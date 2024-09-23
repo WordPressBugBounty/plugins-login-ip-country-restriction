@@ -1,0 +1,818 @@
+# Copyright (C) 2014-2024 Iulia Cazan
+# This file is distributed under the same license as the Login IP & Country Restriction plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Login IP & Country Restriction 6.5.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/slicr\n"
+"Last-Translator: Iulia Cazan\n"
+"Language-Team: \n"
+"Language: ro\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2014-12-04T12:07:15+00:00\n"
+"PO-Revision-Date: 2024-03-14 22:20+0200\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Domain: slicr\n"
+
+#. Plugin Name of the plugin
+#: login-restrict-country.php:1810
+#: login-restrict-country.php:2840
+#: pro-settings.php:551
+#: pro-settings.php:796
+msgid "Login IP & Country Restriction"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://iuliacazan.ro/login-ip-country-restriction/"
+msgstr ""
+
+#. Description of the plugin
+msgid "This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want."
+msgstr ""
+
+#. Author of the plugin
+msgid "Iulia Cazan"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://profiles.wordpress.org/iulia-cazan"
+msgstr ""
+
+#: login-restrict-country.php:440
+#: pro-settings.php:762
+msgid "For some reason the authentication for your account is restricted. Please contact the administrator."
+msgstr ""
+
+#: login-restrict-country.php:601
+#: login-restrict-country.php:602
+#: login-restrict-country.php:1163
+msgid "Login IP & Country Restriction Settings"
+msgstr ""
+
+#: login-restrict-country.php:629
+msgid "The settings were reset to default."
+msgstr ""
+
+#: login-restrict-country.php:642
+msgid "The settings were not imported."
+msgstr ""
+
+#: login-restrict-country.php:662
+msgid "The settings were imported."
+msgstr ""
+
+#: login-restrict-country.php:700
+#: login-restrict-country.php:1107
+msgid "Action not allowed."
+msgstr ""
+
+#: login-restrict-country.php:700
+msgid "Security Breach"
+msgstr ""
+
+#: login-restrict-country.php:731
+#: login-restrict-country.php:792
+#: login-restrict-country.php:827
+#: login-restrict-country.php:851
+msgid "The settings were updated."
+msgstr ""
+
+#. Translators: %1$s - list of IPs.
+#: login-restrict-country.php:984
+msgid "You currently enabled a simulation with IP %1$s and country code %2$s."
+msgstr ""
+
+#: login-restrict-country.php:992
+msgid "The login is allowed, based on assessing the current combination of IPs + country codes + rule type."
+msgstr ""
+
+#: login-restrict-country.php:994
+msgid "The login is blocked, based on assessing the current combination of IPs + country codes + rule type."
+msgstr ""
+
+#: login-restrict-country.php:1016
+msgid "The restriction will apply to your user as well! Please make sure you change the restriction to allow your own access."
+msgstr ""
+
+#: login-restrict-country.php:1023
+msgid "Based on the current setup all settings are temporarily disabled."
+msgstr ""
+
+#: login-restrict-country.php:1031
+msgid "Please note that there is no IP specified or you have * in the IPs list, meaning there is no IP filter to apply."
+msgstr ""
+
+#: login-restrict-country.php:1035
+msgid "Please note that there is no country filter to apply."
+msgstr ""
+
+#. Translators: %1$s - IP, %2$s - country code.
+#: login-restrict-country.php:1043
+#: login-restrict-country.php:1943
+msgid "Your current IP is %1$s and the country code is %2$s."
+msgstr ""
+
+#: login-restrict-country.php:1048
+#: login-restrict-country.php:1208
+#: login-restrict-country.php:1939
+msgid "Debug"
+msgstr ""
+
+#. Translators: %1$s - IP, %2$s - country code.
+#: login-restrict-country.php:1054
+msgid "SERVER_ADDR %1$s / REMOTE_ADDR %2$s / HTTP_CF_IPCOUNTRY %3$s / HTTP_CF_CONNECTING_IP %4$s / HTTP_CLIENT_IP %5$s%6$s"
+msgstr ""
+
+#: login-restrict-country.php:1119
+msgid "Allow login only for allowed IPs"
+msgstr ""
+
+#: login-restrict-country.php:1123
+msgid "Allow login only for allowed countries"
+msgstr ""
+
+#: login-restrict-country.php:1127
+msgid "Allow login only for allowed countries or allowed IPs"
+msgstr ""
+
+#: login-restrict-country.php:1131
+msgid "Block login only for blocked IPs"
+msgstr ""
+
+#: login-restrict-country.php:1135
+msgid "Block login only for blocked countries"
+msgstr ""
+
+#: login-restrict-country.php:1139
+msgid "Block login only for blocked countries or blocked IPs"
+msgstr ""
+
+#: login-restrict-country.php:1143
+msgid "Allow login only for allowed countries or allowed IPs, but not from blocked IPs"
+msgstr ""
+
+#: login-restrict-country.php:1147
+msgid "Allow login only for allowed countries or allowed IPs, but not from blocked IPs or blocked countries"
+msgstr ""
+
+#: login-restrict-country.php:1151
+msgid "Block login only for blocked countries or blocked IPs, but not for allowed IPs"
+msgstr ""
+
+#: login-restrict-country.php:1155
+msgid "Block login only for blocked countries or blocked IPs, but not for allowed IPs or allowed countries"
+msgstr ""
+
+#: login-restrict-country.php:1177
+msgid "Rule Type"
+msgstr ""
+
+#: login-restrict-country.php:1182
+msgid "IP Restriction"
+msgstr ""
+
+#: login-restrict-country.php:1187
+msgid "Country Restriction"
+msgstr ""
+
+#: login-restrict-country.php:1192
+msgid "Redirects"
+msgstr ""
+
+#: login-restrict-country.php:1199
+#: pro-settings.php:77
+msgid "Other Settings"
+msgstr ""
+
+#: login-restrict-country.php:1274
+msgid "Login Restriction Rules"
+msgstr ""
+
+#: login-restrict-country.php:1316
+msgid "The login filter can be configured to work in a different way, depending on what type of rules to be assessed and in which order."
+msgstr ""
+
+#: login-restrict-country.php:1321
+msgid "Filter XML-RPC Authenticated Methods"
+msgstr ""
+
+#: login-restrict-country.php:1329
+msgid "Default"
+msgstr ""
+
+#: login-restrict-country.php:1338
+msgid "Disable all"
+msgstr ""
+
+#: login-restrict-country.php:1347
+msgid "Disable only when matching a restriction rule"
+msgstr ""
+
+#: login-restrict-country.php:1353
+msgid "The option above controls whether XML-RPC methods requiring authentication (such as for publishing purposes) are enabled and does not interfere with pingbacks or other custom endpoints that don't require authentication."
+msgstr ""
+
+#: login-restrict-country.php:1382
+#: login-restrict-country.php:1383
+msgid "No IP restriction"
+msgstr ""
+
+#: login-restrict-country.php:1395
+msgid "Setup IP restriction"
+msgstr ""
+
+#: login-restrict-country.php:1396
+msgid "Allow or block only specific IPs"
+msgstr ""
+
+#: login-restrict-country.php:1405
+msgid "Allow specific IPs"
+msgstr ""
+
+#: login-restrict-country.php:1419
+msgid "* means any IP, you must remove it from the list if you want to apply a restriction."
+msgstr ""
+
+#: login-restrict-country.php:1420
+#: login-restrict-country.php:1463
+msgid "Separate the IPs with comma if there are more."
+msgstr ""
+
+#: login-restrict-country.php:1424
+msgid "Danger zone"
+msgstr ""
+
+#: login-restrict-country.php:1434
+msgid "remove the 127.0.0.1 and ::1 from the allowed IPs"
+msgstr ""
+
+#: login-restrict-country.php:1446
+msgid "include the server forward IP (HTTP_X_FORWARDED_FOR)"
+msgstr ""
+
+#: login-restrict-country.php:1452
+msgid "Please note that this settings are not recommended and are risky to enable, as these will block your access when you are using this on your local environment. The options are intended only for use with hosts like Cloudflare, or when the server IP is masked as 127.0.0.1 or ::1 (using HTTP proxy or a load balancer)."
+msgstr ""
+
+#: login-restrict-country.php:1457
+msgid "Block specific IPs"
+msgstr ""
+
+#: login-restrict-country.php:1492
+#: login-restrict-country.php:1493
+msgid "No country restriction"
+msgstr ""
+
+#: login-restrict-country.php:1506
+msgid "Setup country restriction"
+msgstr ""
+
+#: login-restrict-country.php:1507
+msgid "Allow or block only the selected countries"
+msgstr ""
+
+#: login-restrict-country.php:1529
+#: login-restrict-country.php:1637
+msgid "Allowed countries"
+msgstr ""
+
+#: login-restrict-country.php:1531
+msgid "This is the list of countries from where the login is allowed."
+msgstr ""
+
+#. Translators: %1$s - count selected.
+#: login-restrict-country.php:1536
+#: login-restrict-country.php:1568
+msgid "%1$s selected"
+msgstr ""
+
+#: login-restrict-country.php:1557
+#: login-restrict-country.php:1590
+msgid "you did not select any country yet"
+msgstr ""
+
+#: login-restrict-country.php:1563
+#: login-restrict-country.php:1644
+msgid "Blocked countries"
+msgstr ""
+
+#: login-restrict-country.php:1564
+msgid "This is the list of countries from where the login is blocked."
+msgstr ""
+
+#: login-restrict-country.php:1596
+msgid "Countries list"
+msgstr ""
+
+#: login-restrict-country.php:1678
+msgid "No redirect"
+msgstr ""
+
+#: login-restrict-country.php:1679
+msgid "No redirects"
+msgstr ""
+
+#: login-restrict-country.php:1691
+msgid "Use redirects"
+msgstr ""
+
+#: login-restrict-country.php:1692
+msgid "Yes, use redirects to the front page when the URLs are accessed by someone that has a restriction."
+msgstr ""
+
+#: login-restrict-country.php:1700
+msgid "Login & Registration native pages"
+msgstr ""
+
+#. Translators: %1$s - url, %2$s - new url.
+#: login-restrict-country.php:1712
+msgid "Redirect login from %1$s to %2$s."
+msgstr ""
+
+#. Translators: %1$s - url, %2$s - new url.
+#: login-restrict-country.php:1729
+msgid "Redirect registration from %1$s to %2$s."
+msgstr ""
+
+#: login-restrict-country.php:1738
+msgid "Please note that the restriction to the pages configured above will apply if the login restriction is matched."
+msgstr ""
+
+#: login-restrict-country.php:1741
+msgid "The following specified URLs"
+msgstr ""
+
+#: login-restrict-country.php:1743
+msgid "(separate the URLs with comma)"
+msgstr ""
+
+#: login-restrict-country.php:1783
+msgid "You are using the free version."
+msgstr ""
+
+#. Translators: %1$s - extensions URL.
+#: login-restrict-country.php:1788
+msgid "Click the button to see more and get the <a class=\"pro-item button button-primary\" href=\"%1$s\" target=\"_blank\">version</a> of the plugin!"
+msgstr ""
+
+#: login-restrict-country.php:1794
+msgid "You are using the PRO version."
+msgstr ""
+
+#: login-restrict-country.php:1796
+msgid "It seems that you either did not input yet your license key, or that is not valid or has expired already."
+msgstr ""
+
+#. Translators: %1$s - extensions URL.
+#: login-restrict-country.php:1801
+msgid "Click the button to get a valid license key for the <a class=\"pro-item button button-primary\" href=\"%1$s\" target=\"_blank\">version</a> of the plugin!"
+msgstr ""
+
+#: login-restrict-country.php:1812
+msgid "This plugin allows you to restrict the login on your website, based on the custom rules you apply. This helps with tightening your website security and fights against dictionary bot attacks originating from other countries, by denying access."
+msgstr ""
+
+#: login-restrict-country.php:1818
+msgid "The PRO version includes additional useful features"
+msgstr ""
+
+#: login-restrict-country.php:1820
+msgid "Additional Rule Types"
+msgstr ""
+
+#: login-restrict-country.php:1821
+msgid "Redirect Restricted Login"
+msgstr ""
+
+#: login-restrict-country.php:1822
+#: pro-settings.php:156
+msgid "Lockout duration"
+msgstr ""
+
+#: login-restrict-country.php:1823
+#: pro-settings.php:234
+#: pro-settings.php:559
+msgid "Individual lockout"
+msgstr ""
+
+#: login-restrict-country.php:1824
+#: pro-settings.php:171
+msgid "WooCommerce Integration"
+msgstr ""
+
+#: login-restrict-country.php:1825
+msgid "Bypass the IP and country restriction for the specified roles"
+msgstr ""
+
+#: login-restrict-country.php:1826
+msgid "Single IP Login Per User"
+msgstr ""
+
+#: login-restrict-country.php:1827
+msgid "Simulate IP and Country"
+msgstr ""
+
+#: login-restrict-country.php:1828
+msgid "Temporarily disable all settings"
+msgstr ""
+
+#: login-restrict-country.php:1856
+msgid "Export Settings"
+msgstr ""
+
+#: login-restrict-country.php:1858
+msgid "Here are some details about the current settings of this plugin, these can be reset or exported into another instance."
+msgstr ""
+
+#: login-restrict-country.php:1862
+msgid "Reset to default"
+msgstr ""
+
+#: login-restrict-country.php:1865
+msgid "Please note that reset to default is not requiring for a confirmation, so be careful with clicking this button."
+msgstr ""
+
+#: login-restrict-country.php:1869
+msgid "Import Settings"
+msgstr ""
+
+#: login-restrict-country.php:1871
+msgid "You can paste here the settings you want to import from another instance. This is a string in JSON format."
+msgstr ""
+
+#: login-restrict-country.php:1873
+msgid "Paste here the JSON code."
+msgstr ""
+
+#: login-restrict-country.php:1875
+msgid "Import settings"
+msgstr ""
+
+#: login-restrict-country.php:1878
+msgid "Please note that this will override all the existing settings."
+msgstr ""
+
+#: login-restrict-country.php:1970
+msgid "Status/Debug"
+msgstr ""
+
+#: login-restrict-country.php:1972
+msgid "Here are some details about your current WordPress instance and the services versions that run currently in this environment."
+msgstr ""
+
+#: login-restrict-country.php:1987
+msgid "Test country code for IP"
+msgstr ""
+
+#: login-restrict-country.php:1990
+#: pro-settings.php:728
+msgid "IP"
+msgstr ""
+
+#: login-restrict-country.php:1992
+msgid "Test"
+msgstr ""
+
+#. Translators: %1$s - IP, %2$s - code, %3$s - method.
+#: login-restrict-country.php:1998
+msgid "The country code detected for the IP %1$s is %2$s. The detection was done through the %3$s method."
+msgstr ""
+
+#. Translators: %s - method.
+#: login-restrict-country.php:2013
+msgid "Please note that the %s function is part of the PHP service used on your server, and this is used as the default detection method. If this does not return the expected country code for the test IP, then you can try to bypass it and allow for other detection methods to run."
+msgstr ""
+
+#: login-restrict-country.php:2021
+msgid "Bypass the PHP `geoip_record_by_name` function"
+msgstr ""
+
+#: login-restrict-country.php:2025
+msgid "Enable the PHP `geoip_record_by_name` function"
+msgstr ""
+
+#: login-restrict-country.php:2458
+msgid "Forbidden!"
+msgstr ""
+
+#: login-restrict-country.php:2636
+msgid "Based on the current options there is no login restriction."
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: login-restrict-country.php:2642
+msgid "Based on the current options there is a login restriction, this is allowed only for these IPs: %1$s."
+msgstr ""
+
+#: login-restrict-country.php:2644
+#: login-restrict-country.php:2698
+#: pro-settings.php:899
+#: pro-settings.php:904
+msgid "any"
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: login-restrict-country.php:2652
+msgid "Based on the current options there is a login restriction, this is allowed only from these countries: %1$s."
+msgstr ""
+
+#: login-restrict-country.php:2654
+#: login-restrict-country.php:2664
+#: login-restrict-country.php:2674
+#: login-restrict-country.php:2684
+#: login-restrict-country.php:2687
+#: login-restrict-country.php:2701
+#: pro-settings.php:901
+#: pro-settings.php:906
+msgid "none"
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: login-restrict-country.php:2662
+msgid "Based on the current options there is a login restriction, this is blocked for these IPs: %1$s."
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: login-restrict-country.php:2672
+msgid "Based on the current options there is a login restriction, this is blocked from these countries: %1$s."
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: login-restrict-country.php:2682
+msgid "Based on the current options there is a login restriction, this is blocked for these IPs: %1$s and from these countries: %2$s."
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: login-restrict-country.php:2696
+msgid "Based on the current options there is a login restriction, this is allowed from these IPs: %1$s and from these countries: %2$s."
+msgstr ""
+
+#: login-restrict-country.php:2791
+msgid "Settings"
+msgstr ""
+
+#: login-restrict-country.php:2792
+msgid "Plugin URL"
+msgstr ""
+
+#: login-restrict-country.php:2842
+#: login-restrict-country.php:2933
+#: login-restrict-country.php:2934
+#: login-restrict-country.php:2941
+#: login-restrict-country.php:2942
+msgid "A huge thanks in advance!"
+msgstr ""
+
+#. Translators: %1$s - extensions URL.
+#: login-restrict-country.php:2848
+msgid "You are using the free version. Get the <a href=\"%1$s\" target=\"_blank\"><b>PRO</b> version</a>. "
+msgstr ""
+
+#. Translators: %1$s - pro version label, %2$s - PRO URL.
+#: login-restrict-country.php:2854
+msgid "Thank you for purchasing the <a href=\"%1$s\" target=\"_blank\"><b>PRO</b> version</a>! "
+msgstr ""
+
+#. Translators: %1$s - plugins URL, %2$s - heart icon, %3$s - extensions URL, %4$s - star icon, %5$s - maybe PRO details.
+#: login-restrict-country.php:2861
+msgid "%5$sCheck out my other <a href=\"%1$s\" target=\"_blank\" rel=\"noreferrer\">%2$s free plugins</a> on WordPress.org and the <a href=\"%3$s\" target=\"_blank\" rel=\"noreferrer\">%4$s other extensions</a> available!"
+msgstr ""
+
+#. Translators: %1$s - plugin name.
+#: login-restrict-country.php:2881
+msgid "%1$s plugin was activated!"
+msgstr ""
+
+#. Translators: %1$s - donate URL, %2$s - rating, %3$s - thanks.
+#: login-restrict-country.php:2892
+#: login-restrict-country.php:2931
+msgid "If you find the plugin useful and would like to support my work, please consider making a <a href=\"%1$s\" target=\"_blank\">donation</a>. It would make me very happy if you would leave a %2$s rating. <br>%3$s"
+msgstr ""
+
+#. Translators: %1$s - 5 stars, %2$s - thanks.
+#: login-restrict-country.php:2940
+msgid "It would make me very happy if you would leave a %1$s rating. <br>%2$s"
+msgstr ""
+
+#: pro-settings.php:116
+msgid "Redirect restricted login"
+msgstr ""
+
+#: pro-settings.php:126
+msgid "Header 404"
+msgstr ""
+
+#: pro-settings.php:127
+msgid "Redirect the visitor to the site's \"Not Found\" page."
+msgstr ""
+
+#: pro-settings.php:139
+msgid "Header 403"
+msgstr ""
+
+#: pro-settings.php:140
+msgid "Show \"Forbiden Access\" and the custom message."
+msgstr ""
+
+#: pro-settings.php:146
+msgid "When a user attempts to authenticate and the account is restricted by any of the rules, then the user will see a the forbid message."
+msgstr ""
+
+#: pro-settings.php:150
+msgid "Restricted login message"
+msgstr ""
+
+#: pro-settings.php:159
+msgid "Lokout for"
+msgstr ""
+
+#: pro-settings.php:164
+msgid "minutes"
+msgstr ""
+
+#: pro-settings.php:167
+msgid "When a user attempts to authenticate and the restriction kicks in, the user will not be able to login in the next hour (the default duration is 60 minutes), but you can change the duration."
+msgstr ""
+
+#: pro-settings.php:178
+msgid "Allow customers countries."
+msgstr ""
+
+#: pro-settings.php:181
+msgid "With this setting, you can instruct Login IP & Country Restriction plugin to auto-adapt to WooCommerce new customers, so that their country to automatically be added to the list of allowed countries so that they are granted login access right away."
+msgstr ""
+
+#: pro-settings.php:185
+msgid "Roles Without Restriction"
+msgstr ""
+
+#: pro-settings.php:198
+msgid "You can select the user roles that will bypass the login restriction that you put in place (based on the country or IP)."
+msgstr ""
+
+#: pro-settings.php:199
+msgid "This is useful for shops, where your customers order then authenticate from various countries that might not match the restrictions by IP or country, but you would still want to grant them access to their accounts."
+msgstr ""
+
+#: pro-settings.php:203
+#: pro-settings.php:582
+msgid "Single IP login per user"
+msgstr ""
+
+#: pro-settings.php:216
+msgid "If this option is enabled, the users will be allowed only from the first IP they had when they first login. Don't worry, you can revert this option at any time, and also reset the IP for individual users."
+msgstr ""
+
+#: pro-settings.php:225
+msgid "Reset the IPs for all the users that logged in previously, to allow them to login from other IPs going further."
+msgstr ""
+
+#: pro-settings.php:241
+msgid "Yes, allow for individual lockout."
+msgstr ""
+
+#: pro-settings.php:244
+msgid "If for various reasons, you need to temporarily disable the login for a specific user, you can enable this option, then edit the user account to enable the lockout. Don't worry, you can revert this option at any time."
+msgstr ""
+
+#: pro-settings.php:248
+msgid "See the list of users with login restriction"
+msgstr ""
+
+#: pro-settings.php:254
+msgid "Simulate Restriction"
+msgstr ""
+
+#: pro-settings.php:257
+msgid "Simulate IP"
+msgstr ""
+
+#: pro-settings.php:262
+msgid "country"
+msgstr ""
+
+#: pro-settings.php:274
+msgid "Temporarily Disable"
+msgstr ""
+
+#: pro-settings.php:281
+msgid "Yes, disable this temporarily."
+msgstr ""
+
+#: pro-settings.php:284
+msgid "If for various reasons, you need to temporarily disable all restrictions and any other settings of this plugin, you can use this option, without losing the current settings."
+msgstr ""
+
+#: pro-settings.php:307
+msgid "Simulate the IP or country code you input by accessing the site with the following token."
+msgstr ""
+
+#: pro-settings.php:343
+msgid "Your license key is not valid. Please validate the license key and review one more time the pro settings, these might have been reset to defaults."
+msgstr ""
+
+#: pro-settings.php:566
+msgid "Disable login for this account"
+msgstr ""
+
+#: pro-settings.php:591
+msgid "This is enabled from settings from this user's role"
+msgstr ""
+
+#: pro-settings.php:600
+msgid "Bypass the single IP login for this user"
+msgstr ""
+
+#: pro-settings.php:611
+msgid "Reset the IP for this user"
+msgstr ""
+
+#: pro-settings.php:731
+msgid "and"
+msgstr ""
+
+#: pro-settings.php:732
+msgid "country code"
+msgstr ""
+
+#. Translators: %1$s - simulation, %2$s - details.
+#: pro-settings.php:742
+msgid "Please note that you are accessing the login feature with a %1$s. The simulation for %2$s is checked against the rest of the rules you setup."
+msgstr ""
+
+#: pro-settings.php:743
+msgid "restriction simulation"
+msgstr ""
+
+#: pro-settings.php:773
+msgid "Forbidden"
+msgstr ""
+
+#: pro-settings.php:818
+msgid "Login is disabled"
+msgstr ""
+
+#: pro-settings.php:820
+msgid "Login is allowed"
+msgstr ""
+
+#: pro-settings.php:835
+msgid "not restricted to this IP"
+msgstr ""
+
+#: pro-settings.php:841
+msgid "Last login"
+msgstr ""
+
+#: pro-settings.php:881
+msgid "Any rule"
+msgstr ""
+
+#: pro-settings.php:882
+msgid "With login restriction"
+msgstr ""
+
+#: pro-settings.php:883
+msgid "Without login restriction"
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: pro-settings.php:913
+msgid "Based on the current options there is a login restriction, this is allowed for these IPs: %1$s and from these countries: %2$s, but blocked for these IPs: %3$s."
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: pro-settings.php:923
+msgid "Based on the current options there is a login restriction, this is allowed for these IPs: %1$s and from these countries: %2$s, but blocked for these IPs: %3$s and from these countries: %4$s."
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: pro-settings.php:934
+msgid "Based on the current options there is a login restriction, this is blocked for these IPs: %1$s and from these countries: %2$s, but allowed for these IPs: %3$s."
+msgstr ""
+
+#. Translators: %1$s - list of country names.
+#: pro-settings.php:944
+msgid "Based on the current options there is a login restriction, this is blocked for these IPs: %1$s and from these countries: %2$s, but allowed for these IPs: %3$s and from these countries: %4$s."
+msgstr ""
+
+#: pro-settings.php:1097
+msgid "License Key"
+msgstr ""
+
+#: pro-settings.php:1108
+msgid "Validate"
+msgstr ""
+
+#: pro-settings.php:1110
+msgid "Activate"
+msgstr ""
+
+#: pro-settings.php:1115
+msgid "Reset"
+msgstr ""
+
+#. Translators: %s - expire date.
+#: pro-settings.php:1125
+msgid "The license key expiration date is %s."
+msgstr ""
