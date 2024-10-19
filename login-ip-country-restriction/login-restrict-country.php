@@ -1,16 +1,15 @@
-<?php
+<?php // phpcs:ignore Generic.Files.LineEndings.InvalidEOLChar
 /**
  * Plugin Name: Login IP & Country Restriction
- * Plugin URI: https://iuliacazan.ro/login-ip-country-restriction/
+ * Plugin URI:  https://iuliacazan.ro/login-ip-country-restriction/
  * Description: This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want.
- *
  * Text Domain: slicr
  * Domain Path: /langs
- * Version: 6.5.0
- * Author: Iulia Cazan
- * Author URI: https://profiles.wordpress.org/iulia-cazan
+ * Version:     6.6.0
+ * Author:      Iulia Cazan
+ * Author URI:  https://profiles.wordpress.org/iulia-cazan
  * Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
- * License: GPL2
+ * License:     GPL2
  *
  * @package ic-devops
  *
@@ -32,7 +31,7 @@
 
 // Define the plugin version.
 define( 'SISANU_RCIL_DB_OPTION', 'sisanu_rcil' );
-define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.5 );
+define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.6 );
 define( 'SISANU_RCIL_SLUG', 'slicr' );
 define( 'SISANU_RCIL_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'SISANU_RCIL_URL', trailingslashit( plugins_url( '/', plugin_basename( __FILE__ ) ) ) );
@@ -193,8 +192,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Class constructor. Includes constants, includes and init method.
-	 *
-	 * @return void
 	 */
 	public function __construct() {
 		$this->init();
@@ -202,14 +199,13 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Run action and filter hooks.
-	 *
-	 * @return void
 	 */
 	private function init() {
 		self::load_settings();
 
 		$ob_class = get_called_class();
-		add_action( 'plugins_loaded', [ $ob_class, 'load_textdomain' ] );
+		add_action( 'wp_loaded', [ $ob_class, 'l10n' ], 20 );
+
 		if ( file_exists( __DIR__ . '/pro-settings.php' ) ) {
 			self::$is_pro = true;
 			include_once __DIR__ . '/pro-settings.php';
@@ -224,17 +220,17 @@ class SISANU_Restrict_Country_IP_Login {
 			}
 		}
 
-		if ( is_admin() ) {
-			add_action( 'init', [ $ob_class, 'maybe_upgrade_version' ], 1 );
-			add_action( 'init', [ $ob_class, 'maybe_save_settings' ], 1 );
-			self::$plugin_url = admin_url( 'options-general.php?page=login-ip-country-restriction-settings' );
-			add_action( 'admin_menu', [ $ob_class, 'admin_menu' ] );
-			add_filter( 'check_rule_type_save', [ $ob_class, 'check_rule_type_save' ] );
-			add_action( 'admin_notices', [ $ob_class, 'admin_notices' ] );
+		self::$plugin_url = admin_url( 'options-general.php?page=login-ip-country-restriction-settings' );
 
-			// Enqueue the plugin assets for back-end.
-			add_action( 'admin_enqueue_scripts', [ $ob_class, 'load_assets' ] );
-			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), [ $ob_class, 'plugin_action_links' ] );
+		add_action( 'admin_init', [ $ob_class, 'maybe_upgrade_version' ], 1 );
+		add_action( 'admin_init', [ $ob_class, 'maybe_save_settings' ], 1 );
+		add_action( 'admin_menu', [ $ob_class, 'admin_menu' ] );
+		add_action( 'admin_notices', [ $ob_class, 'admin_notices' ] );
+		add_action( 'admin_enqueue_scripts', [ $ob_class, 'load_assets' ] );
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), [ $ob_class, 'plugin_action_links' ] );
+
+		if ( is_admin() ) {
+			add_filter( 'check_rule_type_save', [ $ob_class, 'check_rule_type_save' ] );
 		}
 
 		add_filter( 'assess_rule_by_type', [ $ob_class, 'assess_rule_by_type' ], 10, 3 );
@@ -244,9 +240,14 @@ class SISANU_Restrict_Country_IP_Login {
 	}
 
 	/**
+	 * Load text domain for internalization.
+	 */
+	public static function l10n() {
+		load_plugin_textdomain( 'slicr', false, basename( __DIR__ ) . '/langs' );
+	}
+
+	/**
 	 * Hookup the custom restrictions filters and actions.
-	 *
-	 * @return void
 	 */
 	public static function hookup_the_custom_restrictions() {
 		$ob_class = get_called_class();
@@ -328,8 +329,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Redirect the login URL.
-	 *
-	 * @return void
 	 */
 	public static function maybe_restrict_login_url() {
 		if ( self::current_page_is( 'login' ) || get_permalink() === wp_login_url()
@@ -346,8 +345,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Redirect the register URL.
-	 *
-	 * @return void
 	 */
 	public static function maybe_restrict_register_url() {
 		$curent_uri = self::current_uri();
@@ -365,8 +362,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Redirect the custom URL.
-	 *
-	 * @return void
 	 */
 	public static function maybe_restrict_custom_url() {
 		global $wp;
@@ -389,8 +384,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Load the plugin settings.
-	 *
-	 * @return void
 	 */
 	public static function load_settings() {
 		self::$allowed_ips       = maybe_unserialize( get_option( SISANU_RCIL_DB_OPTION . '_allow_ips', [ '*' ] ) );
@@ -479,8 +472,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * The actions to be executed when the plugin is activated.
-	 *
-	 * @return void
 	 */
 	public static function maybe_upgrade_version() {
 		$db_version = get_option( SISANU_RCIL_DB_OPTION . '_db_ver', 0 );
@@ -503,8 +494,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * The actions to be executed when the plugin is activated.
-	 *
-	 * @return void
 	 */
 	public static function activate_plugin() {
 		self::maybe_upgrade_version();
@@ -513,8 +502,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * The actions to be executed when the plugin is deactivated.
-	 *
-	 * @return void
 	 */
 	public static function deactivate_plugin() {
 		if ( empty( self::$settings['keep_settings'] ) ) {
@@ -532,68 +519,70 @@ class SISANU_Restrict_Country_IP_Login {
 	}
 
 	/**
-	 * Load text domain for internalization
-	 *
-	 * @return void
-	 */
-	public static function load_textdomain() {
-		load_plugin_textdomain( 'slicr', false, basename( __DIR__ ) . '/langs/' );
-	}
-
-	/**
 	 * Load the plugin assets.
-	 *
-	 * @return void
 	 */
 	public static function load_assets() {
-		$uri = ( ! empty( $_SERVER['REQUEST_URI'] ) ) ? $_SERVER['REQUEST_URI'] : ''; // phpcs:ignore
-		if ( ! substr_count( $uri, 'page=login-ip-country-restriction-settings' ) ) {
+		$current_screen = \get_current_screen();
+		if ( empty( $current_screen->id )
+			|| 'settings_page_login-ip-country-restriction-settings' !== $current_screen->id ) {
 			// Fail-fast, we only add assets to this page.
 			return;
 		}
 
+		$deps = [
+			'dependencies' => [],
+			'version'      => time(),
+		];
+
 		if ( file_exists( SISANU_RCIL_DIR . 'build/index.asset.php' ) ) {
-			$dependencies = require_once SISANU_RCIL_DIR . 'build/index.asset.php';
-		} else {
-			$dependencies = [
-				'dependencies' => [],
-				'version'      => filemtime( SISANU_RCIL_DIR . 'build/index.js' ),
-			];
+			$deps = require_once SISANU_RCIL_DIR . 'build/index.asset.php';
 		}
 
-		if ( file_exists( SISANU_RCIL_DIR . 'build/index.js' ) ) {
-			wp_register_script(
-				SISANU_RCIL_SLUG,
-				SISANU_RCIL_URL . 'build/index.js',
-				$dependencies['dependencies'],
-				$dependencies['version'],
-				true
-			);
-			wp_localize_script(
-				SISANU_RCIL_SLUG,
-				str_replace( '-', '', SISANU_RCIL_SLUG ) . 'Settings',
-				[
-					'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				]
-			);
+		if ( file_exists( SISANU_RCIL_DIR . 'build/index.js' ) && ! wp_script_is( SISANU_RCIL_SLUG ) ) {
+			wp_register_script( SISANU_RCIL_SLUG, SISANU_RCIL_URL . 'build/index.js', $deps['dependencies'], $deps['version'], true );
+			wp_localize_script( SISANU_RCIL_SLUG, str_replace( '-', '', SISANU_RCIL_SLUG ) . 'Settings', [
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			] );
 			wp_enqueue_script( SISANU_RCIL_SLUG );
 		}
 
-		if ( file_exists( SISANU_RCIL_DIR . 'build/index.css' ) ) {
-			wp_enqueue_style(
-				SISANU_RCIL_SLUG,
-				SISANU_RCIL_URL . 'build/index.css',
-				[],
-				filemtime( SISANU_RCIL_DIR . 'build/index.css' ),
-				false
-			);
+		if ( file_exists( SISANU_RCIL_DIR . 'build/index.css' ) && ! wp_style_is( SISANU_RCIL_SLUG ) ) {
+			wp_enqueue_style( SISANU_RCIL_SLUG, SISANU_RCIL_URL . 'build/index.css', [], $deps['version'], false );
+			wp_add_inline_style( SISANU_RCIL_SLUG, self::preset_colors() );
 		}
 	}
 
 	/**
-	 * Add the new menu in settings section that allows to configure the restriction.
+	 * Make preset colors tokens.
 	 *
-	 * @return void
+	 * @return string
+	 */
+	public static function preset_colors() {
+		global $_wp_admin_css_colors;
+
+		$user_id = get_current_user_id();
+		$scheme  = get_user_option( 'admin_color', $user_id );
+		$colors  = $_wp_admin_css_colors[ $scheme ]->colors ?? [];
+		$dark    = $colors[0] ?? '#1e1e1e';
+		$main    = $colors[2] ?? '#2271b1';
+		if ( 'light' === $scheme ) {
+			$main = $colors[3] ?? '#2271b1';
+		} elseif ( 'modern' === $scheme ) {
+			$main = $colors[1] ?? '#2271b1';
+		} elseif ( 'blue' === $scheme ) {
+			$main = '#e1a948';
+		} elseif ( 'midnight' === $scheme ) {
+			$main = $colors[3] ?? '#2271b1';
+		}
+
+		// Return the minified string.
+		$style = ':root { --slicr--color-main: ' . $main . '; --slicr--color-border: color-mix(in srgb, ' . $main . ' 30%, transparent); }';
+		$style = ! empty( $style ) ? trim( preg_replace( '/\s\s+/', ' ', $style ) ) : '';
+		return $style;
+	}
+
+	/**
+	 * Add the new menu in settings section that allows to configure the restriction.
 	 */
 	public static function admin_menu() {
 		add_submenu_page(
@@ -608,8 +597,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Reset all options.
-	 *
-	 * @return void
 	 */
 	public static function reset_all_settings() {
 		$setup = [ '_allow_countries', '_allow_ips', '_block_countries', '_block_ips', '_custom_redirects', '_bypass_roles', '_settings' ];
@@ -633,7 +620,6 @@ class SISANU_Restrict_Country_IP_Login {
 	 * Import settings.
 	 *
 	 * @param string $import Import setting JSON string.
-	 * @return void
 	 */
 	public static function import_settings( $import ) { //phpcs:ignore
 		$data = json_decode( $import, true );
@@ -664,8 +650,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Remove the transients set when verifying the restrictions.
-	 *
-	 * @return void
 	 */
 	public static function reset_plugin_transients() {
 		global $wpdb;
@@ -690,8 +674,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Maybe execute the options update if the nonce is valid, then redirect.
-	 *
-	 * @return void
 	 */
 	public static function maybe_save_settings() {
 		$nonce = filter_input( INPUT_POST, '_login_ip_country_restriction_settings_nonce', FILTER_DEFAULT );
@@ -932,7 +914,6 @@ class SISANU_Restrict_Country_IP_Login {
 	 *
 	 * @param string $text  The text to be outputted as the admin notice.
 	 * @param string $class The admin notice class (notice-success is-dismissible, notice-error).
-	 * @return void
 	 */
 	public static function add_admin_notice( $text, $class = 'notice-success is-dismissible' ) { //phpcs:ignore
 		$items   = get_option( SISANU_RCIL_DB_OPTION . '_actions_notices', [] );
@@ -945,8 +926,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Outputs custom admin notices.
-	 *
-	 * @return void
 	 */
 	public static function admin_notices() {
 		$items = get_option( SISANU_RCIL_DB_OPTION . '_actions_notices', [] );
@@ -964,8 +943,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Display the current status in terms of restrictions.
-	 *
-	 * @return void
 	 */
 	public static function current_restriction_notice_card() {
 		if ( self::$is_pro
@@ -1024,7 +1001,7 @@ class SISANU_Restrict_Country_IP_Login {
 					} else {
 						$text = self::describe_rule_by_type();
 					}
-					echo esc_html( $text );
+					echo wp_kses_post( $text );
 
 					if ( ! empty( self::$rules->wildcard->ip )
 						&& in_array( self::$rules->type, [ 0, 1, 2, 3, 4, 5, 6, 8 ], true ) ) {
@@ -1093,13 +1070,15 @@ class SISANU_Restrict_Country_IP_Login {
 		}
 
 		// phpcs:enable
+		if ( '127.0.0.1' === $ip || '::1' === $ip ) {
+			return apply_filters( 'sislrc_the_user_ip', (string) $ip );
+		}
+
 		return (string) $ip;
 	}
 
 	/**
 	 * Show the current settings and allow you to change the settings.
-	 *
-	 * @return void
 	 */
 	public static function login_ip_country_restriction_settings() {
 		// Verify user capabilities in order to deny the access if the user does not have the capabilities.
@@ -1107,661 +1086,45 @@ class SISANU_Restrict_Country_IP_Login {
 			wp_die( esc_html__( 'Action not allowed.', 'slicr' ) );
 		}
 
-		$all_countries = self::get_countries_list();
-
-		$tab = filter_input( INPUT_GET, 'tab', FILTER_DEFAULT );
-		$tab = ( empty( $tab ) ) ? 0 : (int) $tab;
-		$tab = ( $tab < 0 || $tab > 5 ) ? 0 : $tab;
-
-		$rules = [
-			6 => [
-				'is_pro' => false,
-				'title'  => __( 'Allow login only for allowed IPs', 'slicr' ),
-			],
-			7 => [
-				'is_pro' => false,
-				'title'  => __( 'Allow login only for allowed countries', 'slicr' ),
-			],
-			0 => [
-				'is_pro' => false,
-				'title'  => __( 'Allow login only for allowed countries or allowed IPs', 'slicr' ),
-			],
-			8 => [
-				'is_pro' => false,
-				'title'  => __( 'Block login only for blocked IPs', 'slicr' ),
-			],
-			9 => [
-				'is_pro' => false,
-				'title'  => __( 'Block login only for blocked countries', 'slicr' ),
-			],
-			1 => [
-				'is_pro' => false,
-				'title'  => __( 'Block login only for blocked countries or blocked IPs', 'slicr' ),
-			],
-			2 => [
-				'is_pro' => true,
-				'title'  => __( 'Allow login only for allowed countries or allowed IPs, but not from blocked IPs', 'slicr' ),
-			],
-			3 => [
-				'is_pro' => true,
-				'title'  => __( 'Allow login only for allowed countries or allowed IPs, but not from blocked IPs or blocked countries', 'slicr' ),
-			],
-			4 => [
-				'is_pro' => true,
-				'title'  => __( 'Block login only for blocked countries or blocked IPs, but not for allowed IPs', 'slicr' ),
-			],
-			5 => [
-				'is_pro' => true,
-				'title'  => __( 'Block login only for blocked countries or blocked IPs, but not for allowed IPs or allowed countries', 'slicr' ),
-			],
-		];
-		?>
-
-		<div class="wrap licr-feature" id="start" name="start">
-			<h1 class="plugin-title">
-				<span class="dashicons dashicons-admin-site"></span>
-				<?php esc_html_e( 'Login IP & Country Restriction Settings', 'slicr' ); ?>
-			</h1>
-
-			<div class="intro-next outside">
-				<?php self::current_restriction_notice_card(); ?>
-			</div>
-
-			<div class="intro-next outside menu-wrap">
-			<?php $url = admin_url( 'options-general.php?page=login-ip-country-restriction-settings' ); ?>
-				<details>
-				<summary class="tabs-wrap">
-					<a href="<?php echo esc_url( $url ); ?>"
-						class="button<?php echo esc_attr( 0 === $tab ? ' button-primary on' : '' ); ?>">
-						<div class="dashicons dashicons-admin-tools"></div>
-						<?php esc_html_e( 'Rule Type', 'slicr' ); ?>
-					</a>
-					<a href="<?php echo esc_url( $url . '&tab=1' ); ?>"
-						class="button<?php echo esc_attr( 1 === $tab ? ' button-primary on' : '' ); ?>">
-						<div class="dashicons dashicons-shield"></div>
-						<?php esc_html_e( 'IP Restriction', 'slicr' ); ?>
-					</a>
-					<a href="<?php echo esc_url( $url . '&tab=2' ); ?>"
-						class="button<?php echo esc_attr( 2 === $tab ? ' button-primary on' : '' ); ?>">
-						<div class="dashicons dashicons-shield-alt"></div>
-						<?php esc_html_e( 'Country Restriction', 'slicr' ); ?>
-					</a>
-					<a href="<?php echo esc_url( $url . '&tab=3' ); ?>"
-						class="button<?php echo esc_attr( 3 === $tab ? ' button-primary on' : '' ); ?>">
-						<span class="dashicons dashicons-randomize"></span>
-						<?php esc_html_e( 'Redirects', 'slicr' ); ?>
-					</a>
-					<?php
-					if ( ! self::$is_pro ) {
-						?>
-						<a href="<?php echo esc_url( $url . '&tab=4' ); ?>" class="button pro-item disabled">
-							<span class="dashicons dashicons-admin-generic"></span>
-							<?php esc_html_e( 'Other Settings', 'slicr' ); ?>
-						</a>
-						<?php
-					}
-					do_action( 'sislrc_display_pro_tabs' );
-					?>
-					<a href="<?php echo esc_url( $url . '&tab=5' ); ?>"
-						class="button<?php echo esc_attr( 5 === $tab ? ' button-primary on' : '' ); ?>">
-						<span class="dashicons dashicons-info"></span>
-						<?php esc_html_e( 'Debug', 'slicr' ); ?>
-					</a>
-				</summary>
-			</details>
-			</div>
-
-			<div class="tab-wrap-content">
-				<form action="<?php echo esc_url( self::$plugin_url ); ?>" method="POST">
-					<?php wp_nonce_field( '_login_ip_country_restriction_settings_save', '_login_ip_country_restriction_settings_nonce' ); ?>
-					<input type="hidden" name="tab" id="tab" value="<?php echo (int) $tab; ?>">
-
-					<?php
-					switch ( $tab ) {
-						case 1:
-							// IP restriction.
-							self::tab1_content( $rules );
-							break;
-
-						case 2:
-							// Country restriction.
-							self::tab2_content( $all_countries );
-							break;
-
-						case 3:
-							// Redirects.
-							self::tab3_content();
-							break;
-
-						case 4:
-							// Other Settings.
-							self::tab4_content( $rules );
-							break;
-
-						case 5:
-							// Debug.
-							self::setup_debug_output();
-							break;
-
-						case 0:
-						default:
-							// Rule type.
-							self::tab0_content( $rules );
-							break;
-					}
-					?>
-				</form>
-			</div>
-
-			<?php self::show_donate_text(); ?>
-		</div>
-
-		<?php
+		include_once __DIR__ . '/inc/setup-page.php';
 	}
 
 	/**
 	 * First tab content.
 	 *
-	 * @param  array $rules Custom rules.
-	 * @return void
+	 * @param array $rules Custom rules.
 	 */
 	public static function tab0_content( $rules ) { //phpcs:ignore
-		$true_pro = self::$is_pro && function_exists( '\RCIL\Pro\key_is_active' ) && true === \RCIL\Pro\key_is_active() ? true : false;
-		?>
-
-		<div class="group-columns">
-			<div class="group-wrap">
-				<h3 class="as-title"><?php esc_html_e( 'Login Restriction Rules', 'slicr' ); ?></h3>
-				<ol class="items">
-					<?php
-					foreach ( $rules as $key => $value ) {
-						$class = '';
-						if ( true === $value['is_pro'] ) {
-							$class = ( ! $true_pro ) ? 'pro-item-after disabled' : 'pro-item-after';
-							if ( ! $true_pro ) {
-								?>
-								<li>
-									<label class="pro-item-after disabled">
-										<span><?php echo esc_html( $value['title'] ); ?></span>
-									</label>
-								</li>
-								<?php
-							} else {
-								?>
-								<li>
-									<label class="pro-item-after">
-										<input type="radio" name="rule_type" value="<?php echo (int) $key; ?>"
-										<?php checked( self::$rules->type, $key ); ?>>
-										<span><?php echo esc_html( $value['title'] ); ?></span>
-									</label>
-								</li>
-								<?php
-							}
-						} else {
-							?>
-							<li>
-								<label>
-									<input type="radio" name="rule_type" value="<?php echo (int) $key; ?>"
-									<?php checked( self::$rules->type, $key ); ?>>
-									<span><?php echo esc_html( $value['title'] ); ?></span>
-								</label>
-							</li>
-							<?php
-						}
-					}
-					?>
-				</ol>
-
-				<p class="info">
-					<?php esc_html_e( 'The login filter can be configured to work in a different way, depending on what type of rules to be assessed and in which order.', 'slicr' ); ?>
-				</p>
-			</div>
-
-			<div class="group-wrap">
-				<h3 class="as-title"><?php esc_html_e( 'Filter XML-RPC Authenticated Methods', 'slicr' ); ?></h3>
-				<ul class="items">
-					<li>
-						<label>
-							<input type="radio" name="xmlrpc_auth_filter"
-								id="xmlrpc_auth_filter"
-								value=""
-								<?php checked( '', self::$settings['xmlrpc_auth_filter'] ); ?>/>
-							<span><?php esc_html_e( 'Default', 'slicr' ); ?></span>
-						</label>
-					</li>
-					<li>
-						<label>
-							<input type="radio" name="xmlrpc_auth_filter"
-								id="xmlrpc_auth_filter_all"
-								value="all"
-								<?php checked( 'all', self::$settings['xmlrpc_auth_filter'] ); ?>/>
-							<span><?php esc_html_e( 'Disable all', 'slicr' ); ?></span>
-						</label>
-					</li>
-					<li>
-						<label>
-							<input type="radio" name="xmlrpc_auth_filter"
-								id="xmlrpc_auth_filter_restriction"
-								value="restriction"
-								<?php checked( 'restriction', self::$settings['xmlrpc_auth_filter'] ); ?>/>
-							<span><?php esc_html_e( 'Disable only when matching a restriction rule', 'slicr' ); ?></span>
-						</label>
-					</li>
-				</ul>
-
-				<p class="info">
-					<?php esc_html_e( 'The option above controls whether XML-RPC methods requiring authentication (such as for publishing purposes) are enabled and does not interfere with pingbacks or other custom endpoints that don\'t require authentication.', 'slicr' ); ?>
-				</p>
-			</div>
-		</div>
-
-		<div class="main-button-wrap">
-			<?php submit_button( '', 'primary', '', false ); ?>
-		</div>
-		<?php
+		include_once __DIR__ . '/inc/setup-rules.php';
 	}
 
 	/**
 	 * Second tab content.
 	 *
-	 * @param  array $rules Custom rules.
-	 * @return void
+	 * @param array $rules Custom rules.
 	 */
 	public static function tab1_content( $rules ) { //phpcs:ignore
-		?>
-
-		<div class="group-wrap">
-			<label class="sislrc-toggle"
-				data-target="#restrict_ip_list"
-				data-action="hide">
-				<input type="radio" value="all"
-					name="_login_ip_country_restriction_settings[allow_ip_all]"
-					id="_login_ip_country_restriction_settings_allow_ip_all"
-					<?php checked( false, self::$rules->restrict->ip ); ?>/>
-				<span>
-					<h3 class="as-title"><?php esc_html_e( 'No IP restriction', 'slicr' ); ?></h3>
-					<?php esc_html_e( 'No IP restriction', 'slicr' ); ?>
-				</span>
-			</label>
-		</div>
-
-		<div class="group-wrap">
-			<label class="sislrc-toggle" data-target="#restrict_ip_list" data-action="show">
-				<input type="radio" value="restrict"
-					name="_login_ip_country_restriction_settings[allow_ip_all]"
-					id="_login_ip_country_restriction_settings_allow_ip_restrict"
-					<?php checked( true, self::$rules->restrict->ip ); ?>/>
-				<span>
-					<h3 class="as-title"><?php esc_html_e( 'Setup IP restriction', 'slicr' ); ?></h3>
-					<?php esc_html_e( 'Allow or block only specific IPs', 'slicr' ); ?>
-				</span>
-			</label>
-
-			<div id="restrict_ip_list"
-				class="rcil_elem <?php echo esc_attr( ( false === self::$rules->restrict->ip ) ? 'is-hidden' : '' ); ?>">
-
-				<div class="group-columns">
-					<div>
-						<h3 class="as-subtitle"><?php echo esc_attr( self::CHAR_ALLOW ); ?> <?php esc_html_e( 'Allow specific IPs', 'slicr' ); ?></h3>
-						<?php
-						$list_ip   = self::$allowed_ips;
-						$list_ip[] = self::get_current_ip();
-						$list_ip   = array_unique( $list_ip );
-						if ( ! empty( self::$settings['force_remove_local'] ) ) {
-							$list_ip = array_diff( $list_ip, [ '127.0.0.1', '::1' ] );
-						}
-						?>
-						<textarea
-							name="_login_ip_country_restriction_settings[allow_ip_restrict]"
-							placeholder="111.111.111,222.222.222,333.333.333"
-							class="wide" rows="2"><?php echo esc_html( implode( ', ', $list_ip ) ); ?></textarea>
-						<p class="info">
-							<?php esc_html_e( '* means any IP, you must remove it from the list if you want to apply a restriction.', 'slicr' ); ?>
-							<?php esc_html_e( 'Separate the IPs with comma if there are more.', 'slicr' ); ?>
-						</p>
-
-						<p>
-							<h3 class="as-subtitle has-warning"><span class="dashicons dashicons-warning"></span> <?php esc_html_e( 'Danger zone', 'slicr' ); ?></h3>
-						</p>
-						<ul class="items">
-							<li>
-								<label>
-									<input type="checkbox" value="1"
-										name="_login_ip_country_restriction_settings[force_remove_local]"
-										id="_login_ip_country_restriction_settings_force_remove_local"
-										<?php checked( true, ! empty( self::$settings['force_remove_local'] ) ); ?>/>
-									<span>
-										<?php esc_html_e( 'remove the 127.0.0.1 and ::1 from the allowed IPs', 'slicr' ); ?>
-									</span>
-								</label>
-							</li>
-
-							<li>
-								<label>
-									<input type="checkbox" value="1"
-										name="_login_ip_country_restriction_settings[include_forward_ip]"
-										id="_login_ip_country_restriction_settings_include_forward_ip"
-										<?php checked( true, ! empty( self::$settings['include_forward_ip'] ) ); ?>/>
-									<span>
-										<?php esc_html_e( 'include the server forward IP (HTTP_X_FORWARDED_FOR)', 'slicr' ); ?>
-									</span>
-								</label>
-							</li>
-						</ul>
-						<p class="info">
-							<?php esc_html_e( 'Please note that this settings are not recommended and are risky to enable, as these will block your access when you are using this on your local environment. The options are intended only for use with hosts like Cloudflare, or when the server IP is masked as 127.0.0.1 or ::1 (using HTTP proxy or a load balancer).', 'slicr' ); ?>
-						</p>
-					</div>
-
-					<div>
-						<h3 class="as-subtitle"><?php echo esc_attr( self::CHAR_BLOCK ); ?>  <?php esc_html_e( 'Block specific IPs', 'slicr' ); ?></h3>
-						<textarea
-							name="_login_ip_country_restriction_settings[allow_ip_block]"
-							placeholder="111.111.111,222.222.222,333.333.333"
-							class="wide" rows="2"><?php echo esc_html( implode( ', ', self::$blocked_ips ) ); ?></textarea>
-						<p class="info">
-							<?php esc_html_e( 'Separate the IPs with comma if there are more.', 'slicr' ); ?>
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="main-button-wrap">
-			<?php submit_button( '', 'primary', 'submit-tab1', false ); ?>
-		</div>
-		<?php
+		include_once __DIR__ . '/inc/setup-ips.php';
 	}
 
 	/**
 	 * Third tab content.
 	 *
-	 * @param  array $all_countries Countries list.
-	 * @return void
+	 * @param array $all_countries Countries list.
 	 */
 	public static function tab2_content( $all_countries ) { //phpcs:ignore
-		?>
-		<div class="group-wrap">
-			<label class="sislrc-toggle" data-target="#restrict-country-list" data-action="hide">
-				<input type="radio"
-					name="_login_ip_country_restriction_settings[allow_country_all]"
-					id="_login_ip_country_restriction_settings_allow_country_all"
-					value="all"
-					<?php checked( false, self::$rules->restrict->co ); ?>/>
-				<span>
-					<h3 class="as-title"><?php esc_html_e( 'No country restriction', 'slicr' ); ?></h3>
-					<?php esc_html_e( 'No country restriction', 'slicr' ); ?>
-				</span>
-			</label>
-		</div>
-
-		<div class="group-wrap">
-			<label class="sislrc-toggle" data-target="#restrict-country-list" data-action="show">
-				<input type="radio"
-					name="_login_ip_country_restriction_settings[allow_country_all]"
-					id="_login_ip_country_restriction_settings_allow_country_restrict"
-					value="restrict"
-					<?php checked( true, self::$rules->restrict->co ); ?>/>
-				<span>
-					<h3 class="as-title"><?php esc_html_e( 'Setup country restriction', 'slicr' ); ?></h3>
-					<?php esc_html_e( 'Allow or block only the selected countries', 'slicr' ); ?>
-				</span>
-			</label>
-
-			<div id="restrict-country-list" class="rcil_elem <?php echo esc_attr( ( false === self::$rules->restrict->co ) ? 'is-hidden' : '' ); ?>">
-				<?php
-				$allow = [];
-				$block = [];
-				$reset = [];
-				foreach ( $all_countries as $key => $name ) {
-					if ( in_array( $key, self::$allowed_countries, true ) ) {
-						$allow[ $key ] = $name;
-					} elseif ( in_array( $key, self::$blocked_countries, true ) ) {
-						$block[ $key ] = $name;
-					} else {
-						$reset[ $key ] = $name;
-					}
-				}
-				?>
-				<div class="group-columns one-two">
-					<div class="filter-selected">
-						<div class="filter-allowed">
-							<h3 class="as-subtitle"><?php echo esc_attr( self::CHAR_ALLOW ); ?> <?php esc_html_e( 'Allowed countries', 'slicr' ); ?></h3>
-							<p class="info">
-								<?php esc_html_e( 'This is the list of countries from where the login is allowed.', 'slicr' ); ?>
-							</p>
-							<p>
-								<?php
-								// Translators: %1$s - count selected.
-								echo wp_kses_post( sprintf( __( '%1$s selected', 'slicr' ), '<b>' . count( $allow ) . '</b>' ) );
-								?>
-							</p>
-							<div class="list allowed">
-								<?php if ( ! empty( $allow ) ) : ?>
-									<ul class="group-columns columns-1">
-										<?php foreach ( $allow as $key => $value ) : ?>
-											<li class="as-pill">
-												<label class="fake-checkbox">
-													<input type="checkbox"
-														name="_login_ip_country_restriction_settings[allow_country_restrict][]"
-														id="_login_ip_country_restriction_settings_allow_country_all"
-														value="<?php echo esc_attr( $key ); ?>"
-														checked="checked" />
-													<?php echo esc_html( $value ); ?>
-													(<?php echo esc_html( $key ); ?>)
-												</label>
-											</li>
-										<?php endforeach; ?>
-									</ul>
-								<?php else : ?>
-									(<?php esc_html_e( 'you did not select any country yet', 'slicr' ); ?>)
-								<?php endif; ?>
-							</div>
-						</div>
-
-						<div class="filter-blocked">
-							<h3 class="as-subtitle"><?php echo esc_attr( self::CHAR_BLOCK ); ?> <?php esc_html_e( 'Blocked countries', 'slicr' ); ?></h3>
-							<p class="info"><?php esc_html_e( 'This is the list of countries from where the login is blocked.', 'slicr' ); ?></p>
-							<p>
-								<?php
-								// Translators: %1$s - count selected.
-								echo wp_kses_post( sprintf( __( '%1$s selected', 'slicr' ), '<b>' . count( $block ) . '</b>' ) );
-								?>
-							</p>
-							<div class="list blocked">
-								<?php if ( ! empty( $block ) ) : ?>
-									<ul class="group-columns columns-1">
-										<?php foreach ( $block as $key => $value ) : ?>
-											<li class="as-pill">
-												<label class="fake-checkbox">
-													<input type="checkbox"
-														name="_login_ip_country_restriction_settings[allow_country_block][]"
-														id="_login_ip_country_restriction_settings_allow_country_block"
-														value="<?php echo esc_attr( $key ); ?>"
-														checked="checked"/>
-
-													<?php echo esc_html( $value ); ?>
-													(<?php echo esc_html( $key ); ?>)
-												</label>
-											</li>
-										<?php endforeach; ?>
-									</ul>
-								<?php else : ?>
-									(<?php esc_html_e( 'you did not select any country yet', 'slicr' ); ?>)
-								<?php endif; ?>
-							</div>
-						</div>
-					</div>
-					<div class="filter-unfiltered">
-						<h3 class="as-subtitle"><?php esc_html_e( 'Countries list', 'slicr' ); ?></h3>
-						<div class="rcil-letters-list">
-							<?php foreach ( range( 'A', 'Z' ) as $letter ) { ?>
-								<a href="#letter<?php echo esc_attr( $letter ); ?>" class="button" tabindex="0"><?php echo esc_html( $letter ); ?></a>
-							<?php } ?>
-							<a href="#start" class="button" tabindex="0">↑</a>
-						</div>
-						<div class="list">
-							<?php
-							$letter = '';
-							foreach ( $reset as $key => $value ) :
-								if ( $value[0] !== $letter ) :
-									$letter = $value[0];
-									?>
-									<?php if ( 'A' !== $letter ) : ?>
-										</ul>
-									<?php endif; ?>
-
-									<div name="letter<?php echo esc_attr( $letter ); ?>" id="letter<?php echo esc_attr( $letter ); ?>"></div>
-
-									<div class="has-text-divider">
-										<div>
-											<a class="button button-primary"><?php echo esc_attr( $letter ); ?></a>
-											<?php submit_button( '', 'letter' . esc_attr( $letter ), 'submit-tab2', false ); ?>
-										</div>
-									</div>
-								<ul class="group-columns columns-3 countries-list">
-								<?php endif; ?>
-								<li class="country-row as-pill">
-									<label class="fake-checkbox clear">
-										<input type="radio" tabindex="0"
-											name="_login_ip_country_restriction_settings[countries_filter][<?php echo esc_attr( $key ); ?>]"
-											value="" checked="checked"
-											data-letter="<?php echo esc_attr( $letter ); ?>" />
-											<?php echo esc_html( $value ); ?>
-											(<?php echo esc_html( $key ); ?>)
-									</label>
-									<label class="fake-checkbox allowed">
-										<input type="radio" tabindex="0"
-											name="_login_ip_country_restriction_settings[countries_filter][<?php echo esc_attr( $key ); ?>]"
-											value="allow"
-											title="<?php esc_html_e( 'Allowed countries', 'slicr' ); ?>"
-											data-letter="<?php echo esc_attr( $letter ); ?>" />
-									</label>
-									<label class="fake-checkbox blocked">
-										<input type="radio" tabindex="0"
-											name="_login_ip_country_restriction_settings[countries_filter][<?php echo esc_attr( $key ); ?>]"
-											value="block"
-											title="<?php esc_html_e( 'Blocked countries', 'slicr' ); ?>"
-											data-letter="<?php echo esc_attr( $letter ); ?>" />
-									</label>
-								</li>
-							<?php endforeach; ?>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="main-button-wrap">
-			<?php submit_button( '', 'primary', 'submit-tab2', false ); ?>
-		</div>
-		<?php
+		include_once __DIR__ . '/inc/setup-countries.php';
 	}
 
 	/**
 	 * Redirects tab content.
-	 *
-	 * @return void
 	 */
 	public static function tab3_content() {
-		?>
-		<div class="group-wrap">
-			<label class="sislrc-toggle"
-				data-target="#use_redirects_list"
-				data-action="hide">
-				<input type="radio"
-					name="_login_ip_country_restriction_settings[use_redirect]"
-					id="_login_ip_country_restriction_settings_use_redirect0"
-					value="0" <?php checked( 0, self::$custom_redirects['status'] ); ?>/>
-				<span>
-					<h3 class="as-title"><?php esc_html_e( 'No redirect', 'slicr' ); ?></h3>
-					<?php esc_html_e( 'No redirects', 'slicr' ); ?>
-				</span>
-			</label>
-		</div>
-
-		<div class="group-wrap">
-			<label class="sislrc-toggle" data-target="#use_redirects_list" data-action="show">
-				<input type="radio"
-					name="_login_ip_country_restriction_settings[use_redirect]"
-					id="_login_ip_country_restriction_settings_use_redirect1"
-					value="1" <?php checked( 1, self::$custom_redirects['status'] ); ?>/>
-				<span>
-					<h3 class="as-title"><?php esc_html_e( 'Use redirects', 'slicr' ); ?></h3>
-					<?php esc_html_e( 'Yes, use redirects to the front page when the URLs are accessed by someone that has a restriction.', 'slicr' ); ?>
-				</span>
-			</label>
-
-			<div id="use_redirects_list"
-				class="rcil_elem <?php echo esc_attr( ( 0 === (int) self::$custom_redirects['status'] ) ? 'is-hidden' : '' ); ?>">
-				<div class="group-columns">
-					<div>
-						<h3 class="as-subtitle"><?php esc_html_e( 'Login & Registration native pages', 'slicr' ); ?></h3>
-
-						<ul class="items">
-							<li>
-								<label>
-									<input type="checkbox" name="_login_ip_country_restriction_settings[redirect_login]"
-										id="_login_ip_country_restriction_settings_redirect_login"
-										value="1" <?php checked( 1, (int) self::$custom_redirects['login'] ); ?>/>
-									<span>
-										<?php
-										echo wp_kses_post( sprintf(
-											// Translators: %1$s - url, %2$s - new url.
-											__( 'Redirect login from %1$s to %2$s.', 'slicr' ),
-											'<b><em>' . wp_login_url() . '</em></b>',
-											'<b><em>' . home_url() . '</em></b>'
-										) );
-										?>
-									</span>
-								</label>
-							</li>
-							<li>
-								<label>
-									<input type="checkbox" name="_login_ip_country_restriction_settings[redirect_register]"
-										id="_login_ip_country_restriction_settings_redirect_register"
-										value="1" <?php checked( 1, (int) self::$custom_redirects['register'] ); ?>/>
-									<span>
-										<?php
-										echo wp_kses_post( sprintf(
-											// Translators: %1$s - url, %2$s - new url.
-											__( 'Redirect registration from %1$s to %2$s.', 'slicr' ),
-											'<b><em>' . wp_registration_url() . '</em></b>',
-											'<b><em>' . home_url() . '</em></b>'
-										) );
-										?>
-									</span>
-								</label>
-							</li>
-						</ul>
-						<p class="info"><?php esc_html_e( 'Please note that the restriction to the pages configured above will apply if the login restriction is matched.', 'slicr' ); ?></p>
-					</div>
-					<div>
-						<h3 class="as-subtitle"><?php esc_html_e( 'The following specified URLs', 'slicr' ); ?></h3>
-						<textarea name="_login_ip_country_restriction_settings[redirect_urls]" class="wide" rows="3"><?php echo esc_html( implode( ', ', self::$custom_redirects['urls'] ) ); ?></textarea>
-						<p class="info"><?php esc_html_e( '(separate the URLs with comma)', 'slicr' ); ?></p>
-
-						<?php
-						if ( function_exists( 'RCIL\Pro\sislrc_pro_simulate_info' ) ) {
-							\RCIL\Pro\sislrc_pro_simulate_info( true );
-						}
-						?>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="main-button-wrap">
-			<?php submit_button( '', 'primary', 'submit-tab3', false ); ?>
-		</div>
-		<?php
+		include_once __DIR__ . '/inc/setup-redirect.php';
 	}
 
 	/**
 	 * Pro tab content.
-	 *
-	 * @return void
 	 */
 	public static function tab4_content() {
 		if ( ! self::$is_pro ) {
@@ -1773,264 +1136,17 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * PRO teaser.
 	 *
-	 * @param  string $type Teaser type.
-	 * @return void
+	 * @param string $type Teaser type.
 	 */
 	public static function pro_teaser( $type = 'regular' ) { //phpcs:ignore
-		?>
-
-		<?php if ( 'regular' === $type ) : ?>
-			<h3 class="as-subtitle no-border no-top"><?php esc_html_e( 'You are using the free version.', 'slicr' ); ?></h3>
-			<p>
-				<?php
-				echo wp_kses_post( sprintf(
-					// Translators: %1$s - extensions URL.
-					__( 'Click the button to see more and get the <a class="pro-item button button-primary" href="%1$s" target="_blank">version</a> of the plugin!', 'slicr' ),
-					'https://iuliacazan.ro/wordpress-extension/login-ip-country-restriction-pro/'
-				) );
-				?>
-			</p>
-		<?php else : ?>
-			<h3 class="as-subtitle no-border"><?php esc_html_e( 'You are using the PRO version.', 'slicr' ); ?></h3>
-			<p>
-				<?php esc_html_e( 'It seems that you either did not input yet your license key, or that is not valid or has expired already.', 'slicr' ); ?>
-
-				<?php
-				echo wp_kses_post( sprintf(
-					// Translators: %1$s - extensions URL.
-					__( 'Click the button to get a valid license key for the <a class="pro-item button button-primary" href="%1$s" target="_blank">version</a> of the plugin!', 'slicr' ),
-					'https://iuliacazan.ro/wordpress-extension/login-ip-country-restriction-pro/'
-				) );
-				?>
-			</p>
-		<?php endif; ?>
-
-		<div class="group-columns">
-			<div>
-				<h3 class="as-subtitle"><?php esc_html_e( 'Login IP & Country Restriction', 'slicr' ); ?></h3>
-				<p>
-					<?php esc_html_e( 'This plugin allows you to restrict the login on your website, based on the custom rules you apply. This helps with tightening your website security and fights against dictionary bot attacks originating from other countries, by denying access.', 'slicr' ); ?>
-				</p>
-				<img src="<?php echo esc_url( SISANU_RCIL_URL . 'assets/images/banner-772x250.png' ); ?>" width="100%">
-			</div>
-
-			<div>
-				<h3 class="as-subtitle"><?php esc_html_e( 'The PRO version includes additional useful features', 'slicr' ); ?></h3>
-				<ol>
-					<li><?php esc_html_e( 'Additional Rule Types', 'slicr' ); ?></li>
-					<li><?php esc_html_e( 'Redirect Restricted Login', 'slicr' ); ?></li>
-					<li><?php esc_html_e( 'Lockout duration', 'slicr' ); ?></li>
-					<li><?php esc_html_e( 'Individual lockout', 'slicr' ); ?></li>
-					<li><?php esc_html_e( 'WooCommerce Integration', 'slicr' ); ?></li>
-					<li><?php esc_html_e( 'Bypass the IP and country restriction for the specified roles', 'slicr' ); ?></li>
-					<li><?php esc_html_e( 'Single IP Login Per User', 'slicr' ); ?></li>
-					<li><?php esc_html_e( 'Simulate IP and Country', 'slicr' ); ?></li>
-					<li><?php esc_html_e( 'Temporarily disable all settings', 'slicr' ); ?></li>
-
-				</ol>
-			</div>
-		</div>
-		<?php
+		include_once __DIR__ . '/inc/setup-teaser.php';
 	}
 
 	/**
 	 * Setup debug.
-	 *
-	 * @return void
 	 */
 	public static function setup_debug_output() {
-		$setup = [
-			'_ver'              => SISANU_RCIL_CURRENT_DB_VERSION,
-			'_db_ver'           => get_option( SISANU_RCIL_DB_OPTION . '_db_ver', '' ),
-			'_allow_countries'  => get_option( SISANU_RCIL_DB_OPTION . '_allow_countries', [] ),
-			'_allow_ips'        => get_option( SISANU_RCIL_DB_OPTION . '_allow_ips', [] ),
-			'_block_countries'  => get_option( SISANU_RCIL_DB_OPTION . '_block_countries', [] ),
-			'_block_ips'        => get_option( SISANU_RCIL_DB_OPTION . '_block_ips', [] ),
-			'_custom_redirects' => get_option( SISANU_RCIL_DB_OPTION . '_custom_redirects', [] ),
-			'_bypass_roles'     => get_option( SISANU_RCIL_DB_OPTION . '_bypass_roles', [] ),
-			'_settings'         => get_option( SISANU_RCIL_DB_OPTION . '_settings', [] ),
-		];
-		?>
-		<div class="group-columns">
-			<div class="group-wrap">
-				<h3 class="as-title"><?php esc_html_e( 'Export Settings', 'slicr' ); ?></h3>
-				<p>
-					<?php esc_html_e( 'Here are some details about the current settings of this plugin, these can be reset or exported into another instance.', 'slicr' ); ?>
-				</p>
-				<textarea name="export" rows="5" readonly><?php echo wp_json_encode( $setup ); ?></textarea>
-				<p>
-					<input type="submit" class="button" name="reset-all-settings" value="<?php esc_attr_e( 'Reset to default', 'slicr' ); ?>">
-				</p>
-				<p>
-					<?php esc_html_e( 'Please note that reset to default is not requiring for a confirmation, so be careful with clicking this button.', 'slicr' ); ?>
-				</p>
-			</div>
-			<div class="group-wrap">
-				<h3 class="as-title"><?php esc_html_e( 'Import Settings', 'slicr' ); ?></h3>
-				<p>
-					<?php esc_html_e( 'You can paste here the settings you want to import from another instance. This is a string in JSON format.', 'slicr' ); ?>
-				</p>
-				<textarea name="import" rows="5" placeholder="<?php esc_attr_e( 'Paste here the JSON code.', 'slicr' ); ?>"></textarea>
-				<p>
-					<input type="submit" class="button button-primary" name="import-all-settings" value="<?php esc_attr_e( 'Import settings', 'slicr' ); ?>">
-				</p>
-				<p>
-					<?php esc_html_e( 'Please note that this will override all the existing settings.', 'slicr' ); ?>
-				</p>
-			</div>
-			<div class="group-wrap">
-				<?php
-				if ( ! class_exists( 'WP_Debug_Data' ) && file_exists( ABSPATH . 'wp-admin/includes/class-wp-debug-data.php' ) ) {
-					require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
-				}
-				if ( class_exists( 'WP_Debug_Data' ) ) {
-					$info = \WP_Debug_Data::debug_data();
-				}
-
-				$allow = [
-					'wp-core'           => [ 'version', 'site_language', 'timezone', 'home_url', 'site_url', 'permalink', 'https_status', 'multisite', 'environment_type', 'dotorg_communication' ],
-					'wp-paths-sizes'    => [ 'wordpress_path', 'uploads_path', 'themes_path', 'plugins_path' ],
-					'wp-active-theme'   => [ 'name', 'version', 'author', 'author_website', 'parent_theme', 'theme_features', 'theme_path', 'auto_update' ],
-					'wp-parent-theme'   => [ 'name', 'version' ],
-					'wp-plugins-active' => '*',
-					'wp-media'          => '*',
-					'wp-server'         => '*',
-					'wp-database'       => [ 'extension', 'server_version', 'client_version' ],
-					'wp-constants'      => '*',
-					'wp-filesystem'     => '*',
-				];
-
-				$details = '';
-				if ( ! empty( $info ) ) {
-					foreach ( $info as $section => $item ) {
-						if ( ! empty( $allow[ $section ] ) && ! empty( $item['fields'] ) ) {
-							$details .= PHP_EOL . '*************************************';
-							$details .= PHP_EOL . esc_html( $item['label'] );
-							$details .= PHP_EOL . '-------------------------------------';
-
-							if ( '*' === $allow[ $section ] ) {
-								$keys = array_keys( $item['fields'] );
-							} else {
-								$keys = $allow[ $section ];
-							}
-
-							foreach ( $keys as $key ) {
-								$str = ( ! empty( $item['fields'][ $key ]['label'] ) ) ? $item['fields'][ $key ]['label'] : '';
-								if ( is_scalar( $item['fields'][ $key ]['value'] ) ) {
-									$str .= ': ' . $item['fields'][ $key ]['value'];
-								} else {
-									$str .= ': ' . print_r( $item['fields'][ $key ]['value'], true ); //phpcs:ignore
-								}
-								if ( ! empty( $str ) ) {
-									$details .= PHP_EOL . '- ' . esc_html( $str );
-								}
-							}
-							$details .= PHP_EOL;
-						}
-					}
-
-					if ( isset( $info['wp-paths-sizes']['fields']['wordpress_path']['value'] ) ) {
-						$details = str_replace(
-							$info['wp-paths-sizes']['fields']['wordpress_path']['value'], '{{ROOT}}', $details
-						);
-					}
-				}
-				$details .= PHP_EOL . '*************************************';
-				$details .= PHP_EOL . esc_html__( 'Debug', 'slicr' );
-				$details .= PHP_EOL . '-------------------------------------';
-				$details .= PHP_EOL . '- ' . sprintf(
-					// Translators: %1$s - IP, %2$s - country code.
-					__( 'Your current IP is %1$s and the country code is %2$s.', 'slicr' ),
-					self::get_current_ip(),
-					self::get_user_country_name()
-				);
-
-				$details .= PHP_EOL . '- SERVER_ADDR: ';
-				$details .= ( ! empty( $_SERVER['SERVER_ADDR'] ) ) ? wp_unslash( $_SERVER['SERVER_ADDR'] ) : ''; //phpcs:ignore
-
-				$details .= PHP_EOL . '- REMOTE_ADDR: ';
-				$details .= ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : ''; //phpcs:ignore
-
-				$details .= PHP_EOL . '- HTTP_CF_IPCOUNTRY: ';
-				$details .= ( ! empty( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ) ? wp_unslash( $_SERVER['HTTP_CF_IPCOUNTRY'] ) : ''; //phpcs:ignore
-
-				$details .= PHP_EOL . '- HTTP_CF_CONNECTING_IP: ';
-				$details .= ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) ? wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) : ''; //phpcs:ignore
-
-				$details .= PHP_EOL . '- HTTP_CLIENT_IP: ';
-				$details .= ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) ? wp_unslash( $_SERVER['HTTP_CLIENT_IP'] ) : ''; //phpcs:ignore
-
-				if ( ! empty( self::$settings['include_forward_ip'] ) ) {
-					$details .= PHP_EOL . '- HTTP_X_FORWARDED_FOR: ';
-					$details .= ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ? wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) : ''; //phpcs:ignore
-				}
-
-				if ( ! empty( $details ) ) {
-					?>
-					<h3 class="as-title"><?php esc_html_e( 'Status/Debug', 'slicr' ); ?></h3>
-					<p>
-						<?php esc_html_e( 'Here are some details about your current WordPress instance and the services versions that run currently in this environment.', 'slicr' ); ?>
-					</p>
-					<textarea rows="5" readonly><?php echo esc_html( $details ); ?></textarea>
-					<?php
-				}
-				?>
-			</div>
-
-			<?php
-			$test_info = get_transient( 'rcil-test-' . md5( gmdate( 'Y-m-d' ) ) );
-			$test_ip   = ( ! empty( $test_info['ip'] ) ) ? $test_info['ip'] : '';
-			$test_co   = ( ! empty( $test_info['co'] ) ) ? $test_info['co'] : '';
-			$test_api  = ( ! empty( $test_info['api'] ) ) ? $test_info['api'] : '';
-			?>
-			<div class="group-wrap">
-				<h3 class="as-title"><?php esc_html_e( 'Test country code for IP', 'slicr' ); ?></h3>
-				<div class="group-columns columns-1">
-					<div>
-						<?php esc_html_e( 'IP', 'slicr' ); ?>
-						<input type="text" name="test_ip" value="<?php echo esc_attr( $test_ip ); ?>">
-						<input type="submit" class="button" name="test-ip" value="<?php esc_attr_e( 'Test', 'slicr' ); ?>">
-						<p>
-							<?php
-							if ( ! empty( $test_ip ) ) {
-								echo wp_kses_post( sprintf(
-									// Translators: %1$s - IP, %2$s - code, %3$s - method.
-									__( 'The country code detected for the IP %1$s is %2$s. The detection was done through the %3$s method.', 'slicr' ),
-									'<b>' . $test_ip . '</b>',
-									'<code>' . $test_co . '</code>',
-									'<b>' . $test_api . '</b>'
-								) );
-							}
-							?>
-						</p>
-					</div>
-				</div>
-				<p>
-					<?php
-					if ( ! empty( $test_ip ) && ( 'PHP `geoip_record_by_name`' === $test_api ) ) {
-						echo wp_kses_post( sprintf(
-							// Translators: %s - method.
-							__( 'Please note that the %s function is part of the PHP service used on your server, and this is used as the default detection method. If this does not return the expected country code for the test IP, then you can try to bypass it and allow for other detection methods to run.', 'slicr' ),
-							'<b>' . $test_api . '</b>'
-						) );
-						?>
-						<br>
-						<?php
-						if ( empty( self::$settings['bypass_php_geoip'] ) ) {
-							?>
-							<input type="submit" class="button" name="disable-geoip-function" value="<?php esc_attr_e( 'Bypass the PHP `geoip_record_by_name` function', 'slicr' ); ?>">
-							<?php
-						} else {
-							?>
-							<input type="submit" class="button" name="enable-geoip-function" value="<?php esc_attr_e( 'Enable the PHP `geoip_record_by_name` function', 'slicr' ); ?>">
-							<?php
-						}
-					}
-					?>
-				</p>
-			</div>
-		</div>
-		<?php
+		include_once __DIR__ . '/inc/setup-debug.php';
 	}
 
 	/**
@@ -2039,254 +1155,7 @@ class SISANU_Restrict_Country_IP_Login {
 	 * @return array
 	 */
 	public static function get_countries_list() { //phpcs:ignore
-		$all_countries = [
-			'AF' => 'Afghanistan',
-			'AX' => 'Aland Islands',
-			'AL' => 'Albania',
-			'DZ' => 'Algeria',
-			'AS' => 'American Samoa',
-			'AD' => 'Andorra',
-			'AO' => 'Angola',
-			'AI' => 'Anguilla',
-			'AQ' => 'Antarctica',
-			'AG' => 'Antigua And Barbuda',
-			'AR' => 'Argentina',
-			'AM' => 'Armenia',
-			'AW' => 'Aruba',
-			'AU' => 'Australia',
-			'AT' => 'Austria',
-			'AZ' => 'Azerbaijan',
-			'BS' => 'Bahamas',
-			'BH' => 'Bahrain',
-			'BD' => 'Bangladesh',
-			'BB' => 'Barbados',
-			'BY' => 'Belarus',
-			'BE' => 'Belgium',
-			'BZ' => 'Belize',
-			'BJ' => 'Benin',
-			'BM' => 'Bermuda',
-			'BT' => 'Bhutan',
-			'BO' => 'Bolivia',
-			'BA' => 'Bosnia And Herzegovina',
-			'BW' => 'Botswana',
-			'BV' => 'Bouvet Island',
-			'BR' => 'Brazil',
-			'IO' => 'British Indian Ocean Territory',
-			'BN' => 'Brunei Darussalam',
-			'BG' => 'Bulgaria',
-			'BF' => 'Burkina Faso',
-			'BI' => 'Burundi',
-			'KH' => 'Cambodia',
-			'CM' => 'Cameroon',
-			'CA' => 'Canada',
-			'CV' => 'Cape Verde',
-			'KY' => 'Cayman Islands',
-			'CF' => 'Central African Republic',
-			'TD' => 'Chad',
-			'CL' => 'Chile',
-			'CN' => 'China',
-			'CX' => 'Christmas Island',
-			'CC' => 'Cocos (Keeling) Islands',
-			'CO' => 'Colombia',
-			'KM' => 'Comoros',
-			'CG' => 'Congo',
-			'CD' => 'Congo, Democratic Republic',
-			'CK' => 'Cook Islands',
-			'CR' => 'Costa Rica',
-			'CI' => 'Cote D\'Ivoire',
-			'HR' => 'Croatia',
-			'CU' => 'Cuba',
-			'CY' => 'Cyprus',
-			'CZ' => 'Czech Republic',
-			'DK' => 'Denmark',
-			'DJ' => 'Djibouti',
-			'DM' => 'Dominica',
-			'DO' => 'Dominican Republic',
-			'EC' => 'Ecuador',
-			'EG' => 'Egypt',
-			'SV' => 'El Salvador',
-			'GQ' => 'Equatorial Guinea',
-			'ER' => 'Eritrea',
-			'EE' => 'Estonia',
-			'ET' => 'Ethiopia',
-			'FK' => 'Falkland Islands (Malvinas)',
-			'FO' => 'Faroe Islands',
-			'FJ' => 'Fiji',
-			'FI' => 'Finland',
-			'FR' => 'France',
-			'GF' => 'French Guiana',
-			'PF' => 'French Polynesia',
-			'TF' => 'French Southern Territories',
-			'GA' => 'Gabon',
-			'GM' => 'Gambia',
-			'GE' => 'Georgia',
-			'DE' => 'Germany',
-			'GH' => 'Ghana',
-			'GI' => 'Gibraltar',
-			'GR' => 'Greece',
-			'GL' => 'Greenland',
-			'GD' => 'Grenada',
-			'GP' => 'Guadeloupe',
-			'GU' => 'Guam',
-			'GT' => 'Guatemala',
-			'GG' => 'Guernsey',
-			'GN' => 'Guinea',
-			'GW' => 'Guinea-Bissau',
-			'GY' => 'Guyana',
-			'HT' => 'Haiti',
-			'HM' => 'Heard Island & Mcdonald Islands',
-			'VA' => 'Holy See (Vatican City State)',
-			'HN' => 'Honduras',
-			'HK' => 'Hong Kong',
-			'HU' => 'Hungary',
-			'IS' => 'Iceland',
-			'IN' => 'India',
-			'ID' => 'Indonesia',
-			'IR' => 'Iran, Islamic Republic Of',
-			'IQ' => 'Iraq',
-			'IE' => 'Ireland',
-			'IM' => 'Isle Of Man',
-			'IL' => 'Israel',
-			'IT' => 'Italy',
-			'JM' => 'Jamaica',
-			'JP' => 'Japan',
-			'JE' => 'Jersey',
-			'JO' => 'Jordan',
-			'KZ' => 'Kazakhstan',
-			'KE' => 'Kenya',
-			'KI' => 'Kiribati',
-			'KR' => 'Korea',
-			'KW' => 'Kuwait',
-			'KG' => 'Kyrgyzstan',
-			'LA' => 'Lao People\'s Democratic Republic',
-			'LV' => 'Latvia',
-			'LB' => 'Lebanon',
-			'LS' => 'Lesotho',
-			'LR' => 'Liberia',
-			'LY' => 'Libyan Arab Jamahiriya',
-			'LI' => 'Liechtenstein',
-			'LT' => 'Lithuania',
-			'LU' => 'Luxembourg',
-			'MO' => 'Macao',
-			'MK' => 'Macedonia',
-			'MG' => 'Madagascar',
-			'MW' => 'Malawi',
-			'MY' => 'Malaysia',
-			'MV' => 'Maldives',
-			'ML' => 'Mali',
-			'MT' => 'Malta',
-			'MH' => 'Marshall Islands',
-			'MQ' => 'Martinique',
-			'MR' => 'Mauritania',
-			'MU' => 'Mauritius',
-			'YT' => 'Mayotte',
-			'MX' => 'Mexico',
-			'FM' => 'Micronesia, Federated States Of',
-			'MD' => 'Moldova',
-			'MC' => 'Monaco',
-			'MN' => 'Mongolia',
-			'ME' => 'Montenegro',
-			'MS' => 'Montserrat',
-			'MA' => 'Morocco',
-			'MZ' => 'Mozambique',
-			'MM' => 'Myanmar',
-			'NA' => 'Namibia',
-			'NR' => 'Nauru',
-			'NP' => 'Nepal',
-			'NL' => 'Netherlands',
-			'AN' => 'Netherlands Antilles',
-			'NC' => 'New Caledonia',
-			'NZ' => 'New Zealand',
-			'NI' => 'Nicaragua',
-			'NE' => 'Niger',
-			'NG' => 'Nigeria',
-			'NU' => 'Niue',
-			'NF' => 'Norfolk Island',
-			'MP' => 'Northern Mariana Islands',
-			'NO' => 'Norway',
-			'OM' => 'Oman',
-			'PK' => 'Pakistan',
-			'PW' => 'Palau',
-			'PS' => 'Palestinian Territory, Occupied',
-			'PA' => 'Panama',
-			'PG' => 'Papua New Guinea',
-			'PY' => 'Paraguay',
-			'PE' => 'Peru',
-			'PH' => 'Philippines',
-			'PN' => 'Pitcairn',
-			'PL' => 'Poland',
-			'PT' => 'Portugal',
-			'PR' => 'Puerto Rico',
-			'QA' => 'Qatar',
-			'RE' => 'Reunion',
-			'RO' => 'Romania',
-			'RU' => 'Russian Federation',
-			'RW' => 'Rwanda',
-			'BL' => 'Saint Barthelemy',
-			'SH' => 'Saint Helena',
-			'KN' => 'Saint Kitts And Nevis',
-			'LC' => 'Saint Lucia',
-			'MF' => 'Saint Martin',
-			'PM' => 'Saint Pierre And Miquelon',
-			'VC' => 'Saint Vincent And Grenadines',
-			'WS' => 'Samoa',
-			'SM' => 'San Marino',
-			'ST' => 'Sao Tome And Principe',
-			'SA' => 'Saudi Arabia',
-			'SN' => 'Senegal',
-			'RS' => 'Serbia',
-			'SC' => 'Seychelles',
-			'SL' => 'Sierra Leone',
-			'SG' => 'Singapore',
-			'SK' => 'Slovakia',
-			'SI' => 'Slovenia',
-			'SB' => 'Solomon Islands',
-			'SO' => 'Somalia',
-			'ZA' => 'South Africa',
-			'GS' => 'South Georgia And Sandwich Isl.',
-			'ES' => 'Spain',
-			'LK' => 'Sri Lanka',
-			'SD' => 'Sudan',
-			'SR' => 'Suriname',
-			'SJ' => 'Svalbard And Jan Mayen',
-			'SZ' => 'Swaziland',
-			'SE' => 'Sweden',
-			'CH' => 'Switzerland',
-			'SY' => 'Syrian Arab Republic',
-			'TW' => 'Taiwan',
-			'TJ' => 'Tajikistan',
-			'TZ' => 'Tanzania',
-			'TH' => 'Thailand',
-			'TL' => 'Timor-Leste',
-			'TG' => 'Togo',
-			'TK' => 'Tokelau',
-			'TO' => 'Tonga',
-			'TT' => 'Trinidad And Tobago',
-			'TN' => 'Tunisia',
-			'TR' => 'Turkey',
-			'TM' => 'Turkmenistan',
-			'TC' => 'Turks And Caicos Islands',
-			'TV' => 'Tuvalu',
-			'UG' => 'Uganda',
-			'UA' => 'Ukraine',
-			'AE' => 'United Arab Emirates',
-			'GB' => 'United Kingdom',
-			'US' => 'United States',
-			'UM' => 'United States Outlying Islands',
-			'UY' => 'Uruguay',
-			'UZ' => 'Uzbekistan',
-			'VU' => 'Vanuatu',
-			'VE' => 'Venezuela',
-			'VN' => 'Vietnam',
-			'VG' => 'Virgin Islands, British',
-			'VI' => 'Virgin Islands, U.S.',
-			'WF' => 'Wallis And Futuna',
-			'EH' => 'Western Sahara',
-			'YE' => 'Yemen',
-			'ZM' => 'Zambia',
-			'ZW' => 'Zimbabwe',
-		];
-
+		include_once __DIR__ . '/inc/countries-list.php';
 		return $all_countries;
 	}
 
@@ -2369,8 +1238,8 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Retrieves the current user country code based on the user IP.
 	 *
-	 * @param string $ip           Maybe an explicit IP.
-	 * @param bool   $bypass_cache Bypass or not the cache (defaults to false).
+	 * @param  string $ip           Maybe an explicit IP.
+	 * @param  bool   $bypass_cache Bypass or not the cache (defaults to false).
 	 * @return string
 	 */
 	public static function get_user_country_name( $ip = '', $bypass_cache = false ) { //phpcs:ignore
@@ -2446,8 +1315,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Forbidden screen.
-	 *
-	 * @return void
 	 */
 	public static function forbidden_screen() {
 		if ( self::$is_pro && function_exists( 'RCIL\Pro\forbidden_custom_splash' ) ) {
@@ -2486,6 +1353,18 @@ class SISANU_Restrict_Country_IP_Login {
 
 		// If we got this far, the user restriction was assessed.
 		return self::$curent_user_restriction;
+	}
+
+	/**
+	 * Returns the IP range string.
+	 *
+	 * @param  string $ip Initial IP.
+	 * @return string
+	 */
+	public static function ip_range( $ip ) {
+		$range = explode( '.', $ip );
+		array_pop( $range );
+		return implode( '.', $range ) . '.~';
 	}
 
 	/**
@@ -2531,14 +1410,28 @@ class SISANU_Restrict_Country_IP_Login {
 	 * @return bool
 	 */
 	public static function ip_is_whitelisted( $ip = '' ) { // phpcs:ignore
+		if ( 0 === self::$rules->type ) {
+			if ( in_array( $ip, self::$rules->allow->ip, true )
+				|| in_array( self::ip_range( $ip ), self::$rules->allow->ip, true ) ) {
+				// There is a restriction and the IP or IP range is in the allowed list.
+				return true;
+			} else {
+				// Break here for type 0.
+				return false;
+			}
+		}
+
 		if ( false === self::$rules->restrict->ip ) {
 			// Fail-fast, no IP restriction.
 			return true;
 		}
-		if ( in_array( $ip, self::$rules->allow->ip, true ) ) {
-			// There is a restriction and the IP is in the allowed list.
+
+		if ( in_array( $ip, self::$rules->allow->ip, true )
+			|| in_array( self::ip_range( $ip ), self::$rules->allow->ip, true ) ) {
+			// There is a restriction and the IP or IP range is in the allowed list.
 			return true;
 		}
+
 		return false;
 	}
 
@@ -2553,10 +1446,13 @@ class SISANU_Restrict_Country_IP_Login {
 			// Fail-fast, no IP restriction.
 			return false;
 		}
-		if ( in_array( $ip, self::$rules->block->ip, true ) ) {
-			// There is a restriction and the IP is in the blocked list.
+
+		if ( in_array( $ip, self::$rules->block->ip, true )
+			|| in_array( self::ip_range( $ip ), self::$rules->block->ip, true ) ) {
+			// There is a restriction and the IP or IP range is in the blocked list.
 			return true;
 		}
+
 		return false;
 	}
 
@@ -2569,8 +1465,9 @@ class SISANU_Restrict_Country_IP_Login {
 	 * @return bool
 	 */
 	public static function assess_rule_by_type( $forbid, $co = '', $ip = '' ) { // phpcs:ignore
-		$ip       = ( ! empty( $ip ) ) ? $ip : self::get_current_ip();
-		$co       = ( ! empty( $co ) ) ? $co : self::get_user_country_name( $ip );
+		$ip = ! empty( $ip ) ? $ip : self::get_current_ip();
+		$co = ! empty( $co ) ? $co : self::get_user_country_name( $ip );
+
 		$forbid   = self::check_bypass_single_login( $forbid, $ip );
 		$ip_white = self::ip_is_whitelisted( $ip );
 		$ip_black = self::ip_is_blacklisted( $ip );
@@ -2622,7 +1519,8 @@ class SISANU_Restrict_Country_IP_Login {
 	public static function current_user_has_restriction( $ip, $country_code ) { //phpcs:ignore
 		$forbid = 0;
 		$forbid = apply_filters( 'assess_rule_by_type', $forbid, $country_code, $ip );
-		return ( ! empty( $forbid ) ) ? true : false;
+
+		return ! empty( $forbid ) ? true : false;
 	}
 
 	/**
@@ -2637,69 +1535,69 @@ class SISANU_Restrict_Country_IP_Login {
 		} else {
 			switch ( self::$rules->type ) {
 				case 6:
-					$text = esc_html( sprintf(
+					$text = wp_kses_post( sprintf(
 						// Translators: %1$s - list of country names.
 						__( 'Based on the current options there is a login restriction, this is allowed only for these IPs: %1$s.', 'slicr' ),
-						( empty( self::$rules->allow->ip ) )
+						empty( self::$rules->allow->ip )
 							? __( 'any', 'slicr' )
-							: self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->ip )
+							: '<span class="allow-list">' . self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->ip ) . '</span>'
 					) );
 					break;
 
 				case 7:
-					$text = esc_html( sprintf(
+					$text = wp_kses_post( sprintf(
 						// Translators: %1$s - list of country names.
 						__( 'Based on the current options there is a login restriction, this is allowed only from these countries: %1$s.', 'slicr' ),
-						( empty( self::$rules->allow->co ) )
+						empty( self::$rules->allow->co )
 							? __( 'none', 'slicr' )
-							: self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->co )
+							: '<span class="allow-list">' . self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->co ) . '</span>'
 					) );
 					break;
 
 				case 8:
-					$text = esc_html( sprintf(
+					$text = wp_kses_post( sprintf(
 						// Translators: %1$s - list of country names.
 						__( 'Based on the current options there is a login restriction, this is blocked for these IPs: %1$s.', 'slicr' ),
-						( empty( self::$rules->block->ip ) )
+						empty( self::$rules->block->ip )
 							? __( 'none', 'slicr' )
-							: self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->ip )
+							: '<span class="block-list">' . self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->ip ) . '</span>'
 					) );
 					break;
 
 				case 9:
-					$text = esc_html( sprintf(
+					$text = wp_kses_post( sprintf(
 						// Translators: %1$s - list of country names.
 						__( 'Based on the current options there is a login restriction, this is blocked from these countries: %1$s.', 'slicr' ),
-						( empty( self::$rules->block->co ) )
+						empty( self::$rules->block->co )
 							? __( 'none', 'slicr' )
-							: self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->co )
+							: '<span class="block-list">' . self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->co ) . '</span>'
 					) );
 					break;
 
 				case 1:
-					$text = esc_html( sprintf(
+					$text = wp_kses_post( sprintf(
 						// Translators: %1$s - list of country names.
 						__( 'Based on the current options there is a login restriction, this is blocked for these IPs: %1$s and from these countries: %2$s.', 'slicr' ),
-						( empty( self::$rules->block->ip ) )
+						empty( self::$rules->block->ip )
 							? __( 'none', 'slicr' )
-							: self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->ip ),
-						( empty( self::$rules->block->co ) )
+							: '<span class="block-list">' . self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->ip ) . '</span>',
+						empty( self::$rules->block->co )
 							? __( 'none', 'slicr' )
-							: self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->co )
+							: '<span class="block-list">' . self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->co ) . '</span>'
 					) );
 					break;
 
 				case 0:
 				default:
-					$text = esc_html( sprintf(
+					$text = wp_kses_post( sprintf(
 						// Translators: %1$s - list of country names.
 						__( 'Based on the current options there is a login restriction, this is allowed from these IPs: %1$s and from these countries: %2$s.', 'slicr' ),
 						( self::$rules->wildcard->ip )
 							? __( 'any', 'slicr' )
-							: self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->ip ),
-						( empty( self::$rules->allow->co ) )
+							: '<span class="allow-list">' . self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->ip ) . '</span>',
+						empty( self::$rules->allow->co )
 							? __( 'none', 'slicr' )
-							: self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->co )
+							: '<span class="allow-list">' . self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->co ) . '</span>'
 					) );
 					break;
 			}
@@ -2719,7 +1617,7 @@ class SISANU_Restrict_Country_IP_Login {
 	 * @return object
 	 */
 	public static function sisanu_restrict_country( $user, $username, $password ) { // phpcs:ignore
-		self::$user_id = ( ! empty( $user->ID ) ) ? $user->ID : 0;
+		self::$user_id = ! empty( $user->ID ) ? $user->ID : 0;
 
 		$role_bypass = apply_filters( 'sislrc_maybe_role_bypass', false, $user );
 		if ( true === $role_bypass ) {
@@ -2811,8 +1709,7 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Execute notices cleanup.
 	 *
-	 * @param  bool $ajax Is AJAX call.
-	 * @return void
+	 * @param bool $ajax Is AJAX call.
 	 */
 	public static function plugin_admin_notices_cleanup( $ajax = true ) { //phpcs:ignore
 		// Delete transient, only display this notice once.
@@ -2826,8 +1723,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Admin notices.
-	 *
-	 * @return void
 	 */
 	public static function plugin_admin_notices() {
 		if ( apply_filters( 'slicr_filter_remove_update_info', false ) ) {
@@ -2915,8 +1810,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Maybe donate or rate.
-	 *
-	 * @return void
 	 */
 	public static function show_donate_text() {
 		?>
