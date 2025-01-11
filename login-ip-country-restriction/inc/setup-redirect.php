@@ -80,7 +80,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</label>
 					</li>
 				</ul>
-				<p class="info"><?php esc_html_e( 'Please note that the restriction to the pages configured above will apply if the login restriction is matched.', 'slicr' ); ?></p>
+				<p class="info"><?php esc_html_e( 'The restriction to the pages configured above will apply if the login restriction is matched.', 'slicr' ); ?></p>
 			</div>
 			<div>
 				<h3 class="as-subtitle"><?php esc_html_e( 'The following specified URLs', 'slicr' ); ?></h3>

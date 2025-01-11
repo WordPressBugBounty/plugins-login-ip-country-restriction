@@ -39,14 +39,14 @@ $setup = [
 	<div class="group-wrap">
 		<h3 class="as-title"><?php esc_html_e( 'Import Settings', 'slicr' ); ?></h3>
 		<p>
-			<?php esc_html_e( 'You can paste here the settings you want to import from another instance. This is a string in JSON format.', 'slicr' ); ?>
+			<?php esc_html_e( 'Paste here the settings you want to import from another instance. This is a string in JSON format.', 'slicr' ); ?>
 		</p>
 		<textarea name="import" rows="5" placeholder="<?php esc_attr_e( 'Paste here the JSON code.', 'slicr' ); ?>"></textarea>
 		<p>
 			<input type="submit" class="button button-primary" name="import-all-settings" value="<?php esc_attr_e( 'Import settings', 'slicr' ); ?>">
 		</p>
 		<p>
-			<?php esc_html_e( 'Please note that this will override all the existing settings.', 'slicr' ); ?>
+			<?php esc_html_e( 'When you click the import button, the current settings will be replaced.', 'slicr' ); ?>
 		</p>
 	</div>
 	<div class="group-wrap">
@@ -150,9 +150,9 @@ $setup = [
 
 	<?php
 	$test_info = get_transient( 'rcil-test-' . md5( gmdate( 'Y-m-d' ) ) );
-	$test_ip   = ( ! empty( $test_info['ip'] ) ) ? $test_info['ip'] : '';
-	$test_co   = ( ! empty( $test_info['co'] ) ) ? $test_info['co'] : '';
-	$test_api  = ( ! empty( $test_info['api'] ) ) ? $test_info['api'] : '';
+	$test_ip   = ! empty( $test_info['ip'] ) ? $test_info['ip'] : '';
+	$test_co   = ! empty( $test_info['co'] ) ? $test_info['co'] : '';
+	$test_api  = ! empty( $test_info['api'] ) ? $test_info['api'] : '';
 	?>
 	<div class="group-wrap">
 		<h3 class="as-title"><?php esc_html_e( 'Test country code for IP', 'slicr' ); ?></h3>
@@ -181,19 +181,23 @@ $setup = [
 			if ( ! empty( $test_ip ) && ( 'PHP `geoip_record_by_name`' === $test_api ) ) {
 				echo wp_kses_post( sprintf(
 					// Translators: %s - method.
-					__( 'Please note that the %s function is part of the PHP service used on your server, and this is used as the default detection method. If this does not return the expected country code for the test IP, then you can try to bypass it and allow for other detection methods to run.', 'slicr' ),
+					__( 'The %s function is part of the PHP service used on your server, and this is used as the default detection method. If this does not return the expected country code for the test IP, then you can try to bypass it and allow for other detection methods to run.', 'slicr' ),
 					'<b>' . $test_api . '</b>'
 				) );
 				?>
 				<br>
 				<?php
 				if ( empty( self::$settings['bypass_php_geoip'] ) ) {
+					// Translators: %s - method.
+					$text = sprintf( __( 'Bypass the PHP %s function', 'slicr' ), '`geoip_record_by_name`' );
 					?>
-					<input type="submit" class="button" name="disable-geoip-function" value="<?php esc_attr_e( 'Bypass the PHP `geoip_record_by_name` function', 'slicr' ); ?>">
+					<input type="submit" class="button" name="disable-geoip-function" value="<?php echo esc_html( $text ); ?>">
 					<?php
 				} else {
+					// Translators: %s - method.
+					$text = sprintf( __( 'Enable the PHP %s function', 'slicr' ), '`geoip_record_by_name`' );
 					?>
-					<input type="submit" class="button" name="enable-geoip-function" value="<?php esc_attr_e( 'Enable the PHP `geoip_record_by_name` function', 'slicr' ); ?>">
+					<input type="submit" class="button" name="enable-geoip-function" value="<?php echo esc_html( $text ); ?>">
 					<?php
 				}
 			}

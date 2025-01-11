@@ -89,7 +89,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</li>
 				</ul>
 				<p class="info">
-					<?php esc_html_e( 'Please note that this settings are not recommended and are risky to enable, as these will block your access when you are using this on your local environment. The options are intended only for use with hosts like Cloudflare, or when the server IP is masked as 127.0.0.1 or ::1 (using HTTP proxy or a load balancer).', 'slicr' ); ?>
+					<?php esc_html_e( 'These settings are not recommended and are risky to enable, as these will block your access when you are using this on your local environment. The options are intended only for use with hosts like Cloudflare, or when the server IP is masked as 127.0.0.1 or ::1 (using HTTP proxy or a load balancer).', 'slicr' ); ?>
 				</p>
 			</div>
 

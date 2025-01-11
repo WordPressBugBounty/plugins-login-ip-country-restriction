@@ -5,7 +5,7 @@
  * Description: This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want.
  * Text Domain: slicr
  * Domain Path: /langs
- * Version:     6.6.1
+ * Version:     6.6.2
  * Author:      Iulia Cazan
  * Author URI:  https://profiles.wordpress.org/iulia-cazan
  * Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
@@ -31,7 +31,7 @@
 
 // Define the plugin version.
 define( 'SISANU_RCIL_DB_OPTION', 'sisanu_rcil' );
-define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.61 );
+define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.62 );
 define( 'SISANU_RCIL_SLUG', 'slicr' );
 define( 'SISANU_RCIL_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'SISANU_RCIL_URL', trailingslashit( plugins_url( '/', plugin_basename( __FILE__ ) ) ) );
@@ -973,12 +973,12 @@ class SISANU_Restrict_Country_IP_Login {
 							?>
 						</li>
 						<li>
-							<?php if ( false === $res2 ) : ?>
-								<?php esc_html_e( 'The login is allowed, based on assessing the current combination of IPs + country codes + rule type.', 'slicr' ); ?>
-							<?php else : ?>
-								<?php esc_html_e( 'The login is blocked, based on assessing the current combination of IPs + country codes + rule type.', 'slicr' ); ?>
-							<?php endif; ?>
 							<?php
+							echo esc_html( sprintf(
+								// Translators: %s - allowed or blocked.
+								__( 'According to the current combination of IPs + country codes + rule type that is applied, the login is %s.', 'slicr' ),
+								false === $res2 ? __( 'allowed', 'slicr' ) : __( 'blocked', 'slicr' )
+							) );
 							if ( function_exists( 'RCIL\Pro\sislrc_pro_simulate_info' ) ) {
 								\RCIL\Pro\sislrc_pro_simulate_info( false );
 							}
@@ -1013,11 +1013,11 @@ class SISANU_Restrict_Country_IP_Login {
 
 					if ( ! empty( self::$rules->wildcard->ip )
 						&& in_array( self::$rules->type, [ 0, 1, 2, 3, 4, 5, 6, 8 ], true ) ) {
-						echo ' <b>' . esc_html__( 'Please note that there is no IP specified or you have * in the IPs list, meaning there is no IP filter to apply.', 'slicr' ) . '</b>';
+						echo ' <b>' . esc_html__( 'There is no IP specified or you have * in the IPs list, meaning there is no IP filter to apply.', 'slicr' ) . '</b>';
 					}
 					if ( ! empty( self::$rules->wildcard->co )
 						&& in_array( self::$rules->type, [ 0, 1, 2, 3, 4, 5, 7, 9 ], true ) ) {
-						echo ' <b>' . esc_html__( 'Please note that there is no country filter to apply.', 'slicr' ) . '</b>';
+						echo ' <b>' . esc_html__( 'There is no country filter to apply.', 'slicr' ) . '</b>';
 					}
 					?>
 				</li>
@@ -1526,86 +1526,110 @@ class SISANU_Restrict_Country_IP_Login {
 	}
 
 	/**
+	 * Join the allowed list.
+	 *
+	 * @param array $items_list List of elements.
+	 */
+	public static function join_allowed( $items_list ): string {
+		return '<span class="allow-list">' . self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', $items_list ) . '</span>';
+	}
+
+	/**
+	 * Join the blocked list.
+	 *
+	 * @param array $items_list List of elements.
+	 */
+	public static function join_blocked( $items_list ): string {
+		return '<span class="block-list">' . self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', $items_list ) . '</span>';
+	}
+
+	/**
 	 * Describe rule by type.
 	 *
 	 * @return string
 	 */
 	public static function describe_rule_by_type() { //phpcs:ignore
-		$text = '';
+		$text = [];
 		if ( ! self::$rules->restrict->ip && ! self::$rules->restrict->co ) {
 			return esc_html__( 'Based on the current options there is no login restriction.', 'slicr' );
 		} else {
+			$allow = self::$rules->allow;
+			$block = self::$rules->block;
+			$wild  = self::$rules->wildcard;
+
 			switch ( self::$rules->type ) {
 				case 6:
-					$text = wp_kses_post( sprintf(
-						// Translators: %1$s - list of country names.
-						__( 'Based on the current options there is a login restriction, this is allowed only for these IPs: %1$s.', 'slicr' ),
-						empty( self::$rules->allow->ip )
-							? __( 'any', 'slicr' )
-							: '<span class="allow-list">' . self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->ip ) . '</span>'
-					) );
+					$text[] = __( 'Based on the current options there is a login restriction, this is:', 'slicr' ) . ' ' . sprintf(
+						// Translators: %1$s - allowed or blocked, %1$s - list of elements.
+						__( '%1$s for the %2$s IPs', 'slicr' ),
+						__( 'allowed', 'slicr' ),
+						empty( $allow->ip ) ? __( 'any', 'slicr' ) : self::join_allowed( $allow->ip ),
+					);
 					break;
 
 				case 7:
-					$text = wp_kses_post( sprintf(
-						// Translators: %1$s - list of country names.
-						__( 'Based on the current options there is a login restriction, this is allowed only from these countries: %1$s.', 'slicr' ),
-						empty( self::$rules->allow->co )
-							? __( 'none', 'slicr' )
-							: '<span class="allow-list">' . self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->co ) . '</span>'
-					) );
+					$text[] = __( 'Based on the current options there is a login restriction, this is:', 'slicr' ) . ' ' . sprintf(
+						// Translators: %1$s - allowed or blocked, %1$s - list of elements.
+						__( '%1$s from the %2$s countries', 'slicr' ),
+						__( 'allowed', 'slicr' ),
+						empty( $allow->co ) ? __( 'any', 'slicr' ) : self::join_allowed( $allow->co )
+					);
 					break;
 
 				case 8:
-					$text = wp_kses_post( sprintf(
-						// Translators: %1$s - list of country names.
-						__( 'Based on the current options there is a login restriction, this is blocked for these IPs: %1$s.', 'slicr' ),
-						empty( self::$rules->block->ip )
-							? __( 'none', 'slicr' )
-							: '<span class="block-list">' . self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->ip ) . '</span>'
-					) );
+					$text[] = __( 'Based on the current options there is a login restriction, this is:', 'slicr' ) . ' ' . sprintf(
+						// Translators: %1$s - allowed or blocked, %1$s - list of elements.
+						__( '%1$s for the %2$s IPs', 'slicr' ),
+						__( 'blocked', 'slicr' ),
+						empty( $block->ip ) ? __( 'any', 'slicr' ) : self::join_blocked( $block->ip )
+					);
 					break;
 
 				case 9:
-					$text = wp_kses_post( sprintf(
-						// Translators: %1$s - list of country names.
-						__( 'Based on the current options there is a login restriction, this is blocked from these countries: %1$s.', 'slicr' ),
-						empty( self::$rules->block->co )
-							? __( 'none', 'slicr' )
-							: '<span class="block-list">' . self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->co ) . '</span>'
-					) );
+					$text[] = __( 'Based on the current options there is a login restriction, this is:', 'slicr' ) . ' ' . sprintf(
+						// Translators: %1$s - allowed or blocked, %1$s - list of elements.
+						__( '%1$s from the %2$s countries', 'slicr' ),
+						__( 'blocked', 'slicr' ),
+						empty( $block->co ) ? __( 'any', 'slicr' ) : self::join_blocked( $block->co )
+					);
 					break;
 
 				case 1:
-					$text = wp_kses_post( sprintf(
-						// Translators: %1$s - list of country names.
-						__( 'Based on the current options there is a login restriction, this is blocked for these IPs: %1$s and from these countries: %2$s.', 'slicr' ),
-						empty( self::$rules->block->ip )
-							? __( 'none', 'slicr' )
-							: '<span class="block-list">' . self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->ip ) . '</span>',
-						empty( self::$rules->block->co )
-							? __( 'none', 'slicr' )
-							: '<span class="block-list">' . self::CHAR_BLOCK . ' ' . implode( ', ' . self::CHAR_BLOCK . ' ', self::$rules->block->co ) . '</span>'
-					) );
+					$text[] = __( 'Based on the current options there is a login restriction, this is:', 'slicr' ) . ' ' . sprintf(
+						// Translators: %1$s - allowed or blocked, %1$s - list of elements.
+						__( '%1$s for the %2$s IPs', 'slicr' ),
+						__( 'blocked', 'slicr' ),
+						empty( $block->ip ) ? __( 'any', 'slicr' ) : self::join_blocked( $block->ip )
+					);
+					$text[] = sprintf(
+						// Translators: %1$s - allowed or blocked, %1$s - list of elements.
+						__( '%1$s from the %2$s countries', 'slicr' ),
+						__( 'blocked', 'slicr' ),
+						empty( $block->co ) ? __( 'any', 'slicr' ) : self::join_blocked( $block->co )
+					);
 					break;
 
 				case 0:
 				default:
-					$text = wp_kses_post( sprintf(
-						// Translators: %1$s - list of country names.
-						__( 'Based on the current options there is a login restriction, this is allowed from these IPs: %1$s and from these countries: %2$s.', 'slicr' ),
-						( self::$rules->wildcard->ip )
-							? __( 'any', 'slicr' )
-							: '<span class="allow-list">' . self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->ip ) . '</span>',
-						empty( self::$rules->allow->co )
-							? __( 'none', 'slicr' )
-							: '<span class="allow-list">' . self::CHAR_ALLOW . ' ' . implode( ', ' . self::CHAR_ALLOW . ' ', self::$rules->allow->co ) . '</span>'
-					) );
+					$text[] = __( 'Based on the current options there is a login restriction, this is:', 'slicr' ) . ' ' . sprintf(
+						// Translators: %1$s - allowed or blocked, %1$s - list of elements.
+						__( '%1$s for the %2$s IPs', 'slicr' ),
+						__( 'allowed', 'slicr' ),
+						! empty( $wild->ip ) ? __( 'any', 'slicr' ) : self::join_allowed( $allow->ip )
+					);
+					$text[] = sprintf(
+						// Translators: %1$s - allowed or blocked, %1$s - list of elements.
+						__( '%1$s from the %2$s countries', 'slicr' ),
+						__( 'allowed', 'slicr' ),
+						empty( $allow->co ) ? __( 'any', 'slicr' ) : self::join_allowed( $allow->co )
+					);
 					break;
 			}
 		}
 
+		$text = wp_kses_post( implode( ', ', $text ) . '.' );
 		$text = apply_filters( 'describe_rule_by_type', $text );
+
 		return $text;
 	}
 
