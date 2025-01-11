@@ -1,11 +1,11 @@
-<?php // phpcs:ignore Generic.Files.LineEndings.InvalidEOLChar
+<?php
 /**
  * Plugin Name: Login IP & Country Restriction
  * Plugin URI:  https://iuliacazan.ro/login-ip-country-restriction/
  * Description: This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want.
  * Text Domain: slicr
  * Domain Path: /langs
- * Version:     6.6.0
+ * Version:     6.6.1
  * Author:      Iulia Cazan
  * Author URI:  https://profiles.wordpress.org/iulia-cazan
  * Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
@@ -13,7 +13,7 @@
  *
  * @package ic-devops
  *
- * Copyright (C) 2014-2024 Iulia Cazan
+ * Copyright (C) 2014-2025 Iulia Cazan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -31,7 +31,7 @@
 
 // Define the plugin version.
 define( 'SISANU_RCIL_DB_OPTION', 'sisanu_rcil' );
-define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.6 );
+define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.61 );
 define( 'SISANU_RCIL_SLUG', 'slicr' );
 define( 'SISANU_RCIL_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'SISANU_RCIL_URL', trailingslashit( plugins_url( '/', plugin_basename( __FILE__ ) ) ) );
@@ -204,12 +204,12 @@ class SISANU_Restrict_Country_IP_Login {
 		self::load_settings();
 
 		$ob_class = get_called_class();
-		add_action( 'wp_loaded', [ $ob_class, 'l10n' ], 20 );
-
 		if ( file_exists( __DIR__ . '/pro-settings.php' ) ) {
 			self::$is_pro = true;
 			include_once __DIR__ . '/pro-settings.php';
 		}
+
+		self::$is_pro = true;
 
 		if ( empty( self::$settings['temp_disable'] ) ) {
 			if ( self::$is_pro && function_exists( 'RCIL\Pro\maybe_simulate_restriction' ) ) {
@@ -236,6 +236,8 @@ class SISANU_Restrict_Country_IP_Login {
 		add_filter( 'assess_rule_by_type', [ $ob_class, 'assess_rule_by_type' ], 10, 3 );
 		add_action( 'admin_notices', [ $ob_class, 'plugin_admin_notices' ] );
 		add_action( 'wp_ajax_plugin-deactivate-notice-' . SISANU_RCIL_SLUG, [ $ob_class, 'plugin_admin_notices_cleanup' ] );
+
+		add_action( 'init', [ $ob_class, 'l10n' ] );
 		add_action( 'plugins_loaded', [ $ob_class, 'plugin_ver_check' ] );
 	}
 
@@ -243,7 +245,19 @@ class SISANU_Restrict_Country_IP_Login {
 	 * Load text domain for internalization.
 	 */
 	public static function l10n() {
-		load_plugin_textdomain( 'slicr', false, basename( __DIR__ ) . '/langs' );
+		$locale      = get_locale();
+		$textdomain  = 'slicr';
+		$plugin_path = SISANU_RCIL_DIR . 'langs/' . $textdomain . '-' . $locale . '.mo';
+		$global_path = WP_LANG_DIR . '/plugins/' . $textdomain . '-' . $locale . '.mo';
+
+		load_plugin_textdomain( $textdomain, false, basename( SISANU_RCIL_DIR ) . '/langs/' );
+
+		// Attempt to fix 6.7 translation from plugin folder.
+		if ( file_exists( $plugin_path ) && is_readable( $plugin_path ) ) {
+			\load_textdomain( $textdomain, $plugin_path );
+		} elseif ( file_exists( $global_path ) && is_readable( $global_path ) ) {
+			\load_textdomain( $textdomain, $global_path );
+		}
 	}
 
 	/**
@@ -270,10 +284,8 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * This is login script.
-	 *
-	 * @return bool
 	 */
-	public static function this_is_login() {
+	public static function this_is_login(): bool {
 		if ( function_exists( 'is_login' ) ) {
 			return is_login();
 		} elseif ( ! empty( $_SERVER['SCRIPT_NAME'] ) ) {
@@ -285,10 +297,9 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Current page is login or register.
 	 *
-	 * @param  string $page_type Login or register page.
-	 * @return bool
+	 * @param string $page_type Login or register page.
 	 */
-	public static function current_page_is( $page_type ) {
+	public static function current_page_is( $page_type ): bool {
 		global $pagenow;
 
 		if ( empty( $pagenow ) || empty( $page_type ) ) {
@@ -317,10 +328,8 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Current request if possible.
-	 *
-	 * @return string
 	 */
-	public static function current_uri() {
+	public static function current_uri(): string {
 		global $wp;
 		return ! empty( $_SERVER['REQUEST_URI'] )
 			? wp_unslash( $_SERVER['REQUEST_URI'] ) //phpcs:ignore
@@ -447,8 +456,8 @@ class SISANU_Restrict_Country_IP_Login {
 		self::$rules = (object) [
 			'type'     => self::$settings['rule_type'],
 			'restrict' => (object) [
-				'ip' => ( empty( self::$all_ips ) ) ? true : false,
-				'co' => ( empty( self::$all_countries ) ) ? true : false,
+				'ip' => empty( self::$all_ips ) ? true : false,
+				'co' => empty( self::$all_countries ) ? true : false,
 			],
 			'block'    => (object) [
 				'ip' => array_diff( self::$blocked_ips, [ '*' ] ),
@@ -465,8 +474,8 @@ class SISANU_Restrict_Country_IP_Login {
 		}
 
 		self::$rules->wildcard = (object) [
-			'ip' => ( substr_count( $ips, '*' ) ) ? true : false,
-			'co' => ( empty( $cos ) || substr_count( $cos, '*' ) ) ? true : false,
+			'ip' => substr_count( $ips, '*' ) ? true : false,
+			'co' => empty( $cos ) || substr_count( $cos, '*' ) ? true : false,
 		];
 	}
 
@@ -683,8 +692,8 @@ class SISANU_Restrict_Country_IP_Login {
 			}
 
 			$tab = filter_input( INPUT_POST, 'tab', FILTER_DEFAULT );
-			$tab = ( empty( $tab ) ) ? 0 : (int) $tab;
-			$tab = ( $tab < 0 || $tab > 5 ) ? 0 : $tab;
+			$tab = empty( $tab ) ? 0 : (int) $tab;
+			$tab = $tab < 0 || $tab > 5 ? 0 : $tab;
 			$url = admin_url( 'options-general.php?page=login-ip-country-restriction-settings' );
 
 			// Reset the plugin cache.
@@ -782,8 +791,8 @@ class SISANU_Restrict_Country_IP_Login {
 						$_allow_country_restrict = [ '*' ];
 						$_allow_country_block    = [];
 					} else {
-						$_allow_country_restrict = ( ! empty( $sel['allow_country_restrict'] ) ) ? $sel['allow_country_restrict'] : [];
-						$_allow_country_block    = ( ! empty( $sel['allow_country_block'] ) ) ? $sel['allow_country_block'] : [];
+						$_allow_country_restrict = ! empty( $sel['allow_country_restrict'] ) ? $sel['allow_country_restrict'] : [];
+						$_allow_country_block    = ! empty( $sel['allow_country_block'] ) ? $sel['allow_country_block'] : [];
 					}
 
 					if ( ! empty( $sel['countries_filter'] ) && 'restrict' === $sel['allow_country_all'] ) {
@@ -823,9 +832,9 @@ class SISANU_Restrict_Country_IP_Login {
 					}
 
 					$custom_redirects             = self::$custom_redirects;
-					$custom_redirects['status']   = ( ! empty( $sel['use_redirect'] ) ) ? 1 : 0;
-					$custom_redirects['login']    = ( ! empty( $sel['redirect_login'] ) ) ? 1 : 0;
-					$custom_redirects['register'] = ( ! empty( $sel['redirect_register'] ) ) ? 1 : 0;
+					$custom_redirects['status']   = ! empty( $sel['use_redirect'] ) ? 1 : 0;
+					$custom_redirects['login']    = ! empty( $sel['redirect_login'] ) ? 1 : 0;
+					$custom_redirects['register'] = ! empty( $sel['redirect_register'] ) ? 1 : 0;
 					$custom_redirects['urls']     = $_urls;
 					update_option( SISANU_RCIL_DB_OPTION . '_custom_redirects', $custom_redirects );
 
@@ -896,10 +905,9 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Check rule type save.
 	 *
-	 * @param  int $type Rule type.
-	 * @return int
+	 * @param int $type Rule type.
 	 */
-	public static function check_rule_type_save( $type ) { // phpcs:ignore
+	public static function check_rule_type_save( $type ): int { // phpcs:ignore
 		if ( ! self::$is_pro && ! in_array( $type, [ 0, 1, 6, 7, 8, 9 ], true ) ) {
 			return 0;
 		}
@@ -949,7 +957,7 @@ class SISANU_Restrict_Country_IP_Login {
 			&& ( ! empty( self::$settings['simulate_ip'] ) || ! empty( self::$settings['simulate_country'] ) ) ) {
 			if ( function_exists( 'RCIL\Pro\key_is_active' ) && \RCIL\Pro\key_is_active() ) {
 				$res2  = self::current_user_has_restriction( self::$settings['simulate_ip'], self::$settings['simulate_country'] );
-				$icon2 = ( true === $res2 ) ? '<span class="dashicons dashicons-warning"></span>' : '<span class="dashicons dashicons-yes-alt"></span>';
+				$icon2 = true === $res2 ? '<span class="dashicons dashicons-warning"></span>' : '<span class="dashicons dashicons-yes-alt"></span>';
 				?>
 				<div class="card">
 					<?php echo wp_kses_post( $icon2 ); ?>
@@ -983,7 +991,7 @@ class SISANU_Restrict_Country_IP_Login {
 		}
 
 		$res  = self::current_user_has_restriction( self::get_current_ip(), self::get_user_country_name() );
-		$icon = ( true === $res ) ? '<span class="dashicons dashicons-warning"></span>' : '<span class="dashicons dashicons-yes-alt"></span>';
+		$icon = true === $res ? '<span class="dashicons dashicons-warning"></span>' : '<span class="dashicons dashicons-yes-alt"></span>';
 		?>
 		<div class="card">
 			<?php echo wp_kses_post( $icon ); ?>
@@ -1199,7 +1207,7 @@ class SISANU_Restrict_Country_IP_Login {
 		$body = self::maybe_fetch_url( $url );
 		if ( ! empty( $body ) ) {
 			$user = @json_decode( $body ); // phpcs:ignore
-			$code = ( ! empty( $user->geoplugin_countryCode ) ) ? $user->geoplugin_countryCode : ''; // PHPCS:ignore WordPress.NamingConventions.ValidVariableName
+			$code = ! empty( $user->geoplugin_countryCode ) ? $user->geoplugin_countryCode : ''; // phpcs:ignore
 		}
 		return (string) $code;
 	}
@@ -1215,7 +1223,7 @@ class SISANU_Restrict_Country_IP_Login {
 		$body = wp_remote_get( $url, [ 'timeout' => 120 ] );
 		if ( ! is_wp_error( $body ) && ! empty( $body['body'] ) ) {
 			$body = @json_decode( $body['body'] ); // phpcs:ignore
-			$code = ( ! empty( $body->geoplugin_countryCode ) ) ? $body->geoplugin_countryCode : ''; // PHPCS:ignore WordPress.NamingConventions.ValidVariableName
+			$code = ! empty( $body->geoplugin_countryCode ) ? $body->geoplugin_countryCode : ''; // phpcs:ignore
 		}
 		return (string) $code;
 	}
@@ -1249,13 +1257,13 @@ class SISANU_Restrict_Country_IP_Login {
 		$trans_id     = 'rcil-geo-' . md5( $user_ip );
 		$country_code = get_transient( $trans_id );
 		if ( true === $bypass_cache || false === $country_code ) {
-			$duration = ( ! empty( self::$settings['lockout_duration'] ) ) ? (int) self::$settings['lockout_duration'] : 60;
+			$duration = ! empty( self::$settings['lockout_duration'] ) ? (int) self::$settings['lockout_duration'] : 60;
 			$duration = $duration * MINUTE_IN_SECONDS;
 			if ( function_exists( 'geoip_record_by_name' ) ) {
 				if ( empty( self::$settings['bypass_php_geoip'] ) ) {
 					// If GeoIP library is available, then let's use this.
 					$user_details = geoip_record_by_name( $user_ip );
-					$country_code = ( ! empty( $user_details['country_code'] ) ) ? $user_details['country_code'] : $country_code;
+					$country_code = ! empty( $user_details['country_code'] ) ? $user_details['country_code'] : $country_code;
 
 					$country_code_detected_api = 'PHP `geoip_record_by_name`';
 					set_transient( $trans_id, $country_code, $duration );
@@ -1370,10 +1378,9 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Country code is whitelisted.
 	 *
-	 * @param  string $code Country code.
-	 * @return bool
+	 * @param string $code Country code.
 	 */
-	public static function country_is_whitelisted( $code = '' ) { // phpcs:ignore
+	public static function country_is_whitelisted( $code = '' ): bool { // phpcs:ignore
 		if ( false === self::$rules->restrict->co || '!NA' === $code ) {
 			// Fail-fast, no country restriction or code not identified.
 			return true;
@@ -1388,10 +1395,9 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Country code is blacklisted.
 	 *
-	 * @param  string $code Country code.
-	 * @return bool
+	 * @param string $code Country code.
 	 */
-	public static function country_is_blacklisted( $code = '' ) { // phpcs:ignore
+	public static function country_is_blacklisted( $code = '' ): bool { // phpcs:ignore
 		if ( false === self::$rules->restrict->co || '!NA' === $code ) {
 			// Fail-fast, no country restriction or code not identified.
 			return false;
@@ -1406,10 +1412,9 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * IP is whitelisted.
 	 *
-	 * @param  string $ip IP code.
-	 * @return bool
+	 * @param string $ip IP code.
 	 */
-	public static function ip_is_whitelisted( $ip = '' ) { // phpcs:ignore
+	public static function ip_is_whitelisted( $ip = '' ): bool { // phpcs:ignore
 		if ( 0 === self::$rules->type ) {
 			if ( in_array( $ip, self::$rules->allow->ip, true )
 				|| in_array( self::ip_range( $ip ), self::$rules->allow->ip, true ) ) {
@@ -1438,10 +1443,9 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * IP is blacklisted.
 	 *
-	 * @param  string $ip IP code.
-	 * @return bool
+	 * @param string $ip IP code.
 	 */
-	public static function ip_is_blacklisted( $ip = '' ) { // phpcs:ignore
+	public static function ip_is_blacklisted( $ip = '' ): bool { // phpcs:ignore
 		if ( false === self::$rules->restrict->ip ) {
 			// Fail-fast, no IP restriction.
 			return false;
@@ -1459,12 +1463,11 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Assess rule by type.
 	 *
-	 * @param  int    $forbid Forbidden rules matched.
-	 * @param  string $co     Maybe a country code.
-	 * @param  string $ip     Maybe an IP code.
-	 * @return bool
+	 * @param int    $forbid Forbidden rules matched.
+	 * @param string $co     Maybe a country code.
+	 * @param string $ip     Maybe an IP code.
 	 */
-	public static function assess_rule_by_type( $forbid, $co = '', $ip = '' ) { // phpcs:ignore
+	public static function assess_rule_by_type( $forbid, $co = '', $ip = '' ): int { // phpcs:ignore
 		$ip = ! empty( $ip ) ? $ip : self::get_current_ip();
 		$co = ! empty( $co ) ? $co : self::get_user_country_name( $ip );
 
@@ -1512,11 +1515,10 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Assess if the specified user has restrictions.
 	 *
-	 * @param  string $ip           IP address.
-	 * @param  string $country_code Country code.
-	 * @return bool
+	 * @param string $ip           IP address.
+	 * @param string $country_code Country code.
 	 */
-	public static function current_user_has_restriction( $ip, $country_code ) { //phpcs:ignore
+	public static function current_user_has_restriction( $ip, $country_code ): bool { //phpcs:ignore
 		$forbid = 0;
 		$forbid = apply_filters( 'assess_rule_by_type', $forbid, $country_code, $ip );
 
@@ -1694,8 +1696,6 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * The actions to be executed when the plugin is updated.
-	 *
-	 * @return void
 	 */
 	public static function plugin_ver_check() {
 		$opt = str_replace( '-', '_', self::PLUGIN_TRANSIENT ) . '_db_ver';
@@ -1760,7 +1760,6 @@ class SISANU_Restrict_Country_IP_Login {
 				'<span class="dashicons dashicons-star-filled"></span>',
 				$maybe_pro
 			);
-
 			?>
 
 			<div id="item-<?php echo esc_attr( $slug ); ?>" class="updated notice">

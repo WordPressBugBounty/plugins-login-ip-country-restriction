@@ -2,8 +2,8 @@
 Contributors: Iulia Cazan
 Tags: country restriction, login restriction, block country, block IP, country firewall
 Requires at least: 5.1
-Tested up to: 6.7
-Stable tag: 6.6.0
+Tested up to: 6.7.1
+Stable tag: 6.6.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -43,11 +43,8 @@ None
 
 
 == Changelog ==
-= 6.6.0 =
-* Tested up to 6.7
-* Added the IP range options, using ~ (tilda)
-* Performance updates
-* Refined redirect rules
-* Translations updates
+= 6.6.1 =
+* Tested up to 6.7.1
+* Translations load fixes and compatibility for 6.7.1
 
 See the [changelog](changelog.txt) for detailed information on changes made in the earlier versions.

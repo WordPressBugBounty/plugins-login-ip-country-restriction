@@ -1,5 +1,12 @@
 == Changelog ==
 
+= 6.6.0 =
+* Tested up to 6.7
+* Added the IP range options, using ~ (tilda)
+* Performance updates
+* Refined redirect rules
+* Translations updates
+
 = 6.5.0 =
 * Tested up to 6.5
 * Added the option to enable HTTP_X_FORWARDED_FOR in case of using HTTP proxy or load balancer (danger zone)

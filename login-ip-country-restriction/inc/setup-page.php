@@ -14,8 +14,8 @@ $all_countries = self::get_countries_list();
 
 // phpcs:disable
 $tab = filter_input( INPUT_GET, 'tab', FILTER_DEFAULT );
-$tab = ( empty( $tab ) ) ? 0 : (int) $tab;
-$tab = ( $tab < 0 || $tab > 5 ) ? 0 : $tab;
+$tab = empty( $tab ) ? 0 : (int) $tab;
+$tab = $tab < 0 || $tab > 5 ? 0 : $tab;
 // phpcs:enable
 
 $rules = [
