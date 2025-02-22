@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 6.6.3 =
+* Translations updates
+
+= 6.6.2 =
+* Translations updates
+
 = 6.6.1 =
 * Tested up to 6.7.1
 * Translations load fixes and compatibility for 6.7.1

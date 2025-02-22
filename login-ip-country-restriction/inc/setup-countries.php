@@ -134,8 +134,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					$letter = '';
 					foreach ( $reset as $key => $value ) :
-						if ( $value[0] !== $letter ) :
-							$letter = $value[0];
+						$code_letter = remove_accents( str_replace( '"', '', $value )[0] );
+
+						if ( $code_letter !== $letter ) :
+							$letter = $code_letter;
 							?>
 							<?php if ( 'A' !== $letter ) : ?>
 								</ul>

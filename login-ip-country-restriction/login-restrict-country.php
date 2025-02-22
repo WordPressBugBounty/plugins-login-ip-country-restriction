@@ -5,7 +5,7 @@
  * Description: This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want.
  * Text Domain: slicr
  * Domain Path: /langs
- * Version:     6.6.2
+ * Version:     6.6.4
  * Author:      Iulia Cazan
  * Author URI:  https://profiles.wordpress.org/iulia-cazan
  * Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
@@ -31,7 +31,7 @@
 
 // Define the plugin version.
 define( 'SISANU_RCIL_DB_OPTION', 'sisanu_rcil' );
-define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.62 );
+define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.64 );
 define( 'SISANU_RCIL_SLUG', 'slicr' );
 define( 'SISANU_RCIL_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'SISANU_RCIL_URL', trailingslashit( plugins_url( '/', plugin_basename( __FILE__ ) ) ) );
@@ -92,21 +92,21 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * All countries.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	public static $all_countries = false;
 
 	/**
 	 * All IPs.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	public static $all_ips = false;
 
 	/**
 	 * No roles bypass.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	public static $no_roles_bypass = true;
 
@@ -132,14 +132,14 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * If he current user restriction was assessed.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private static $curent_user_assessed = false;
 
 	/**
 	 * If he current user has restriction.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private static $curent_user_restriction = false;
 
@@ -153,7 +153,7 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * The plugin debug.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private static $is_pro = false;
 
@@ -167,7 +167,7 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Maybe auth user ID.
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public static $user_id = 0;
 
@@ -563,10 +563,8 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Make preset colors tokens.
-	 *
-	 * @return string
 	 */
-	public static function preset_colors() {
+	public static function preset_colors(): string {
 		global $_wp_admin_css_colors;
 
 		$user_id = get_current_user_id();
@@ -630,7 +628,7 @@ class SISANU_Restrict_Country_IP_Login {
 	 *
 	 * @param string $import Import setting JSON string.
 	 */
-	public static function import_settings( $import ) { //phpcs:ignore
+	public static function import_settings( $import ) { // phpcs:ignore
 		$data = json_decode( $import, true );
 		if ( empty( $data ) || ! is_array( $data ) ) {
 			// Add admin notice on flushed transients.
@@ -867,6 +865,8 @@ class SISANU_Restrict_Country_IP_Login {
 					$maybe_test = filter_input( INPUT_POST, 'test-ip' );
 					$test_ip    = filter_input( INPUT_POST, 'test_ip' );
 					if ( ! empty( $maybe_test ) && ! empty( $test_ip ) ) {
+						delete_transient( 'rcil-geo-method' );
+
 						global $country_code_detected_api;
 						$trans_id  = 'rcil-test-' . md5( gmdate( 'Y-m-d' ) );
 						$test_info = [
@@ -1045,6 +1045,12 @@ class SISANU_Restrict_Country_IP_Login {
 							! empty( self::$settings['include_forward_ip'] )
 								? ' / HTTP_X_FORWARDED_FOR <b>' . $forward . '</b>' : ''
 						) );
+
+						echo wp_kses_post( ' / ' . sprintf(
+							// Translators: %1$s - detection method.
+							__( 'The available detection method is %1$s.', 'slicr' ),
+							self::detection_method()
+						) );
 						// phpcs:enable
 						?>
 					</span>
@@ -1056,10 +1062,8 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Get current IP.
-	 *
-	 * @return string
 	 */
-	public static function get_current_ip() { //phpcs:ignore
+	public static function get_current_ip(): string {
 		$ip = '';
 		// phpcs:disable
 		if ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
@@ -1102,7 +1106,7 @@ class SISANU_Restrict_Country_IP_Login {
 	 *
 	 * @param array $rules Custom rules.
 	 */
-	public static function tab0_content( $rules ) { //phpcs:ignore
+	public static function tab0_content( $rules ) { // phpcs:ignore
 		include_once __DIR__ . '/inc/setup-rules.php';
 	}
 
@@ -1111,7 +1115,7 @@ class SISANU_Restrict_Country_IP_Login {
 	 *
 	 * @param array $rules Custom rules.
 	 */
-	public static function tab1_content( $rules ) { //phpcs:ignore
+	public static function tab1_content( $rules ) { // phpcs:ignore
 		include_once __DIR__ . '/inc/setup-ips.php';
 	}
 
@@ -1120,7 +1124,7 @@ class SISANU_Restrict_Country_IP_Login {
 	 *
 	 * @param array $all_countries Countries list.
 	 */
-	public static function tab2_content( $all_countries ) { //phpcs:ignore
+	public static function tab2_content( $all_countries ) { // phpcs:ignore
 		include_once __DIR__ . '/inc/setup-countries.php';
 	}
 
@@ -1146,7 +1150,7 @@ class SISANU_Restrict_Country_IP_Login {
 	 *
 	 * @param string $type Teaser type.
 	 */
-	public static function pro_teaser( $type = 'regular' ) { //phpcs:ignore
+	public static function pro_teaser( $type = 'regular' ) { // phpcs:ignore
 		include_once __DIR__ . '/inc/setup-teaser.php';
 	}
 
@@ -1162,18 +1166,37 @@ class SISANU_Restrict_Country_IP_Login {
 	 *
 	 * @return array
 	 */
-	public static function get_countries_list() { //phpcs:ignore
-		include_once __DIR__ . '/inc/countries-list.php';
-		return $all_countries;
+	public static function get_countries_list() { // phpcs:ignore
+		static $sorted_countries_list;
+
+		if ( ! isset( $sorted_countries_list ) ) {
+			include_once __DIR__ . '/inc/countries-list.php';
+
+			asort( $all_countries );
+
+			$prepared = [];
+			foreach ( $all_countries as $code => $name ) {
+				$prepared[ $code ] = [
+					'name'   => $name,
+					'letter' => remove_accents( str_replace( '"', '', $name )[0] ),
+				];
+			}
+
+			$letter = array_column( $prepared, 'letter' );
+			array_multisort( $letter, SORT_ASC, $prepared );
+
+			$sorted_countries_list = wp_list_pluck( $prepared, 'name' );
+		}
+
+		return $sorted_countries_list;
 	}
 
 	/**
 	 * Maybe fetch url content with cUrl.
 	 *
-	 * @param  string $url URL to be crawled.
-	 * @return string
+	 * @param string $url URL to be crawled.
 	 */
-	public static function maybe_fetch_url( $url = '' ) { // phpcs:ignore
+	public static function maybe_fetch_url( $url = '' ): string { // phpcs:ignore
 		$result = '';
 		if ( function_exists( 'curl_setopt' ) ) {
 			// phpcs:disable
@@ -1199,10 +1222,9 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Maybe a country code by cUrl.
 	 *
-	 * @param  string $url URL to be crawled.
-	 * @return string
+	 * @param string $url URL to be crawled.
 	 */
-	public static function country_code_by_curl( $url = '' ) { //phpcs:ignore
+	public static function country_code_by_curl( $url = '' ): string { // phpcs:ignore
 		$code = '';
 		$body = self::maybe_fetch_url( $url );
 		if ( ! empty( $body ) ) {
@@ -1215,10 +1237,9 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Maybe a country code by JSON fetch.
 	 *
-	 * @param  string $url URL to be crawled.
-	 * @return string
+	 * @param string $url URL to be crawled.
 	 */
-	public static function country_code_by_json( $url = '' ) { //phpcs:ignore
+	public static function country_code_by_json( $url = '' ): string { // phpcs:ignore
 		$code = '';
 		$body = wp_remote_get( $url, [ 'timeout' => 120 ] );
 		if ( ! is_wp_error( $body ) && ! empty( $body['body'] ) ) {
@@ -1231,10 +1252,9 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Maybe a country code by php fetch.
 	 *
-	 * @param  string $url URL to be crawled.
-	 * @return string
+	 * @param string $url URL to be crawled.
 	 */
-	public static function country_code_by_php( $url = '' ) { //phpcs:ignore
+	public static function country_code_by_php( $url = '' ): string {
 		$code = '';
 		$body = maybe_unserialize( @file_get_contents( $url ) ); // phpcs:ignore
 		if ( ! empty( $body['geoplugin_countryCode'] ) ) {
@@ -1244,13 +1264,60 @@ class SISANU_Restrict_Country_IP_Login {
 	}
 
 	/**
+	 * Assess the detection method.
+	 */
+	public static function detection_method(): string {
+		$trans_id = 'rcil-geo-method';
+		$api      = get_transient( $trans_id );
+		if ( false === $api ) {
+			$user = '123.456.789';
+			$code = '';
+			$api  = '';
+
+			if ( function_exists( 'geoip_record_by_name' )
+				&& empty( self::$settings['bypass_php_geoip'] ) ) {
+				$info = geoip_record_by_name( $user );
+				$code = ! empty( $info['country_code'] ) ? $info['country_code'] : '!NA';
+				$api  = 'PHP `geoip_record_by_name`';
+			}
+
+			if ( empty( $api ) ) {
+				// First attempt by cUrl.
+				$code = self::country_code_by_curl( 'http://www.geoplugin.net/json.gp?ip=' . $user );
+				if ( ! empty( $code ) && '!NA' !== $code ) {
+					$api = 'CURL';
+				}
+			}
+
+			if ( empty( $api ) ) {
+				// The GeoIP library is not available, so we are trying to use the public GeoPlugin.
+				$code = self::country_code_by_json( 'http://www.geoplugin.net/json.gp?ip=' . $user );
+				if ( ! empty( $code ) && '!NA' !== $code ) {
+					$api = 'JSON';
+				}
+			}
+
+			if ( empty( $api ) ) {
+				$code = self::country_code_by_php( 'http://www.geoplugin.net/php.gp?ip=' . $user );
+				if ( ! empty( $code ) && '!NA' !== $code ) {
+					$api = 'PHP';
+				}
+			}
+
+			$api = $api ?? __( 'undefined', 'slicr' );
+			set_transient( $trans_id, $api, 360 * MINUTE_IN_SECONDS );
+		}
+
+		return $api ?? __( 'undefined', 'slicr' );
+	}
+
+	/**
 	 * Retrieves the current user country code based on the user IP.
 	 *
-	 * @param  string $ip           Maybe an explicit IP.
-	 * @param  bool   $bypass_cache Bypass or not the cache (defaults to false).
-	 * @return string
+	 * @param string $ip           Maybe an explicit IP.
+	 * @param bool   $bypass_cache Bypass or not the cache (defaults to false).
 	 */
-	public static function get_user_country_name( $ip = '', $bypass_cache = false ) { //phpcs:ignore
+	public static function get_user_country_name( $ip = '', $bypass_cache = false ): string { // phpcs:ignore
 		global $country_code_detected_api;
 		$country_code = '!NA';
 		$user_ip      = ( ! empty( $ip ) ) ? $ip : self::get_current_ip();
@@ -1307,11 +1374,10 @@ class SISANU_Restrict_Country_IP_Login {
 	/**
 	 * Check bypass single login.
 	 *
-	 * @param  int    $forbid Current count.
-	 * @param  string $ip     Check IP.
-	 * @return int
+	 * @param int    $forbid Current count.
+	 * @param string $ip     Check IP.
 	 */
-	public static function check_bypass_single_login( $forbid, $ip ) { // phpcs:ignore
+	public static function check_bypass_single_login( $forbid, $ip ): int { // phpcs:ignore
 		if ( ! empty( self::$user_id ) && self::$is_pro && function_exists( 'RCIL\Pro\user_bypass_single_login' ) ) {
 			$bypass = RCIL\Pro\user_bypass_single_login( self::$user_id, $ip );
 			if ( false === $bypass ) {
@@ -1336,10 +1402,8 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Assess if the current user has restrictions.
-	 *
-	 * @return bool
 	 */
-	public static function user_has_restriction() { //phpcs:ignore
+	public static function user_has_restriction(): bool {
 		if ( false === self::$curent_user_assessed || ! empty( self::$simulate ) ) {
 			// Proceed with the computation.
 			if ( ! empty( self::$simulate ) ) {
@@ -1360,7 +1424,7 @@ class SISANU_Restrict_Country_IP_Login {
 		}
 
 		// If we got this far, the user restriction was assessed.
-		return self::$curent_user_restriction;
+		return (bool) self::$curent_user_restriction;
 	}
 
 	/**
@@ -1746,6 +1810,27 @@ class SISANU_Restrict_Country_IP_Login {
 	}
 
 	/**
+	 * Maybe donate or rate.
+	 */
+	public static function donate_text(): string {
+		$title  = __( 'Login IP & Country Restriction', 'slicr' );
+		$donate = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ&item_name=Support for development and maintenance (' . rawurlencode( $title ) . ')';
+		$thanks = __( 'A huge thanks in advance!', 'slicr' );
+
+		return trim(
+			sprintf(
+				// Translators: %s - donate URL.
+				__( 'If you find the plugin useful and would like to support my work, please consider making a <a href="%s" target="_blank">donation</a>.', 'slicr' ),
+				$donate
+			) . ' ' . sprintf(
+				// Translators: %s - rating.
+				__( 'It would make me very happy if you would leave a %s rating.', 'slicr' ),
+				'<a href="' . self::PLUGIN_SUPPORT_URL . 'reviews/?rate=5#new-post" class="rating" target="_blank" rel="noreferrer" title="' . esc_attr( $thanks ) . '">★★★★★</a>'
+			) . ' ' . $thanks
+		);
+	}
+
+	/**
 	 * Admin notices.
 	 */
 	public static function plugin_admin_notices() {
@@ -1755,22 +1840,25 @@ class SISANU_Restrict_Country_IP_Login {
 
 		$maybe_trans = get_transient( self::PLUGIN_TRANSIENT );
 		if ( ! empty( $maybe_trans ) ) {
-			$slug      = md5( SISANU_RCIL_SLUG );
-			$title     = __( 'Login IP & Country Restriction', 'slicr' );
-			$donate    = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ&item_name=Support for development and maintenance (' . rawurlencode( self::PLUGIN_NAME ) . ')';
+			$slug   = md5( SISANU_RCIL_SLUG );
+			$ptitle = __( 'Login IP & Country Restriction', 'slicr' );
+
+			// Translators: %1$s - plugin name.
+			$activated = sprintf( __( '%1$s plugin was activated!', 'slicr' ), '<b>' . $ptitle . '</b>' );
+			$donate    = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ&item_name=Support for development and maintenance (' . rawurlencode( $ptitle ) . ')';
+
 			$thanks    = __( 'A huge thanks in advance!', 'slicr' );
 			$maybe_pro = '';
-
 			if ( empty( self::$is_pro ) ) {
 				$maybe_pro = sprintf(
 					// Translators: %1$s - extensions URL.
-					__( 'You are using the free version. Get the <a href="%1$s" target="_blank"><b>PRO</b> version</a>. ', 'slicr' ),
+					__( 'You are using the free version. Get the <a href="%1$s" target="_blank"><b>PRO</b> version</a>.', 'slicr' ),
 					'https://iuliacazan.ro/wordpress-extension/login-ip-country-restriction-pro/'
 				) . ' ';
 			} else {
 				$maybe_pro = sprintf(
 					// Translators: %1$s - pro version label, %2$s - PRO URL.
-					__( 'Thank you for purchasing the <a href="%1$s" target="_blank"><b>PRO</b> version</a>! ', 'slicr' ),
+					__( 'Thank you for purchasing the <a href="%1$s" target="_blank"><b>PRO</b> version</a>!', 'slicr' ),
 					'https://iuliacazan.ro/wordpress-extension/login-ip-country-restriction-pro/'
 				) . ' ';
 			}
@@ -1786,45 +1874,25 @@ class SISANU_Restrict_Country_IP_Login {
 			);
 			?>
 
-			<div id="item-<?php echo esc_attr( $slug ); ?>" class="updated notice">
-				<div class="icon">
-					<a href="<?php echo esc_url( self::$plugin_url ); ?>"><img src="<?php echo esc_url( SISANU_RCIL_URL . 'assets/images/icon-128x128.gif' ); ?>"></a>
-				</div>
+			<div id="item-<?php echo esc_attr( $slug ); ?>" class="notice is-dismissible">
 				<div class="content">
-					<div>
-						<h3>
-							<?php
-							echo wp_kses_post( sprintf(
-								// Translators: %1$s - plugin name.
-								__( '%1$s plugin was activated!', 'slicr' ),
-								'<b>' . $title . '</b>'
-							) );
-							?>
-						</h3>
-						<div class="notice-other-items"><div><?php echo wp_kses_post( $other_notice ); ?></div></div>
+					<a class="icon" href="<?php echo esc_url( self::$plugin_url ); ?>"><img src="<?php echo esc_url( SISANU_RCIL_URL . 'assets/images/icon-128x128.gif' ); ?>"></a>
+					<div class="details">
+						<div>
+							<h3><?php echo \wp_kses_post( $activated ); ?></h3>
+							<div class="notice-other-items"><?php echo wp_kses_post( $other_notice ); ?></div>
+						</div>
+						<div><?php echo wp_kses_post( self::donate_text() ); ?></div>
+						<a class="notice-plugin-donate" href="<?php echo esc_url( $donate ); ?>" target="_blank"><img src="<?php echo esc_url( SISANU_RCIL_URL . 'assets/images/buy-me-a-coffee.png?v=' . SISANU_RCIL_CURRENT_DB_VERSION ); ?>" width="200"></a>
 					</div>
-					<div>
-						<?php
-						echo wp_kses_post( sprintf(
-								// Translators: %1$s - donate URL, %2$s - rating, %3$s - thanks.
-							__( 'If you find the plugin useful and would like to support my work, please consider making a <a href="%1$s" target="_blank">donation</a>. It would make me very happy if you would leave a %2$s rating. <br>%3$s', 'slicr' ),
-							$donate,
-							'<a href="' . self::PLUGIN_SUPPORT_URL . 'reviews/?rate=5#new-post" class="rating" target="_blank" rel="noreferrer" title="' . esc_attr( $thanks ) . '">★★★★★</a>',
-							$thanks
-						) );
-						?>
-					</div>
-					<a class="notice-plugin-donate" href="<?php echo esc_url( $donate ); ?>" target="_blank"><img src="<?php echo esc_url( SISANU_RCIL_URL . 'assets/images/buy-me-a-coffee.png?v=' . SISANU_RCIL_CURRENT_DB_VERSION ); ?>" width="200"></a>
 				</div>
-				<div class="action">
-					<div class="dashicons dashicons-no" onclick="dismiss_notice_for_<?php echo esc_attr( $slug ); ?>()"></div>
-				</div>
+				<button type="button" class="notice-dismiss" onclick="dismiss_notice_for_<?php echo esc_attr( $slug ); ?>()"><span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'slicr' ); ?></span></button>
 			</div>
+
 			<?php
-			$style = '
-			#trans123super{--color-bg:rgba(176,227,126,0.2); --color-border:rgb(176,227,126); display:grid; padding:0; gap:0; grid-template-columns:6rem auto 3rem; max-width:100%; width:100%; border-left-color: var(--color-border); box-sizing:border-box;} #trans123super .dashicons-no{font-size:2rem; cursor:pointer;} #trans123super .icon{ display:grid; align-content:start; background-color:var(--color-bg); padding: 1rem} #trans123super .icon img{object-fit:cover; object-position:center; width:100%; display:block} #trans123super .action{ display:grid; align-content:start; padding: 1rem 0.5rem} #trans123super .content{ align-items: center; display: grid; gap: 1rem; grid-template-columns: 1fr 1fr 12rem; padding: 1rem;} #trans123super .content .dashicons{color:var(--color-border);} #trans123super .content > div{color:#666;} #trans123super h3{margin:0 0 0.1rem 0;color:#666} #trans123super h3 b{color:#000} #trans123super a{color:#000;text-decoration:none;} #trans123super .notice-plugin-donate img{max-width: 100%;} @media all and (max-width: 1024px) {#trans123super .content{grid-template-columns:100%;}}';
+			$style = '#trans123super{--color-bg:rgba(176,227,126,0.2); --color-border:rgb(176,227,126); border-left-color:var(--color-border);padding:0 38px 0 0!important}#trans123super *{margin:0}#trans123super .dashicons{color:var(--color-border)}#trans123super a{text-decoration:none}#trans123super img{display:flex;}#trans123super .content,#trans123super .details{display:flex;gap:1rem;padding-block:.5em}#trans123super .details{align-items:center;flex-wrap:wrap;padding-block:0}#trans123super .details>*{flex:1 1 35rem}#trans123super .details .notice-plugin-donate{flex:1 1 auto}#trans123super .details .notice-plugin-donate img{max-width:100%}#trans123super .icon{background:var(--color-bg);flex:0 0 4rem;margin:-.5em 0;padding:1rem}#trans123super .icon img{display:flex;height:auto;width:4rem} #trans123super h3{margin-bottom:0.5rem;text-transform:none}';
 			$style = str_replace( '#trans123super', '#item-' . esc_attr( $slug ), $style );
-			echo '<style>' . $style . '</style>'; //phpcs:ignore
+			echo '<style>' . $style . '</style>'; // phpcs:ignore
 			?>
 			<script>function dismiss_notice_for_<?php echo esc_attr( $slug ); ?>() { document.getElementById( 'item-<?php echo esc_attr( $slug ); ?>' ).style='display:none'; fetch( '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>?action=plugin-deactivate-notice-<?php echo esc_attr( SISANU_RCIL_SLUG ); ?>' ); }</script>
 			<?php
@@ -1841,22 +1909,17 @@ class SISANU_Restrict_Country_IP_Login {
 			<div>
 				<?php
 				if ( ! self::$is_pro ) {
+					echo wp_kses_post( self::donate_text() );
+				} else {
+					$thanks = __( 'A huge thanks in advance!', 'slicr' );
+
 					echo wp_kses_post(
 						sprintf(
-							// Translators: %1$s - donate URL, %2$s - rating, %3$s - thanks.
-							__( 'If you find the plugin useful and would like to support my work, please consider making a <a href="%1$s" target="_blank">donation</a>. It would make me very happy if you would leave a %2$s rating. <br>%3$s', 'slicr' ),
-							'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ&item_name=Support for development and maintenance (' . rawurlencode( self::PLUGIN_NAME ) . ')',
-							'<a href="' . self::PLUGIN_SUPPORT_URL . 'reviews/?rate=5#new-post" class="rating" target="_blank" title="' . esc_attr__( 'A huge thanks in advance!', 'slicr' ) . '">★★★★★</a>',
-							__( 'A huge thanks in advance!', 'slicr' )
-						)
+							// Translators: %s - rating.
+							__( 'It would make me very happy if you would leave a %s rating.', 'slicr' ),
+							'<a href="' . self::PLUGIN_SUPPORT_URL . 'reviews/?rate=5#new-post" class="rating" target="_blank" rel="noreferrer" title="' . esc_attr( $thanks ) . '">★★★★★</a>'
+						) . ' ' . $thanks
 					);
-				} else {
-					echo wp_kses_post( sprintf(
-						// Translators: %1$s - 5 stars, %2$s - thanks.
-						__( 'It would make me very happy if you would leave a %1$s rating. <br>%2$s', 'slicr' ),
-						'<a href="' . self::PLUGIN_SUPPORT_URL . 'reviews/?rate=5#new-post" class="rating" target="_blank" title="' . esc_attr__( 'A huge thanks in advance!', 'slicr' ) . '">★★★★★</a>',
-						__( 'A huge thanks in advance!', 'slicr' )
-					) );
 				}
 				?>
 			</div>

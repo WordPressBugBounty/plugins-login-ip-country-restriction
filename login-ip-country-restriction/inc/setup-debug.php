@@ -43,7 +43,7 @@ $setup = [
 		</p>
 		<textarea name="import" rows="5" placeholder="<?php esc_attr_e( 'Paste here the JSON code.', 'slicr' ); ?>"></textarea>
 		<p>
-			<input type="submit" class="button button-primary" name="import-all-settings" value="<?php esc_attr_e( 'Import settings', 'slicr' ); ?>">
+			<input type="submit" class="button button-primary" name="import-all-settings" value="<?php esc_attr_e( 'Import Settings', 'slicr' ); ?>">
 		</p>
 		<p>
 			<?php esc_html_e( 'When you click the import button, the current settings will be replaced.', 'slicr' ); ?>
@@ -114,6 +114,12 @@ $setup = [
 			__( 'Your current IP is %1$s and the country code is %2$s.', 'slicr' ),
 			self::get_current_ip(),
 			self::get_user_country_name()
+		);
+
+		$details .= PHP_EOL . '- ' . sprintf(
+			// Translators: %1$s - detection method.
+			__( 'The available detection method is %1$s.', 'slicr' ),
+			self::detection_method()
 		);
 
 		$details .= PHP_EOL . '- SERVER_ADDR: ';

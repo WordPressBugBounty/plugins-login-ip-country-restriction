@@ -2,8 +2,8 @@
 Contributors: Iulia Cazan
 Tags: country restriction, login restriction, block country, block IP, country firewall
 Requires at least: 5.1
-Tested up to: 6.7.1
-Stable tag: 6.6.2
+Tested up to: 6.7.2
+Stable tag: 6.6.4
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -23,7 +23,7 @@ This plugin hooks in the authenticate filter. By default, the plugin is set to a
 
 
 == Screenshots ==
-1. Login restriction rules amd XML-RPC authenticated methods
+1. Login restriction rules and XML-RPC authenticated methods
 2. IPs restriction: allow and block specific IPs
 3. Countries restriction: allow and block specific countries
 4. Redirect options
@@ -43,7 +43,10 @@ None
 
 
 == Changelog ==
-= 6.6.2 =
+= 6.6.4 =
+* Tested up to 6.7.2
+* Show the detection method in the debug details
+* Updated the country codes list
 * Translations updates
 
 See the [changelog](changelog.txt) for detailed information on changes made in the earlier versions.

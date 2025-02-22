@@ -94,7 +94,7 @@ $true_pro = self::$is_pro && function_exists( '\RCIL\Pro\key_is_active' ) && tru
 		</ul>
 
 		<p class="info">
-			<?php esc_html_e( 'The option above controls whether XML-RPC methods requiring authentication (such as for publishing purposes) are enabled and does not interfere with pingbacks or other custom endpoints that don\'t require authentication.', 'slicr' ); ?>
+			<?php esc_html_e( 'The option above controls whether XML-RPC methods requiring authentication (such as for publishing purposes) are enabled and do not interfere with pingbacks or other custom endpoints that don\'t require authentication.', 'slicr' ); ?>
 		</p>
 	</div>
 </div>
