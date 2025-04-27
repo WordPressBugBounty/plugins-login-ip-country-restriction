@@ -2,21 +2,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Login IP & Country Restriction 6.6.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/slicr\n"
-"POT-Creation-Date: 2025-02-22T10:30:45+00:00\n"
-"PO-Revision-Date: 2025-02-22 12:33+0200\n"
+"POT-Creation-Date: 2025-04-27T10:22:08+00:00\n"
+"PO-Revision-Date: 2025-04-27 13:28+0300\n"
 "Last-Translator: Iulia Cazan\n"
 "Language-Team: \n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 "X-Domain: slicr\n"
 
 #. Plugin Name of the plugin
-#: login-restrict-country.php inc/setup-teaser.php:40
-#: login-restrict-country.php:1807 login-restrict-country.php:1835
-#: pro-settings.php:577 pro-settings.php:817
+#: login-restrict-country.php inc/setup-teaser.php:48 inc/setup-teaser.php:52
+#: login-restrict-country.php:1810 login-restrict-country.php:1838
+#: pro-settings.php:525 pro-settings.php:778
 msgid "Login IP & Country Restriction"
 msgstr "Login IP & Country Restriction"
 
@@ -60,52 +60,52 @@ msgstr "Iulia Cazan"
 msgid "https://profiles.wordpress.org/iulia-cazan"
 msgstr "https://profiles.wordpress.org/iulia-cazan"
 
-#: inc/setup-countries.php:22 inc/setup-countries.php:23
+#: inc/setup-countries.php:17 inc/setup-countries.php:18
 msgid "No country restriction"
 msgstr "Nicio restricție pentru țări"
 
-#: inc/setup-countries.php:36
+#: inc/setup-countries.php:27
 msgid "Setup country restriction"
 msgstr "Inițializează restricțiile pentru țări"
 
-#: inc/setup-countries.php:37
+#: inc/setup-countries.php:28
 msgid "Allow or block only the selected countries"
 msgstr "Permite sau blochează numai țările selectate"
 
-#: inc/setup-countries.php:59 inc/setup-countries.php:167
+#: inc/setup-countries.php:54 inc/setup-countries.php:154
 msgid "Allowed countries"
 msgstr "Țări permise"
 
-#: inc/setup-countries.php:61
+#: inc/setup-countries.php:58
 msgid "This is the list of countries from where the login is allowed."
 msgstr "Aceasta este lista de țări de unde este permisă autentificarea."
 
 #. Translators: %1$s - count selected.
-#: inc/setup-countries.php:66 inc/setup-countries.php:98
+#: inc/setup-countries.php:62 inc/setup-countries.php:94
 msgid "%1$s selected"
 msgstr "%1$s selectate"
 
-#: inc/setup-countries.php:87 inc/setup-countries.php:120
+#: inc/setup-countries.php:81 inc/setup-countries.php:114
 msgid "you did not select any country yet"
 msgstr "nu ai selectat nicio țară până acum"
 
-#: inc/setup-countries.php:93 inc/setup-countries.php:174
+#: inc/setup-countries.php:88 inc/setup-countries.php:157
 msgid "Blocked countries"
 msgstr "Țări blocate"
 
-#: inc/setup-countries.php:94
+#: inc/setup-countries.php:91
 msgid "This is the list of countries from where the login is blocked."
 msgstr "Aceasta este lista cu țările pentru care autentificarea este blocată."
 
-#: inc/setup-countries.php:126
+#: inc/setup-countries.php:121
 msgid "Countries list"
 msgstr "Listă cu țări"
 
-#: inc/setup-debug.php:27
+#: inc/setup-debug.php:35
 msgid "Export Settings"
 msgstr "Exportă setările"
 
-#: inc/setup-debug.php:29
+#: inc/setup-debug.php:37
 msgid ""
 "Here are some details about the current settings of this plugin, these can "
 "be reset or exported into another instance."
@@ -113,11 +113,7 @@ msgstr ""
 "Aici sunt câteva detalii despre setările curente ale acestui modul, ele pot "
 "fi resetate sau exportate într-o altă instanță."
 
-#: inc/setup-debug.php:33
-msgid "Reset to default"
-msgstr "Resetează la valorile implicite"
-
-#: inc/setup-debug.php:36
+#: inc/setup-debug.php:38
 msgid ""
 "Please note that reset to default is not requiring for a confirmation, so be "
 "careful with clicking this button."
@@ -125,11 +121,15 @@ msgstr ""
 "Te rog să reții că resetarea la valorile implicite nu necesită o confirmare, "
 "deci fii atent când dai clic pe acest buton."
 
-#: inc/setup-debug.php:40 inc/setup-debug.php:46
+#: inc/setup-debug.php:42
+msgid "Reset to default"
+msgstr "Resetează la valorile implicite"
+
+#: inc/setup-debug.php:49 inc/setup-debug.php:56
 msgid "Import Settings"
 msgstr "Importă setările"
 
-#: inc/setup-debug.php:42
+#: inc/setup-debug.php:51
 msgid ""
 "Paste here the settings you want to import from another instance. This is a "
 "string in JSON format."
@@ -137,35 +137,34 @@ msgstr ""
 "Plasează aici setările pe care vrei să le imporți din altă instanță. Este un "
 "șir de caractere în format JSON."
 
-#: inc/setup-debug.php:44
-msgid "Paste here the JSON code."
-msgstr "Plasează aici codul JSON."
-
-#: inc/setup-debug.php:49
+#: inc/setup-debug.php:52
 msgid ""
 "When you click the import button, the current settings will be replaced."
 msgstr "Când dai clic pe butonul Importă, setările curente vor fi înlocuite."
 
-#: inc/setup-debug.php:110 inc/setup-page.php:113
-#: login-restrict-country.php:1035
+#: inc/setup-debug.php:54
+msgid "Paste here the JSON code."
+msgstr "Plasează aici codul JSON."
+
+#: inc/setup-debug.php:121 inc/setup-page.php:84
 msgid "Debug"
 msgstr "Depanare"
 
 #. Translators: %1$s - IP, %2$s - country code.
-#: inc/setup-debug.php:114 login-restrict-country.php:1030
+#: inc/setup-debug.php:125 login-restrict-country.php:1045
 msgid "Your current IP is %1$s and the country code is %2$s."
 msgstr "IP-ul tău curent este %1$s și codul de țară este %2$s."
 
 #. Translators: %1$s - detection method.
-#: inc/setup-debug.php:121 login-restrict-country.php:1053
+#: inc/setup-debug.php:132 inc/setup-debug.php:169
 msgid "The available detection method is %1$s."
 msgstr "Metoda de detecție disponibilă este %1$s."
 
-#: inc/setup-debug.php:147
+#: inc/setup-debug.php:162
 msgid "Status/Debug"
 msgstr "Stare/depanare"
 
-#: inc/setup-debug.php:149
+#: inc/setup-debug.php:164
 msgid ""
 "Here are some details about your current WordPress instance and the services "
 "versions that run currently in this environment."
@@ -173,20 +172,24 @@ msgstr ""
 "Aici sunt câteva detalii despre instanța curentă de WordPress și versiunile "
 "serviciilor care rulează în acest mediu."
 
-#: inc/setup-debug.php:164
+#: inc/setup-debug.php:176
+msgid "N/A"
+msgstr "N/A"
+
+#: inc/setup-debug.php:192
 msgid "Test country code for IP"
 msgstr "Testează codul de țară pentru IP"
 
-#: inc/setup-debug.php:167 pro-settings.php:751
+#: inc/setup-debug.php:194 pro-settings.php:697
 msgid "IP"
 msgstr "IP"
 
-#: inc/setup-debug.php:169
+#: inc/setup-debug.php:196
 msgid "Test"
 msgstr "Testează"
 
 #. Translators: %1$s - IP, %2$s - code, %3$s - method.
-#: inc/setup-debug.php:175
+#: inc/setup-debug.php:202
 msgid ""
 "The country code detected for the IP %1$s is %2$s. The detection was done "
 "through the %3$s method."
@@ -195,7 +198,7 @@ msgstr ""
 "prin metoda %3$s."
 
 #. Translators: %s - method.
-#: inc/setup-debug.php:190
+#: inc/setup-debug.php:216
 msgid ""
 "The %s function is part of the PHP service used on your server, and this is "
 "used as the default detection method. If this does not return the expected "
@@ -208,40 +211,40 @@ msgstr ""
 "rularea altor metode de detecție."
 
 #. Translators: %s - method.
-#: inc/setup-debug.php:198
+#: inc/setup-debug.php:224
 msgid "Bypass the PHP %s function"
 msgstr "Omite funcția PHP %s"
 
 #. Translators: %s - method.
-#: inc/setup-debug.php:204
+#: inc/setup-debug.php:230
 msgid "Enable the PHP %s function"
 msgstr "Activează funcția PHP %s"
 
-#: inc/setup-ips.php:23 inc/setup-ips.php:24
+#: inc/setup-ips.php:20 inc/setup-ips.php:21
 msgid "No IP restriction"
 msgstr "Nicio restricție după IP"
 
-#: inc/setup-ips.php:36
+#: inc/setup-ips.php:33
 msgid "Setup IP restriction"
 msgstr "Inițializează restricția după IP"
 
-#: inc/setup-ips.php:37
+#: inc/setup-ips.php:34
 msgid "Allow or block only specific IPs"
 msgstr "Permite sau blochează numai anumite IP-uri"
 
-#: inc/setup-ips.php:46
+#: inc/setup-ips.php:45
 msgid "Allow specific IPs"
 msgstr "Permite anumite IP-uri"
 
-#: inc/setup-ips.php:60 inc/setup-ips.php:103
+#: inc/setup-ips.php:49 inc/setup-ips.php:78
 msgid "Separate the IPs with comma if there are more."
 msgstr "Dacă sunt mai multe, separă IP-urile cu virgule."
 
-#: inc/setup-ips.php:61 inc/setup-ips.php:104
+#: inc/setup-ips.php:50 inc/setup-ips.php:79
 msgid "For IP ranges, use ~ (ex: 192.168.0.~)."
 msgstr "Pentru intervale de IP-uri, folosește ~ (de exemplu, 192.168.0.~)."
 
-#: inc/setup-ips.php:62
+#: inc/setup-ips.php:67
 msgid ""
 "* means any IP, you must remove it from the list if you want to apply a "
 "restriction."
@@ -249,19 +252,15 @@ msgstr ""
 "* înseamnă orice IP, trebuie să îl înlături din listă dacă vrei să aplici o "
 "restricție."
 
-#: inc/setup-ips.php:64
+#: inc/setup-ips.php:75
+msgid "Block specific IPs"
+msgstr "Blochează anumite IP-uri"
+
+#: inc/setup-ips.php:92
 msgid "Danger zone"
 msgstr "Zonă periculoasă"
 
-#: inc/setup-ips.php:74
-msgid "remove the 127.0.0.1 and ::1 from the allowed IPs"
-msgstr "înlătură 127.0.0.1 și ::1 din lista de IP-uri permise"
-
-#: inc/setup-ips.php:86
-msgid "include the server forward IP (HTTP_X_FORWARDED_FOR)"
-msgstr "include IP-ul de redirecționare a serverului (HTTP_X_FORWARDED_FOR)"
-
-#: inc/setup-ips.php:92
+#: inc/setup-ips.php:94
 msgid ""
 "These settings are not recommended and are risky to enable, as these will "
 "block your access when you are using this on your local environment. The "
@@ -275,9 +274,13 @@ msgstr ""
 "sau când IP-ul serverului este mascat ca 127.0.0.1 sau ::1 (folosind un "
 "proxy HTTP sau un echilibrator de încărcare)."
 
-#: inc/setup-ips.php:97
-msgid "Block specific IPs"
-msgstr "Blochează anumite IP-uri"
+#: inc/setup-ips.php:100
+msgid "remove the 127.0.0.1 and ::1 from the allowed IPs"
+msgstr "înlătură 127.0.0.1 și ::1 din lista de IP-uri permise"
+
+#: inc/setup-ips.php:109
+msgid "include the server forward IP (HTTP_X_FORWARDED_FOR)"
+msgstr "include IP-ul de redirecționare a serverului (HTTP_X_FORWARDED_FOR)"
 
 #: inc/setup-page.php:24
 msgid "Allow login only for allowed IPs"
@@ -335,44 +338,56 @@ msgstr ""
 "Blochează autentificarea numai din țările sau de la IP-urile blocate, nu și "
 "de la IP-urile sau din țările permise"
 
-#: inc/setup-page.php:68 login-restrict-country.php:599
-#: login-restrict-country.php:600
-msgid "Login IP & Country Restriction Settings"
-msgstr "Setări Login IP & Country Restriction"
-
-#: inc/setup-page.php:82
+#: inc/setup-page.php:68
 msgid "Rule Type"
 msgstr "Tip de regulă"
 
-#: inc/setup-page.php:87
+#: inc/setup-page.php:71
 msgid "IP Restriction"
 msgstr "Restricție pentru IP"
 
-#: inc/setup-page.php:92
+#: inc/setup-page.php:74
 msgid "Country Restriction"
 msgstr "Restricție pentru țară"
 
-#: inc/setup-page.php:97
+#: inc/setup-page.php:77
 msgid "Redirects"
 msgstr "Redirecționări"
 
-#: inc/setup-page.php:104 pro-settings.php:115
+#: inc/setup-page.php:80 pro-settings.php:112
 msgid "Other Settings"
 msgstr "Alte setări"
 
-#: inc/setup-redirect.php:23
+#: inc/setup-page.php:92 login-restrict-country.php:595
+#: login-restrict-country.php:596
+msgid "Login IP & Country Restriction Settings"
+msgstr "Setări Login IP & Country Restriction"
+
+#: inc/setup-page.php:102
+msgid "Login IP & Country Restriction Settings Menu"
+msgstr "Meniu Setări Login IP & Country Restriction"
+
+#: inc/setup-page.php:125
+msgid "Settings form"
+msgstr "Formular setări"
+
+#: inc/setup-page.php:125
+msgid "Settings form elements"
+msgstr "Elemente formular setări"
+
+#: inc/setup-redirect.php:20
 msgid "No redirect"
 msgstr "Nicio redirecționare"
 
-#: inc/setup-redirect.php:24
+#: inc/setup-redirect.php:21
 msgid "No redirects"
 msgstr "Fără redirecționări"
 
-#: inc/setup-redirect.php:36
+#: inc/setup-redirect.php:33
 msgid "Use redirects"
 msgstr "Folosește redirecționări"
 
-#: inc/setup-redirect.php:37
+#: inc/setup-redirect.php:34
 msgid ""
 "Yes, use redirects to the front page when the URLs are accessed by someone "
 "that has a restriction."
@@ -380,21 +395,11 @@ msgstr ""
 "Da, folosește redirecționări la pagina din față când URL-urile sunt accesate "
 "de cineva care are o restricție."
 
-#: inc/setup-redirect.php:45
+#: inc/setup-redirect.php:42
 msgid "Login & Registration native pages"
 msgstr "Pagini native Autentificare și Înregistrare"
 
-#. Translators: %1$s - url, %2$s - new url.
-#: inc/setup-redirect.php:57
-msgid "Redirect login from %1$s to %2$s."
-msgstr "Redirecționează autentificarea de la %1$s la %2$s."
-
-#. Translators: %1$s - url, %2$s - new url.
-#: inc/setup-redirect.php:74
-msgid "Redirect registration from %1$s to %2$s."
-msgstr "Redirecționează înregistrarea de la %1$s la %2$s."
-
-#: inc/setup-redirect.php:83
+#: inc/setup-redirect.php:43
 msgid ""
 "The restriction to the pages configured above will apply if the login "
 "restriction is matched."
@@ -402,19 +407,29 @@ msgstr ""
 "Restricția pentru paginile configurate mai sus se va aplica dacă se "
 "potrivește cu restricția pentru autentificare."
 
-#: inc/setup-redirect.php:86
+#. Translators: %1$s - url, %2$s - new url.
+#: inc/setup-redirect.php:54
+msgid "Redirect login from %1$s to %2$s."
+msgstr "Redirecționează autentificarea de la %1$s la %2$s."
+
+#. Translators: %1$s - url, %2$s - new url.
+#: inc/setup-redirect.php:71
+msgid "Redirect registration from %1$s to %2$s."
+msgstr "Redirecționează înregistrarea de la %1$s la %2$s."
+
+#: inc/setup-redirect.php:83
 msgid "The following specified URLs"
 msgstr "Următoarele URL-uri specificate"
 
-#: inc/setup-redirect.php:88
-msgid "(separate the URLs with comma)"
-msgstr "(separă URL-urile cu virgule)"
+#: inc/setup-redirect.php:85
+msgid "Separate the URLs with comma if there are more."
+msgstr "Dacă sunt mai multe, separă URL-urile cu virgule."
 
-#: inc/setup-rules.php:18
+#: inc/setup-rules.php:17
 msgid "Login Restriction Rules"
 msgstr "Reguli pentru restricționarea autentificărilor"
 
-#: inc/setup-rules.php:60
+#: inc/setup-rules.php:18
 msgid ""
 "The login filter can be configured to work in a different way, depending on "
 "what type of rules to be assessed and in which order."
@@ -422,39 +437,39 @@ msgstr ""
 "Filtrul de autentificare poate fi configurat să funcționeze într-un mod "
 "diferit, în funcție de ce tip de reguli sunt evaluate și în ce ordine."
 
-#: inc/setup-rules.php:65
+#: inc/setup-rules.php:67
 msgid "Filter XML-RPC Authenticated Methods"
 msgstr "Filtrează metodele XML-RPC autentificate"
+
+#: inc/setup-rules.php:68
+msgid ""
+"The option controls whether XML-RPC methods requiring authentication (such "
+"as for publishing purposes) are enabled and do not interfere with pingbacks "
+"or other custom endpoints that don't require authentication."
+msgstr ""
+"Opțiunea de mai sus controlează dacă metodele XML-RPC care necesită "
+"autentificare (cum ar fi în scopuri de publicare) sunt activate și nu "
+"interferează cu pingback-urile sau alte puncte-finale personalizate care nu "
+"necesită autentificare."
 
 #: inc/setup-rules.php:73
 msgid "Default"
 msgstr "Implicit"
 
-#: inc/setup-rules.php:82
+#: inc/setup-rules.php:79
 msgid "Disable all"
 msgstr "Dezactivează tot"
 
-#: inc/setup-rules.php:91
+#: inc/setup-rules.php:85
 msgid "Disable only when matching a restriction rule"
 msgstr "Dezactivează numai când se potrivește cu o regulă de restricție"
 
-#: inc/setup-rules.php:97
-msgid ""
-"The option above controls whether XML-RPC methods requiring authentication "
-"(such as for publishing purposes) are enabled and do not interfere with "
-"pingbacks or other custom endpoints that don't require authentication."
-msgstr ""
-"Opțiunea de mai sus controlează dacă metodele XML-RPC care necesită "
-"autentificare (ca cele cu scop de publicare) sunt activate și nu "
-"interferează cu pingback-urile sau alte puncte-finale personalizate care nu "
-"necesită autentificare."
-
-#: inc/setup-teaser.php:14
+#: inc/setup-teaser.php:17
 msgid "You are using the free version."
 msgstr "Acum folosești versiunea gratuită."
 
 #. Translators: %1$s - extensions URL.
-#: inc/setup-teaser.php:19
+#: inc/setup-teaser.php:22
 msgid ""
 "Click the button to see more and get the <a class=\"pro-item button button-"
 "primary\" href=\"%1$s\" target=\"_blank\">version</a> of the plugin!"
@@ -463,11 +478,11 @@ msgstr ""
 "class=\"pro-item button button-primary\" href=\"%1$s\" "
 "target=\"_blank\">versiunea <b>PRO</b></a> a acestui modul!"
 
-#: inc/setup-teaser.php:25
+#: inc/setup-teaser.php:28
 msgid "You are using the PRO version."
 msgstr "Acum folosești versiunea PRO."
 
-#: inc/setup-teaser.php:27
+#: inc/setup-teaser.php:30
 msgid ""
 "It seems that you either did not input yet your license key, or that is not "
 "valid or has expired already."
@@ -476,7 +491,7 @@ msgstr ""
 "expirat."
 
 #. Translators: %1$s - extensions URL.
-#: inc/setup-teaser.php:31
+#: inc/setup-teaser.php:36
 msgid ""
 "Click the button to get a valid license key for the <a class=\"pro-item "
 "button button-primary\" href=\"%1$s\" target=\"_blank\">version</a> of the "
@@ -486,7 +501,7 @@ msgstr ""
 "class=\"pro-item button button-primary\" href=\"%1$s\" "
 "target=\"_blank\">versiunea</a> acestui modul!"
 
-#: inc/setup-teaser.php:42
+#: inc/setup-teaser.php:50
 msgid ""
 "This plugin allows you to restrict the login on your website, based on the "
 "custom rules you apply. This helps with tightening your website security and "
@@ -498,47 +513,47 @@ msgstr ""
 "securitatea pe site și, prin interzicerea accesului, luptă împotriva "
 "atacurilor clasice ale boțiilor care provin din alte țări."
 
-#: inc/setup-teaser.php:48
+#: inc/setup-teaser.php:56
 msgid "The PRO version includes additional useful features"
 msgstr "Versiunea PRO include funcționalități suplimentare utile"
 
-#: inc/setup-teaser.php:50
+#: inc/setup-teaser.php:58
 msgid "Additional Rule Types"
 msgstr "Tipuri de reguli adiționale"
 
-#: inc/setup-teaser.php:51
+#: inc/setup-teaser.php:59
 msgid "Redirect Restricted Login"
 msgstr "Redirecționează autentificările restricționate"
 
-#: inc/setup-teaser.php:52 pro-settings.php:192
+#: inc/setup-teaser.php:60 pro-settings.php:174
 msgid "Lockout duration"
 msgstr "Durata blocării"
 
-#: inc/setup-teaser.php:53 pro-settings.php:270 pro-settings.php:585
+#: inc/setup-teaser.php:61 pro-settings.php:236 pro-settings.php:533
 msgid "Individual lockout"
 msgstr "Blocare individuală"
 
-#: inc/setup-teaser.php:54 pro-settings.php:207
+#: inc/setup-teaser.php:62 pro-settings.php:185
 msgid "WooCommerce Integration"
 msgstr "Integrare cu WooCommerce"
 
-#: inc/setup-teaser.php:55
+#: inc/setup-teaser.php:63
 msgid "Bypass the IP and country restriction for the specified roles"
 msgstr "Ocolește restricția de IP și țară pentru rolurile specificate"
 
-#: inc/setup-teaser.php:56
+#: inc/setup-teaser.php:64
 msgid "Single IP Login Per User"
 msgstr "Autentificare unică pe IP pentru utilizator"
 
-#: inc/setup-teaser.php:57
+#: inc/setup-teaser.php:65
 msgid "Simulate IP and Country"
 msgstr "Simulare IP și țară"
 
-#: inc/setup-teaser.php:58
+#: inc/setup-teaser.php:66
 msgid "Temporarily disable all settings"
 msgstr "Dezactivează temporar toate setările"
 
-#: login-restrict-country.php:442 pro-settings.php:783
+#: login-restrict-country.php:440 pro-settings.php:729
 msgid ""
 "For some reason the authentication for your account is restricted. Please "
 "contact the administrator."
@@ -546,38 +561,48 @@ msgstr ""
 "Din anumite motive, autentificarea în contul tău este restricționată. Te rog "
 "să contactezi administratorul."
 
-#: login-restrict-country.php:625
+#: login-restrict-country.php:621
 msgid "The settings were reset to default."
 msgstr "Setările au fost resetate la valorile implicite."
 
-#: login-restrict-country.php:637
+#: login-restrict-country.php:633
 msgid "The settings were not imported."
 msgstr "Setările nu au fost importate."
 
-#: login-restrict-country.php:657
+#: login-restrict-country.php:653
 msgid "The settings were imported."
 msgstr "Setările au fost importate."
 
-#: login-restrict-country.php:691 login-restrict-country.php:1102
+#: login-restrict-country.php:687 login-restrict-country.php:1091
 msgid "Action not allowed."
 msgstr "Acțiunea nu este permisă."
 
-#: login-restrict-country.php:691
+#: login-restrict-country.php:687
 msgid "Security Breach"
 msgstr "Breșă de securitate"
 
-#: login-restrict-country.php:722 login-restrict-country.php:783
-#: login-restrict-country.php:818 login-restrict-country.php:842
+#: login-restrict-country.php:718 login-restrict-country.php:779
+#: login-restrict-country.php:814 login-restrict-country.php:838
 msgid "The settings were updated."
 msgstr "Setările au fost actualizate."
 
 #. Translators: %1$s - list of IPs.
-#: login-restrict-country.php:971
+#: login-restrict-country.php:969
 msgid "You currently enabled a simulation with IP %1$s and country code %2$s."
 msgstr "Momentan ai activat o simulare cu IP-ul %1$s și codul țării %2$s."
 
+#. Translators: %1$s - list of IPs.
+#: login-restrict-country.php:976
+msgid "You currently enabled a simulation with IP %1$s."
+msgstr "Momentan ai activat o simulare cu IP-ul %1$s."
+
+#. Translators: %1$s - list of IPs.
+#: login-restrict-country.php:982
+msgid "You currently enabled a simulation with country code %2$s."
+msgstr "Momentan ai activat o simulare cu codul țării %2$s."
+
 #. Translators: %s - allowed or blocked.
-#: login-restrict-country.php:981
+#: login-restrict-country.php:990
 msgid ""
 "According to the current combination of IPs + country codes + rule type that "
 "is applied, the login is %s."
@@ -585,23 +610,23 @@ msgstr ""
 "Conform combinației curente de IP-uri + coduri de țări + tip de regulă care "
 "s-a aplicat, autentificarea este %s."
 
-#: login-restrict-country.php:982 login-restrict-country.php:1620
-#: login-restrict-country.php:1629 login-restrict-country.php:1672
-#: login-restrict-country.php:1678 pro-settings.php:934 pro-settings.php:940
-#: pro-settings.php:956 pro-settings.php:962 pro-settings.php:995
-#: pro-settings.php:1016 pro-settings.php:1022
+#: login-restrict-country.php:991 login-restrict-country.php:1623
+#: login-restrict-country.php:1632 login-restrict-country.php:1675
+#: login-restrict-country.php:1681 pro-settings.php:902 pro-settings.php:908
+#: pro-settings.php:924 pro-settings.php:930 pro-settings.php:963
+#: pro-settings.php:984 pro-settings.php:990
 msgid "allowed"
 msgstr "permisă"
 
-#: login-restrict-country.php:982 login-restrict-country.php:1638
-#: login-restrict-country.php:1647 login-restrict-country.php:1656
-#: login-restrict-country.php:1662 pro-settings.php:946 pro-settings.php:968
-#: pro-settings.php:974 pro-settings.php:983 pro-settings.php:989
-#: pro-settings.php:1004 pro-settings.php:1010
+#: login-restrict-country.php:991 login-restrict-country.php:1641
+#: login-restrict-country.php:1650 login-restrict-country.php:1659
+#: login-restrict-country.php:1665 pro-settings.php:914 pro-settings.php:936
+#: pro-settings.php:942 pro-settings.php:951 pro-settings.php:957
+#: pro-settings.php:972 pro-settings.php:978
 msgid "blocked"
 msgstr "blocată"
 
-#: login-restrict-country.php:1003
+#: login-restrict-country.php:1018
 msgid ""
 "The restriction will apply to your user as well! Please make sure you change "
 "the restriction to allow your own access."
@@ -609,13 +634,13 @@ msgstr ""
 "Restricția se va aplica și pentru tine, ca utilizator! Te rog să te asiguri "
 "că modifici restricția ca să ai acces."
 
-#: login-restrict-country.php:1010
+#: login-restrict-country.php:1025
 msgid "Based on the current setup all settings are temporarily disabled."
 msgstr ""
 "În funcție de inițializarea curentă, sunt dezactivate temporar toate "
 "setările."
 
-#: login-restrict-country.php:1018
+#: login-restrict-country.php:1033
 msgid ""
 "There is no IP specified or you have * in the IPs list, meaning there is no "
 "IP filter to apply."
@@ -623,82 +648,73 @@ msgstr ""
 "Nu ai specificat niciun IP sau ai * în lista cu IP-uri, asta înseamnă că nu "
 "se aplică niciun filtru pentru IP."
 
-#: login-restrict-country.php:1022
+#: login-restrict-country.php:1037
 msgid "There is no country filter to apply."
 msgstr "Niciun filtru de aplicat pentru țară."
 
-#. Translators: %1$s - IP, %2$s - country code.
-#: login-restrict-country.php:1041
-msgid ""
-"SERVER_ADDR %1$s / REMOTE_ADDR %2$s / HTTP_CF_IPCOUNTRY %3$s / "
-"HTTP_CF_CONNECTING_IP %4$s / HTTP_CLIENT_IP %5$s%6$s"
-msgstr ""
-"SERVER_ADDR %1$s / REMOTE_ADDR %2$s / HTTP_CF_IPCOUNTRY %3$s / "
-"HTTP_CF_CONNECTING_IP %4$s / HTTP_CLIENT_IP %5$s%6$s"
-
-#: login-restrict-country.php:1294 login-restrict-country.php:1298
+#: login-restrict-country.php:1301 login-restrict-country.php:1305
 msgid "undefined"
 msgstr "nedefinit"
 
-#: login-restrict-country.php:1388
+#: login-restrict-country.php:1393
 msgid "Forbidden!"
 msgstr "Interzis!"
 
-#: login-restrict-country.php:1609
+#: login-restrict-country.php:1612
 msgid "Based on the current options there is no login restriction."
 msgstr ""
 "Pe baza opțiunilor curente, nu există nicio restricție la autentificare."
 
-#: login-restrict-country.php:1617 login-restrict-country.php:1626
-#: login-restrict-country.php:1635 login-restrict-country.php:1644
-#: login-restrict-country.php:1653 login-restrict-country.php:1669
-#: pro-settings.php:931 pro-settings.php:953 pro-settings.php:980
-#: pro-settings.php:1001
+#: login-restrict-country.php:1620 login-restrict-country.php:1629
+#: login-restrict-country.php:1638 login-restrict-country.php:1647
+#: login-restrict-country.php:1656 login-restrict-country.php:1672
+#: pro-settings.php:899 pro-settings.php:921 pro-settings.php:948
+#: pro-settings.php:969
 msgid "Based on the current options there is a login restriction, this is:"
 msgstr ""
 "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
 "este:"
 
 #. Translators: %1$s - allowed or blocked, %1$s - list of elements.
-#: login-restrict-country.php:1619 login-restrict-country.php:1637
-#: login-restrict-country.php:1655 login-restrict-country.php:1671
-#: pro-settings.php:933 pro-settings.php:945 pro-settings.php:955
-#: pro-settings.php:967 pro-settings.php:982 pro-settings.php:994
-#: pro-settings.php:1003 pro-settings.php:1015
+#: login-restrict-country.php:1622 login-restrict-country.php:1640
+#: login-restrict-country.php:1658 login-restrict-country.php:1674
+#: pro-settings.php:901 pro-settings.php:913 pro-settings.php:923
+#: pro-settings.php:935 pro-settings.php:950 pro-settings.php:962
+#: pro-settings.php:971 pro-settings.php:983
 msgid "%1$s for the %2$s IPs"
 msgstr "%1$s pentru IP-urile %2$s"
 
-#: login-restrict-country.php:1621 login-restrict-country.php:1630
-#: login-restrict-country.php:1639 login-restrict-country.php:1648
-#: login-restrict-country.php:1657 login-restrict-country.php:1663
-#: login-restrict-country.php:1673 login-restrict-country.php:1679
-#: pro-settings.php:917 pro-settings.php:922
+#: login-restrict-country.php:1624 login-restrict-country.php:1633
+#: login-restrict-country.php:1642 login-restrict-country.php:1651
+#: login-restrict-country.php:1660 login-restrict-country.php:1666
+#: login-restrict-country.php:1676 login-restrict-country.php:1682
+#: pro-settings.php:885 pro-settings.php:890
 msgid "any"
 msgstr "oricare"
 
 #. Translators: %1$s - allowed or blocked, %1$s - list of elements.
-#: login-restrict-country.php:1628 login-restrict-country.php:1646
-#: login-restrict-country.php:1661 login-restrict-country.php:1677
-#: pro-settings.php:939 pro-settings.php:961 pro-settings.php:973
-#: pro-settings.php:988 pro-settings.php:1009 pro-settings.php:1021
+#: login-restrict-country.php:1631 login-restrict-country.php:1649
+#: login-restrict-country.php:1664 login-restrict-country.php:1680
+#: pro-settings.php:907 pro-settings.php:929 pro-settings.php:941
+#: pro-settings.php:956 pro-settings.php:977 pro-settings.php:989
 msgid "%1$s from the %2$s countries"
 msgstr "%1$s din țările %2$s"
 
-#: login-restrict-country.php:1770
+#: login-restrict-country.php:1773
 msgid "Settings"
 msgstr "Setări"
 
-#: login-restrict-country.php:1771
+#: login-restrict-country.php:1774
 msgid "Plugin URL"
 msgstr "URL modul"
 
-#: login-restrict-country.php:1809 login-restrict-country.php:1841
-#: login-restrict-country.php:1905
+#: login-restrict-country.php:1812 login-restrict-country.php:1844
+#: login-restrict-country.php:1908
 msgid "A huge thanks in advance!"
 msgstr "Multe mulțumiri în avans!"
 
 #. Translators: %s - donate URL.
-#: login-restrict-country.php:1814
+#: login-restrict-country.php:1817
 msgid ""
 "If you find the plugin useful and would like to support my work, please "
 "consider making a <a href=\"%s\" target=\"_blank\">donation</a>."
@@ -707,17 +723,17 @@ msgstr ""
 "bucura dacă ai face o <a href=\"%s\" target=\"_blank\">donație</a>."
 
 #. Translators: %s - rating.
-#: login-restrict-country.php:1818 login-restrict-country.php:1910
+#: login-restrict-country.php:1821 login-restrict-country.php:1913
 msgid "It would make me very happy if you would leave a %s rating."
 msgstr "M-aș bucura foarte mult dacă lași o evaluare de %s."
 
 #. Translators: %1$s - plugin name.
-#: login-restrict-country.php:1838
+#: login-restrict-country.php:1841
 msgid "%1$s plugin was activated!"
 msgstr "Modulul %1$s a fost activat!"
 
 #. Translators: %1$s - extensions URL.
-#: login-restrict-country.php:1846
+#: login-restrict-country.php:1849
 msgid ""
 "You are using the free version. Get the <a href=\"%1$s\" "
 "target=\"_blank\"><b>PRO</b> version</a>."
@@ -726,7 +742,7 @@ msgstr ""
 "target=\"_blank\">versiunea <b>PRO</b></a>."
 
 #. Translators: %1$s - pro version label, %2$s - PRO URL.
-#: login-restrict-country.php:1852
+#: login-restrict-country.php:1855
 msgid ""
 "Thank you for purchasing the <a href=\"%1$s\" target=\"_blank\"><b>PRO</b> "
 "version</a>!"
@@ -735,7 +751,7 @@ msgstr ""
 "<b>PRO</b></a>!"
 
 #. Translators: %1$s - plugins URL, %2$s - heart icon, %3$s - extensions URL, %4$s - star icon, %5$s - maybe PRO details.
-#: login-restrict-country.php:1859
+#: login-restrict-country.php:1862
 msgid ""
 "%5$sCheck out my other <a href=\"%1$s\" target=\"_blank\" "
 "rel=\"noreferrer\">%2$s free plugins</a> on WordPress.org and the <a "
@@ -747,31 +763,15 @@ msgstr ""
 "href=\"%3$s\" target=\"_blank\" rel=\"noreferrer\">%4$s extensiile premium</"
 "a> disponibile!"
 
-#: login-restrict-country.php:1880
+#: login-restrict-country.php:1883
 msgid "Dismiss this notice."
 msgstr "Respinge această notificare."
 
-#: pro-settings.php:152
+#: pro-settings.php:145
 msgid "Redirect restricted login"
 msgstr "Redirecționare autentificare restricționată"
 
-#: pro-settings.php:162
-msgid "Header 404"
-msgstr "Header 404"
-
-#: pro-settings.php:163
-msgid "Redirect the visitor to the site's \"Not Found\" page."
-msgstr "Redirecționează vizitatorul la pagina \"Nu s-a găsit\"."
-
-#: pro-settings.php:175
-msgid "Header 403"
-msgstr "Header 403"
-
-#: pro-settings.php:176
-msgid "Show \"Forbiden Access\" and the custom message."
-msgstr "Arată \"Access Interzis\" și mesajul personalizat."
-
-#: pro-settings.php:182
+#: pro-settings.php:146
 msgid ""
 "When a user attempts to authenticate and the account is restricted by any of "
 "the rules, then the user will see a the forbid message."
@@ -780,19 +780,27 @@ msgstr ""
 "pe baza oricăreia dintre reguli, atunci utilizatorul va vedea un mesaj de "
 "interzis."
 
-#: pro-settings.php:186
+#: pro-settings.php:151
+msgid "Header 404"
+msgstr "Header 404"
+
+#: pro-settings.php:152
+msgid "Redirect the visitor to the site's \"Not Found\" page."
+msgstr "Redirecționează vizitatorul la pagina \"Nu s-a găsit\"."
+
+#: pro-settings.php:160
+msgid "Header 403"
+msgstr "Header 403"
+
+#: pro-settings.php:161
+msgid "Show \"Forbiden Access\" and the custom message."
+msgstr "Arată \"Access Interzis\" și mesajul personalizat."
+
+#: pro-settings.php:168
 msgid "Restricted login message"
 msgstr "Mesaj autentificare restricționată"
 
-#: pro-settings.php:195
-msgid "Lokout for"
-msgstr "Blocare pentru"
-
-#: pro-settings.php:200
-msgid "minutes"
-msgstr "minute"
-
-#: pro-settings.php:203
+#: pro-settings.php:175
 msgid ""
 "When a user attempts to authenticate and the restriction kicks in, the user "
 "will not be able to login in the next hour (the default duration is 60 "
@@ -803,11 +811,15 @@ msgstr ""
 "următoarea oră (durata implicită este 60 de minute), dar poți modifica "
 "durata."
 
-#: pro-settings.php:214
-msgid "Allow customers countries."
-msgstr "Permite țările clienților."
+#: pro-settings.php:177
+msgid "Lokout for"
+msgstr "Blocare pentru"
 
-#: pro-settings.php:217
+#: pro-settings.php:179
+msgid "minutes"
+msgstr "minute"
+
+#: pro-settings.php:186
 msgid ""
 "With this setting, you can instruct Login IP & Country Restriction plugin to "
 "auto-adapt to WooCommerce new customers, so that their country to "
@@ -819,11 +831,15 @@ msgstr ""
 "adăugată automat în lista de țări permise, ca să aibă imediat acces la "
 "autentificare."
 
-#: pro-settings.php:221
+#: pro-settings.php:189
+msgid "Allow customers countries."
+msgstr "Permite țările clienților."
+
+#: pro-settings.php:195
 msgid "Roles Without Restriction"
 msgstr "Roluri fără restricții"
 
-#: pro-settings.php:234
+#: pro-settings.php:196
 msgid ""
 "You can select the user roles that will bypass the login restriction that "
 "you put in place (based on the country or IP)."
@@ -831,7 +847,7 @@ msgstr ""
 "Poți selecta rolurile de utilizatori pentru care se ocolește restricția de "
 "autentificare pe care ai făcut-o (bazată pe țară și IP)."
 
-#: pro-settings.php:235
+#: pro-settings.php:196
 msgid ""
 "This is useful for shops, where your customers order then authenticate from "
 "various countries that might not match the restrictions by IP or country, "
@@ -842,11 +858,11 @@ msgstr ""
 "restricțiile după IP sau țară, dar ai vrea să le acorzi access la conturile "
 "lor."
 
-#: pro-settings.php:239 pro-settings.php:608
+#: pro-settings.php:209 pro-settings.php:553
 msgid "Single IP login per user"
 msgstr "Autentificare cu IP unic per utilizator"
 
-#: pro-settings.php:252
+#: pro-settings.php:210
 msgid ""
 "If this option is enabled, the users will be allowed only from the first IP "
 "they had when they first login. Don't worry, you can revert this option at "
@@ -856,7 +872,7 @@ msgstr ""
 "autentifice doar de la primul IP de la care s-au autentificat prima data. Nu "
 "te îngrijora, poți reveni oricând la setarea inițială."
 
-#: pro-settings.php:261
+#: pro-settings.php:225
 msgid ""
 "Reset the IPs for all the users that logged in previously, to allow them to "
 "login from other IPs going further."
@@ -864,11 +880,7 @@ msgstr ""
 "Resetează IP-urilor pentru toți utilizatorii care s-au autentificat deja, "
 "pentru a le permite autentificarea de la alte IP-uri mai departe."
 
-#: pro-settings.php:277
-msgid "Yes, allow for individual lockout."
-msgstr "Da, permite blocarea individuală a accesului."
-
-#: pro-settings.php:280
+#: pro-settings.php:237
 msgid ""
 "If for various reasons, you need to temporarily disable the login for a "
 "specific user, you can enable this option, then edit the user account to "
@@ -879,31 +891,31 @@ msgstr ""
 "contul de utilizator blocându-i accesul. Nu te îngrijora, poți reveni "
 "oricând la setarea inițială."
 
-#: pro-settings.php:284
+#: pro-settings.php:240
+msgid "Yes, allow for individual lockout."
+msgstr "Da, permite blocarea individuală a accesului."
+
+#: pro-settings.php:244
 msgid "See the list of users with login restriction"
 msgstr "Vezi lista de utilizatori cu restricție la autentificare"
 
-#: pro-settings.php:290
+#: pro-settings.php:251
 msgid "Simulate Restriction"
-msgstr "Simulare restricție"
+msgstr "Simulează restricție"
 
-#: pro-settings.php:293
+#: pro-settings.php:255
 msgid "Simulate IP"
-msgstr "Simulare IP"
+msgstr "Simulează IP"
 
-#: pro-settings.php:298
-msgid "country"
-msgstr "țară"
+#: pro-settings.php:259
+msgid "Simulate country"
+msgstr "Simulează țara"
 
-#: pro-settings.php:310
+#: pro-settings.php:267
 msgid "Temporarily Disable"
 msgstr "Dezactivare temporară"
 
-#: pro-settings.php:317
-msgid "Yes, disable this temporarily."
-msgstr "Da, dezactivează temporar."
-
-#: pro-settings.php:320
+#: pro-settings.php:268
 msgid ""
 "If for various reasons, you need to temporarily disable all restrictions and "
 "any other settings of this plugin, you can use this option, without losing "
@@ -913,7 +925,11 @@ msgstr ""
 "și toate celelalte setări ale acestui modul, poți folosi această opțiune "
 "fără a pierde setările curente."
 
-#: pro-settings.php:342
+#: pro-settings.php:271
+msgid "Yes, disable this temporarily."
+msgstr "Da, dezactivează temporar."
+
+#: pro-settings.php:293
 msgid ""
 "Simulate the IP or country code you input by accessing the site with the "
 "following token."
@@ -921,7 +937,7 @@ msgstr ""
 "Simulează IP-ul sau codul țării introduse, prin accesarea sitului cu token-"
 "ul următor."
 
-#: pro-settings.php:376
+#: pro-settings.php:326
 msgid ""
 "Your license key is not valid. Please validate the license key and review "
 "one more time the pro settings, these might have been reset to defaults."
@@ -929,32 +945,32 @@ msgstr ""
 "Cheia ta de licență nu este validă. Te rog să validezi cheia de licență și "
 "să verifici încă o dată setările pro, este posibil ca acestea să se reseteze."
 
-#: pro-settings.php:592
+#: pro-settings.php:537
 msgid "Disable login for this account"
 msgstr "Dezactivează autentificarea pentru acest cont"
 
-#: pro-settings.php:617
+#: pro-settings.php:562
 msgid "This is enabled from settings from this user's role"
 msgstr "Opțiunea este activată din setări pentru rolul acestui utilizator"
 
-#: pro-settings.php:626
+#: pro-settings.php:571
 msgid "Bypass the single IP login for this user"
 msgstr "Ocolește IP-ul unic la login pentru acest utilizator"
 
-#: pro-settings.php:637
+#: pro-settings.php:582
 msgid "Reset the IP for this user"
 msgstr "Resetează IP-ului pentru acest utilizator"
 
-#: pro-settings.php:754
+#: pro-settings.php:700
 msgid "and"
 msgstr "și"
 
-#: pro-settings.php:755
+#: pro-settings.php:701
 msgid "country code"
 msgstr "cod țară"
 
 #. Translators: %1$s - simulation, %2$s - details.
-#: pro-settings.php:765
+#: pro-settings.php:711
 msgid ""
 "You are accessing the login feature with a %1$s. The simulation for %2$s is "
 "checked against the rest of the rules you setup."
@@ -962,154 +978,75 @@ msgstr ""
 "Accesezi funcționalitatea de autentificare cu o %1$s. Simularea pentru %2$s "
 "se trece prin restul regulilor pe care le-ai setat."
 
-#: pro-settings.php:766
+#: pro-settings.php:712
 msgid "restriction simulation"
 msgstr "simulare de restricție"
 
-#: pro-settings.php:794
+#: pro-settings.php:734
 msgid "Forbidden"
 msgstr "Interzis"
 
-#: pro-settings.php:839
-msgid "Login is disabled"
-msgstr "Autentificare dezactivată"
-
-#: pro-settings.php:841
+#: pro-settings.php:799
 msgid "Login is allowed"
 msgstr "Autentificare permisă"
 
-#: pro-settings.php:856
-msgid "not restricted to this IP"
-msgstr "fără restricționare la acest IP"
+#: pro-settings.php:803
+msgid "Login is unrestricted"
+msgstr "Autentificarea este nerestricționată"
 
-#: pro-settings.php:862
+#: pro-settings.php:811
+msgid "Login is not restricted to IP"
+msgstr "Autentificarea nu este restricționată pe IP"
+
+#: pro-settings.php:815
+msgid "Login is restricted to IP"
+msgstr "Autentificarea este restricționată pe IP"
+
+#: pro-settings.php:824
+msgid "Login is disabled"
+msgstr "Autentificarea este dezactivată"
+
+#: pro-settings.php:831
 msgid "Last login"
 msgstr "Ultima autentificare"
 
-#: pro-settings.php:899
+#: pro-settings.php:868
 msgid "Any rule"
 msgstr "Orice regulă"
 
-#: pro-settings.php:900
+#: pro-settings.php:869
 msgid "With login restriction"
 msgstr "Cu restricție de autentificare"
 
-#: pro-settings.php:901
+#: pro-settings.php:870
 msgid "Without login restriction"
 msgstr "Fără restricție de autentificare"
 
-#: pro-settings.php:919 pro-settings.php:924
+#: pro-settings.php:887 pro-settings.php:892
 msgid "none"
 msgstr "nimic"
 
-#: pro-settings.php:1170
+#: pro-settings.php:1142
 msgid "License Key"
 msgstr "Cheie de licentă"
 
-#: pro-settings.php:1182
+#: pro-settings.php:1151
 msgid "Validate"
 msgstr "Validează"
 
-#: pro-settings.php:1184
+#: pro-settings.php:1152
+msgid "Deactivate"
+msgstr "Deactivează"
+
+#: pro-settings.php:1154
 msgid "Activate"
 msgstr "Activează"
 
-#: pro-settings.php:1189
+#: pro-settings.php:1157
 msgid "Reset"
 msgstr "Resetează"
 
 #. Translators: %s - expire date.
-#: pro-settings.php:1199
+#: pro-settings.php:1166
 msgid "The license key expiration date is %s."
 msgstr "Data de expirare pentru cheia de licență este %s."
-
-#~ msgid "Import settings"
-#~ msgstr "Importă setările"
-
-#~ msgid "Please note that this will override all the existing settings."
-#~ msgstr "Te rog să notezi că aceasta va suprascrie toate setările existente."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "allowed only for these IPs: %1$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este permisă pentru IP-urile: %1$s."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "allowed only from these countries: %1$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este permisă din aceste țări: %1$s."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "blocked for these IPs: %1$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este blocată de la IP-urile: %1$s."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "blocked from these countries: %1$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este blocată din aceste țări: %1$s."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "blocked for these IPs: %1$s and from these countries: %2$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este blocată de la aceste IP-uri: %1$s și din aceste țări: %2$s."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "allowed from these IPs: %1$s and from these countries: %2$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este permisă de la aceste IP-uri: %1$s și din aceste țări: %2$s."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "allowed for these IPs: %1$s and from these countries: %2$s, but blocked "
-#~ "for these IPs: %3$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este permisă de la IP-urile: %1$s și din aceste țări: %2$s, dar blocată "
-#~ "de la aceste IP-uri: %3$s."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "allowed for these IPs: %1$s and from these countries: %2$s, but blocked "
-#~ "for these IPs: %3$s and from these countries: %4$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este permisă de la IP-urile: %1$s și din aceste țări: %2$s, dar blocată "
-#~ "de la IP-urile: %3$s și din țările: %4$s."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "blocked for these IPs: %1$s and from these countries: %2$s, but allowed "
-#~ "for these IPs: %3$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este blocată de la IP-urile: %1$s și din aceste țări: %2$s, dar permisă "
-#~ "de la aceste IP-uri: %3$s."
-
-#~ msgid ""
-#~ "Based on the current options there is a login restriction, this is "
-#~ "blocked for these IPs: %1$s and from these countries: %2$s, but allowed "
-#~ "for these IPs: %3$s and from these countries: %4$s."
-#~ msgstr ""
-#~ "Pe baza opțiunilor curente există o restricție de autentificare, aceasta "
-#~ "este blocată de la IP-urile: %1$s și din aceste țări: %2$s, dar permisă "
-#~ "de la aceste IP-uri: %3$s și din aceste țări: %4$s."
-
-#~ msgid ""
-#~ "The login is blocked, based on assessing the current combination of IPs + "
-#~ "country codes + rule type."
-#~ msgstr ""
-#~ "Pe baza analizării combinației curente de IP-uri + coduri țări + tip "
-#~ "regulă, autentificarea este blocată."

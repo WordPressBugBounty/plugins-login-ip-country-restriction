@@ -60,6 +60,30 @@ $rules = [
 		'title'  => __( 'Block login only for blocked countries or blocked IPs, but not for allowed IPs or allowed countries', 'slicr' ),
 	],
 ];
+
+$url = admin_url( 'options-general.php?page=login-ip-country-restriction-settings' );
+
+$menu_items = apply_filters( 'sislrc_display_pro_tabs', [
+	0 => [
+		'title' => __( 'Rule Type', 'slicr' ),
+	],
+	1 => [
+		'title' => __( 'IP Restriction', 'slicr' ),
+	],
+	2 => [
+		'title' => __( 'Country Restriction', 'slicr' ),
+	],
+	3 => [
+		'title' => __( 'Redirects', 'slicr' ),
+	],
+	4 => [
+		'title' => __( 'Other Settings', 'slicr' ),
+		'class' => 'button inactive pro-item',
+	],
+	5 => [
+		'title' => __( 'Debug', 'slicr' ),
+	],
+] );
 ?>
 
 <div class="wrap licr-feature" id="start" name="start">
@@ -68,55 +92,37 @@ $rules = [
 		<?php esc_html_e( 'Login IP & Country Restriction Settings', 'slicr' ); ?>
 	</h1>
 
-	<div class="intro-next outside">
+	<div>
 		<?php self::current_restriction_notice_card(); ?>
 	</div>
 
-	<div class="intro-next outside menu-wrap">
-	<?php $url = admin_url( 'options-general.php?page=login-ip-country-restriction-settings' ); ?>
-		<details>
-		<summary class="tabs-wrap">
-			<a href="<?php echo esc_url( $url ); ?>"
-				class="button<?php echo esc_attr( 0 === $tab ? ' button-primary on' : '' ); ?>">
-				<div class="dashicons dashicons-admin-tools"></div>
-				<?php esc_html_e( 'Rule Type', 'slicr' ); ?>
-			</a>
-			<a href="<?php echo esc_url( $url . '&tab=1' ); ?>"
-				class="button<?php echo esc_attr( 1 === $tab ? ' button-primary on' : '' ); ?>">
-				<div class="dashicons dashicons-shield"></div>
-				<?php esc_html_e( 'IP Restriction', 'slicr' ); ?>
-			</a>
-			<a href="<?php echo esc_url( $url . '&tab=2' ); ?>"
-				class="button<?php echo esc_attr( 2 === $tab ? ' button-primary on' : '' ); ?>">
-				<div class="dashicons dashicons-shield-alt"></div>
-				<?php esc_html_e( 'Country Restriction', 'slicr' ); ?>
-			</a>
-			<a href="<?php echo esc_url( $url . '&tab=3' ); ?>"
-				class="button<?php echo esc_attr( 3 === $tab ? ' button-primary on' : '' ); ?>">
-				<span class="dashicons dashicons-randomize"></span>
-				<?php esc_html_e( 'Redirects', 'slicr' ); ?>
-			</a>
+	<?php
+	if ( ! empty( $menu_items ) ) {
+		?>
+		<nav class="licr-menu" id="licr-menu" aria-label="<?php esc_html_e( 'Login IP & Country Restriction Settings Menu', 'slicr' ); ?>">
 			<?php
-			if ( ! self::$is_pro ) {
+			$options = [];
+			foreach ( $menu_items as $idx => $item ) {
+				$href = $idx > 0 ? $url . '&tab=' . $idx : $url;
+				$cls  = ! empty( $item['class'] ) ? $item['class'] : 'button';
+				$cls .= $idx === $tab ? ' button-primary' : '';
+
+				$options[] = '<option value="' . esc_url( $href ) . '"' . ( $idx === $tab ? ' selected="selected"' : '' ) . '>' . esc_html( $item['title'] ) . '</option>';
 				?>
-				<a href="<?php echo esc_url( $url . '&tab=4' ); ?>" class="button pro-item disabled">
-					<span class="dashicons dashicons-admin-generic"></span>
-					<?php esc_html_e( 'Other Settings', 'slicr' ); ?>
+				<a href="<?php echo esc_url( $href ); ?>"
+					<?php echo esc_attr( $idx === $tab ? ' aria-current="page"' : '' ); ?>
+					class="<?php echo esc_attr( $cls ); ?>">
+					<?php echo esc_html( $item['title'] ); ?>
 				</a>
 				<?php
 			}
-			do_action( 'sislrc_display_pro_tabs' );
 			?>
-			<a href="<?php echo esc_url( $url . '&tab=5' ); ?>"
-				class="button<?php echo esc_attr( 5 === $tab ? ' button-primary on' : '' ); ?>">
-				<span class="dashicons dashicons-info"></span>
-				<?php esc_html_e( 'Debug', 'slicr' ); ?>
-			</a>
-		</summary>
-	</details>
-	</div>
+		</nav>
+		<?php
+	}
+	?>
 
-	<div class="tab-wrap-content">
+	<div class="tabpanel panel-<?php echo (int) $tab; ?>" role="tabpanel" aria-label="<?php esc_html_e( 'Settings form', 'slicr' ); ?>" aria-description="<?php esc_html_e( 'Settings form elements', 'slicr' ); ?>">
 		<form action="<?php echo esc_url( self::$plugin_url ); ?>" method="POST">
 			<?php wp_nonce_field( '_login_ip_country_restriction_settings_save', '_login_ip_country_restriction_settings_nonce' ); ?>
 			<input type="hidden" name="tab" id="tab" value="<?php echo (int) $tab; ?>">
@@ -156,7 +162,7 @@ $rules = [
 			}
 			?>
 		</form>
-	</div>
 
-	<?php self::show_donate_text(); ?>
+		<?php self::show_donate_text(); ?>
+	</div>
 </div>

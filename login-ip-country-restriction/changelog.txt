@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 6.6.4 =
+* Tested up to 6.7.2
+* Show the detection method in the debug details
+* Updated the country codes list
+* Translations updates
+
 = 6.6.3 =
 * Translations updates
 

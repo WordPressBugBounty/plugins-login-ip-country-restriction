@@ -5,7 +5,7 @@
  * Description: This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want.
  * Text Domain: slicr
  * Domain Path: /langs
- * Version:     6.6.4
+ * Version:     6.7.0
  * Author:      Iulia Cazan
  * Author URI:  https://profiles.wordpress.org/iulia-cazan
  * Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
@@ -31,7 +31,7 @@
 
 // Define the plugin version.
 define( 'SISANU_RCIL_DB_OPTION', 'sisanu_rcil' );
-define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.64 );
+define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.70 );
 define( 'SISANU_RCIL_SLUG', 'slicr' );
 define( 'SISANU_RCIL_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'SISANU_RCIL_URL', trailingslashit( plugins_url( '/', plugin_basename( __FILE__ ) ) ) );
@@ -208,8 +208,6 @@ class SISANU_Restrict_Country_IP_Login {
 			self::$is_pro = true;
 			include_once __DIR__ . '/pro-settings.php';
 		}
-
-		self::$is_pro = true;
 
 		if ( empty( self::$settings['temp_disable'] ) ) {
 			if ( self::$is_pro && function_exists( 'RCIL\Pro\maybe_simulate_restriction' ) ) {
@@ -583,7 +581,7 @@ class SISANU_Restrict_Country_IP_Login {
 		}
 
 		// Return the minified string.
-		$style = ':root { --slicr--color-main: ' . $main . '; --slicr--color-border: color-mix(in srgb, ' . $main . ' 30%, transparent); }';
+		$style = ':root { --slicr--color-main: ' . $main . '; --slicr--color-dim: color-mix(in srgb, ' . $main . ' 80%, transparent); --slicr--color-border: color-mix(in srgb, ' . $main . ' 30%, transparent); }';
 		$style = ! empty( $style ) ? trim( preg_replace( '/\s\s+/', ' ', $style ) ) : '';
 		return $style;
 	}
@@ -959,31 +957,50 @@ class SISANU_Restrict_Country_IP_Login {
 				$res2  = self::current_user_has_restriction( self::$settings['simulate_ip'], self::$settings['simulate_country'] );
 				$icon2 = true === $res2 ? '<span class="dashicons dashicons-warning"></span>' : '<span class="dashicons dashicons-yes-alt"></span>';
 				?>
-				<div class="card">
+				<div class="card simulation">
 					<?php echo wp_kses_post( $icon2 ); ?>
 					<ul>
 						<li>
 							<?php
-							echo wp_kses_post( sprintf(
-								// Translators: %1$s - list of IPs.
-								__( 'You currently enabled a simulation with IP %1$s and country code %2$s.', 'slicr' ),
-								'<b>' . self::$settings['simulate_ip'] . '</b> (' . self::get_user_country_name( self::$settings['simulate_ip'] ) . ')',
-								'<b>' . self::$settings['simulate_country'] . '</b>'
-							) );
+							if ( ! empty( self::$settings['simulate_ip'] )
+								&& ! empty( self::$settings['simulate_country'] ) ) {
+								echo wp_kses_post( sprintf(
+									// Translators: %1$s - list of IPs.
+									__( 'You currently enabled a simulation with IP %1$s and country code %2$s.', 'slicr' ),
+									'<b>' . self::$settings['simulate_ip'] . '</b> (<em>' . self::get_user_country_name( self::$settings['simulate_ip'] ) . '</em>)',
+									'<b>' . self::$settings['simulate_country'] . '</b>'
+								) );
+							} elseif ( ! empty( self::$settings['simulate_ip'] ) ) {
+								echo wp_kses_post( sprintf(
+									// Translators: %1$s - list of IPs.
+									__( 'You currently enabled a simulation with IP %1$s.', 'slicr' ),
+									'<b>' . self::$settings['simulate_ip'] . '</b> (<em>' . self::get_user_country_name( self::$settings['simulate_ip'] ) . '</em>)'
+								) );
+							} elseif ( ! empty( self::$settings['simulate_country'] ) ) {
+								echo wp_kses_post( sprintf(
+									// Translators: %1$s - list of IPs.
+									__( 'You currently enabled a simulation with country code %2$s.', 'slicr' ),
+									'<b>' . self::$settings['simulate_country'] . '</b>'
+								) );
+							}
 							?>
-						</li>
-						<li>
 							<?php
 							echo esc_html( sprintf(
 								// Translators: %s - allowed or blocked.
 								__( 'According to the current combination of IPs + country codes + rule type that is applied, the login is %s.', 'slicr' ),
 								false === $res2 ? __( 'allowed', 'slicr' ) : __( 'blocked', 'slicr' )
 							) );
-							if ( function_exists( 'RCIL\Pro\sislrc_pro_simulate_info' ) ) {
-								\RCIL\Pro\sislrc_pro_simulate_info( false );
-							}
 							?>
 						</li>
+						<?php
+						if ( function_exists( 'RCIL\Pro\sislrc_pro_simulate_info' ) ) {
+							?>
+							<li>
+								<?php \RCIL\Pro\sislrc_pro_simulate_info( false ); ?>
+							</li>
+							<?php
+						}
+						?>
 					</ul>
 				</div>
 				<?php
@@ -991,9 +1008,9 @@ class SISANU_Restrict_Country_IP_Login {
 		}
 
 		$res  = self::current_user_has_restriction( self::get_current_ip(), self::get_user_country_name() );
-		$icon = true === $res ? '<span class="dashicons dashicons-warning"></span>' : '<span class="dashicons dashicons-yes-alt"></span>';
+		$icon = true === $res ? '<span class="dashicons dashicons-warning" aria-hidden="true"></span>' : '<span class="dashicons dashicons-yes-alt" aria-hidden="true"></span>';
 		?>
-		<div class="card">
+		<div class="card state">
 			<?php echo wp_kses_post( $icon ); ?>
 			<ul>
 				<?php if ( true === $res ) : ?>
@@ -1013,11 +1030,11 @@ class SISANU_Restrict_Country_IP_Login {
 
 					if ( ! empty( self::$rules->wildcard->ip )
 						&& in_array( self::$rules->type, [ 0, 1, 2, 3, 4, 5, 6, 8 ], true ) ) {
-						echo ' <b>' . esc_html__( 'There is no IP specified or you have * in the IPs list, meaning there is no IP filter to apply.', 'slicr' ) . '</b>';
+						echo ' <b class="card-hint">' . esc_html__( 'There is no IP specified or you have * in the IPs list, meaning there is no IP filter to apply.', 'slicr' ) . '</b>';
 					}
 					if ( ! empty( self::$rules->wildcard->co )
 						&& in_array( self::$rules->type, [ 0, 1, 2, 3, 4, 5, 7, 9 ], true ) ) {
-						echo ' <b>' . esc_html__( 'There is no country filter to apply.', 'slicr' ) . '</b>';
+						echo ' <b class="card-hint">' . esc_html__( 'There is no country filter to apply.', 'slicr' ) . '</b>';
 					}
 					?>
 				</li>
@@ -1030,30 +1047,6 @@ class SISANU_Restrict_Country_IP_Login {
 						'<b>' . self::get_user_country_name() . '</b>'
 					) );
 					?>
-					<a id="sislrc-toggle-debug"><?php esc_html_e( 'Debug', 'slicr' ); ?></a><span id="sislrc-debug-ip" class="is-hidden">:
-						<?php
-						// phpcs:disable
-						$forward = ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) : '';
-						echo wp_kses_post( sprintf(
-							// Translators: %1$s - IP, %2$s - country code.
-							__( 'SERVER_ADDR %1$s / REMOTE_ADDR %2$s / HTTP_CF_IPCOUNTRY %3$s / HTTP_CF_CONNECTING_IP %4$s / HTTP_CLIENT_IP %5$s%6$s', 'slicr' ),
-							( ! empty( $_SERVER['SERVER_ADDR'] ) ) ? '<b>' . wp_unslash( $_SERVER['SERVER_ADDR'] ) . '</b>' : '',
-							( ! empty( $_SERVER['REMOTE_ADDR'] ) ) ? '<b>' . wp_unslash( $_SERVER['REMOTE_ADDR'] ) . '</b>' : '',
-							( ! empty( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ) ? '<b>' . wp_unslash( $_SERVER['HTTP_CF_IPCOUNTRY'] ) . '</b>' : '',
-							( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) ? '<b>' . wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) . '</b>' : '',
-							( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) ? '<b>' . wp_unslash( $_SERVER['HTTP_CLIENT_IP'] ) . '</b>' : '',
-							! empty( self::$settings['include_forward_ip'] )
-								? ' / HTTP_X_FORWARDED_FOR <b>' . $forward . '</b>' : ''
-						) );
-
-						echo wp_kses_post( ' / ' . sprintf(
-							// Translators: %1$s - detection method.
-							__( 'The available detection method is %1$s.', 'slicr' ),
-							self::detection_method()
-						) );
-						// phpcs:enable
-						?>
-					</span>
 				</li>
 			</ul>
 		</div>
@@ -1142,6 +1135,7 @@ class SISANU_Restrict_Country_IP_Login {
 		if ( ! self::$is_pro ) {
 			self::pro_teaser();
 		}
+
 		do_action( 'sislrc_display_pro_tabs_content' );
 	}
 
@@ -1270,7 +1264,7 @@ class SISANU_Restrict_Country_IP_Login {
 		$trans_id = 'rcil-geo-method';
 		$api      = get_transient( $trans_id );
 		if ( false === $api ) {
-			$user = '123.456.789';
+			$user = '12.34.56.78';
 			$code = '';
 			$api  = '';
 
