@@ -1,5 +1,15 @@
 == Changelog ==
 
+= 6.7.0 =
+* Tested up to 6.8
+* PHP 8+ compatibility
+* Moved the detection method and additional troubleshoo info in the Debug page
+* Styles updated with the aim for a minimalistic view
+* Accessibility enhancements
+* Assets optimization
+* Translations updates
+* Screenshots updates
+
 = 6.6.4 =
 * Tested up to 6.7.2
 * Show the detection method in the debug details

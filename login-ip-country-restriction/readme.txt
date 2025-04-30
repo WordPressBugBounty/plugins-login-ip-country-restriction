@@ -3,7 +3,7 @@ Contributors: Iulia Cazan
 Tags: country restriction, login restriction, block country, block IP, country firewall
 Requires at least: 5.1
 Tested up to: 6.8
-Stable tag: 6.7.0
+Stable tag: 6.7.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -44,14 +44,8 @@ None
 
 == Changelog ==
 
-= 6.7.0 =
-* Tested up to 6.8
+= 6.7.1 =
 * PHP 8+ compatibility
-* Moved the detection method and additional troubleshoo info in the Debug page
-* Styles updated with the aim for a minimalistic view
-* Accessibility enhancements
-* Assets optimization
-* Translations updates
-* Screenshots updates
+* Removed the internationalizes string from default settings to avoid the function _load_textdomain_just_in_time was called incorrectly warnings
 
 See the [changelog](changelog.txt) for detailed information on changes made in the earlier versions.

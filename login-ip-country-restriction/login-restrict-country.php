@@ -5,7 +5,7 @@
  * Description: This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want.
  * Text Domain: slicr
  * Domain Path: /langs
- * Version:     6.7.0
+ * Version:     6.7.1
  * Author:      Iulia Cazan
  * Author URI:  https://profiles.wordpress.org/iulia-cazan
  * Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
@@ -31,7 +31,7 @@
 
 // Define the plugin version.
 define( 'SISANU_RCIL_DB_OPTION', 'sisanu_rcil' );
-define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.70 );
+define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.71 );
 define( 'SISANU_RCIL_SLUG', 'slicr' );
 define( 'SISANU_RCIL_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'SISANU_RCIL_URL', trailingslashit( plugins_url( '/', plugin_basename( __FILE__ ) ) ) );
@@ -437,7 +437,7 @@ class SISANU_Restrict_Country_IP_Login {
 			'simulate_ip'         => '',
 			'simulate_country'    => '',
 			'simulate_token'      => '',
-			'forbidden_text'      => __( 'For some reason the authentication for your account is restricted. Please contact the administrator.', 'slicr' ),
+			'forbidden_text'      => 'For some reason the authentication for your account is restricted. Please contact the administrator.',
 			'xmlrpc_auth_filter'  => '',
 			'rule_type'           => 0,
 			'bypass_php_geoip'    => false,
@@ -979,7 +979,7 @@ class SISANU_Restrict_Country_IP_Login {
 							} elseif ( ! empty( self::$settings['simulate_country'] ) ) {
 								echo wp_kses_post( sprintf(
 									// Translators: %1$s - list of IPs.
-									__( 'You currently enabled a simulation with country code %2$s.', 'slicr' ),
+									__( 'You currently enabled a simulation with country code %1$s.', 'slicr' ),
 									'<b>' . self::$settings['simulate_country'] . '</b>'
 								) );
 							}
