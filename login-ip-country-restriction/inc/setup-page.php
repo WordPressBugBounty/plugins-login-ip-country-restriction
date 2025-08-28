@@ -15,7 +15,7 @@ $all_countries = self::get_countries_list();
 // phpcs:disable
 $tab = filter_input( INPUT_GET, 'tab', FILTER_DEFAULT );
 $tab = empty( $tab ) ? 0 : (int) $tab;
-$tab = $tab < 0 || $tab > 5 ? 0 : $tab;
+$tab = $tab < 0 || $tab > 6 ? 0 : $tab;
 // phpcs:enable
 
 $rules = [
@@ -82,6 +82,9 @@ $menu_items = apply_filters( 'sislrc_display_pro_tabs', [
 	],
 	5 => [
 		'title' => __( 'Debug', 'slicr' ),
+	],
+	6 => [
+		'title' => __( 'Integration', 'slicr' ),
 	],
 ] );
 ?>
@@ -152,6 +155,11 @@ $menu_items = apply_filters( 'sislrc_display_pro_tabs', [
 				case 5:
 					// Debug.
 					self::setup_debug_output();
+					break;
+
+				case 6:
+					// Integration.
+					self::setup_integration_output();
 					break;
 
 				case 0:

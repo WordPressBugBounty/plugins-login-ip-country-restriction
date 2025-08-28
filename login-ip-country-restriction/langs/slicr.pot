@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Login IP & Country Restriction 6.7.0\n"
+"Project-Id-Version: Login IP & Country Restriction 6.8.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/slicr\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-27T17:00:01+00:00\n"
+"POT-Creation-Date: 2025-08-28T18:20:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: slicr\n"
@@ -18,8 +18,8 @@ msgstr ""
 #: login-restrict-country.php
 #: inc/setup-teaser.php:48
 #: inc/setup-teaser.php:52
-#: login-restrict-country.php:1810
-#: login-restrict-country.php:1838
+#: login-restrict-country.php:1924
+#: login-restrict-country.php:1952
 #: pro-settings.php:535
 #: pro-settings.php:788
 msgid "Login IP & Country Restriction"
@@ -131,7 +131,7 @@ msgstr ""
 
 #. Translators: %1$s - IP, %2$s - country code.
 #: inc/setup-debug.php:125
-#: login-restrict-country.php:1045
+#: login-restrict-country.php:1067
 msgid "Your current IP is %1$s and the country code is %2$s."
 msgstr ""
 
@@ -184,6 +184,22 @@ msgstr ""
 #. Translators: %s - method.
 #: inc/setup-debug.php:235
 msgid "Enable the PHP %s function"
+msgstr ""
+
+#: inc/setup-integration.php:18
+msgid "geolocated.io"
+msgstr ""
+
+#: inc/setup-integration.php:20
+msgid "Create a free account at https://app.geolocated.io/"
+msgstr ""
+
+#: inc/setup-integration.php:28
+msgid "API Key"
+msgstr ""
+
+#: inc/setup-integration.php:36
+msgid "API Endpoint"
 msgstr ""
 
 #: inc/setup-ips.php:20
@@ -298,21 +314,25 @@ msgstr ""
 msgid "Other Settings"
 msgstr ""
 
-#: inc/setup-page.php:92
+#: inc/setup-page.php:87
+msgid "Integration"
+msgstr ""
+
+#: inc/setup-page.php:95
 #: login-restrict-country.php:595
 #: login-restrict-country.php:596
 msgid "Login IP & Country Restriction Settings"
 msgstr ""
 
-#: inc/setup-page.php:102
+#: inc/setup-page.php:105
 msgid "Login IP & Country Restriction Settings Menu"
 msgstr ""
 
-#: inc/setup-page.php:125
+#: inc/setup-page.php:128
 msgid "Settings form"
 msgstr ""
 
-#: inc/setup-page.php:125
+#: inc/setup-page.php:128
 msgid "Settings form elements"
 msgstr ""
 
@@ -456,11 +476,6 @@ msgstr ""
 msgid "Temporarily disable all settings"
 msgstr ""
 
-#: login-restrict-country.php:440
-#: pro-settings.php:739
-msgid "For some reason the authentication for your account is restricted. Please contact the administrator."
-msgstr ""
-
 #: login-restrict-country.php:621
 msgid "The settings were reset to default."
 msgstr ""
@@ -474,7 +489,7 @@ msgid "The settings were imported."
 msgstr ""
 
 #: login-restrict-country.php:687
-#: login-restrict-country.php:1091
+#: login-restrict-country.php:1113
 msgid "Action not allowed."
 msgstr ""
 
@@ -490,30 +505,30 @@ msgid "The settings were updated."
 msgstr ""
 
 #. Translators: %1$s - list of IPs.
-#: login-restrict-country.php:969
+#: login-restrict-country.php:991
 msgid "You currently enabled a simulation with IP %1$s and country code %2$s."
 msgstr ""
 
 #. Translators: %1$s - list of IPs.
-#: login-restrict-country.php:976
+#: login-restrict-country.php:998
 msgid "You currently enabled a simulation with IP %1$s."
 msgstr ""
 
 #. Translators: %1$s - list of IPs.
-#: login-restrict-country.php:982
+#: login-restrict-country.php:1004
 msgid "You currently enabled a simulation with country code %1$s."
 msgstr ""
 
 #. Translators: %s - allowed or blocked.
-#: login-restrict-country.php:990
+#: login-restrict-country.php:1012
 msgid "According to the current combination of IPs + country codes + rule type that is applied, the login is %s."
 msgstr ""
 
-#: login-restrict-country.php:991
-#: login-restrict-country.php:1623
-#: login-restrict-country.php:1632
-#: login-restrict-country.php:1675
-#: login-restrict-country.php:1681
+#: login-restrict-country.php:1013
+#: login-restrict-country.php:1737
+#: login-restrict-country.php:1746
+#: login-restrict-country.php:1789
+#: login-restrict-country.php:1795
 #: pro-settings.php:912
 #: pro-settings.php:918
 #: pro-settings.php:934
@@ -524,11 +539,11 @@ msgstr ""
 msgid "allowed"
 msgstr ""
 
-#: login-restrict-country.php:991
-#: login-restrict-country.php:1641
-#: login-restrict-country.php:1650
-#: login-restrict-country.php:1659
-#: login-restrict-country.php:1665
+#: login-restrict-country.php:1013
+#: login-restrict-country.php:1755
+#: login-restrict-country.php:1764
+#: login-restrict-country.php:1773
+#: login-restrict-country.php:1779
 #: pro-settings.php:924
 #: pro-settings.php:946
 #: pro-settings.php:952
@@ -539,41 +554,41 @@ msgstr ""
 msgid "blocked"
 msgstr ""
 
-#: login-restrict-country.php:1018
+#: login-restrict-country.php:1040
 msgid "The restriction will apply to your user as well! Please make sure you change the restriction to allow your own access."
 msgstr ""
 
-#: login-restrict-country.php:1025
+#: login-restrict-country.php:1047
 msgid "Based on the current setup all settings are temporarily disabled."
 msgstr ""
 
-#: login-restrict-country.php:1033
+#: login-restrict-country.php:1055
 msgid "There is no IP specified or you have * in the IPs list, meaning there is no IP filter to apply."
 msgstr ""
 
-#: login-restrict-country.php:1037
+#: login-restrict-country.php:1059
 msgid "There is no country filter to apply."
 msgstr ""
 
-#: login-restrict-country.php:1301
-#: login-restrict-country.php:1305
+#: login-restrict-country.php:1396
+#: login-restrict-country.php:1400
 msgid "undefined"
 msgstr ""
 
-#: login-restrict-country.php:1393
+#: login-restrict-country.php:1507
 msgid "Forbidden!"
 msgstr ""
 
-#: login-restrict-country.php:1612
+#: login-restrict-country.php:1726
 msgid "Based on the current options there is no login restriction."
 msgstr ""
 
-#: login-restrict-country.php:1620
-#: login-restrict-country.php:1629
-#: login-restrict-country.php:1638
-#: login-restrict-country.php:1647
-#: login-restrict-country.php:1656
-#: login-restrict-country.php:1672
+#: login-restrict-country.php:1734
+#: login-restrict-country.php:1743
+#: login-restrict-country.php:1752
+#: login-restrict-country.php:1761
+#: login-restrict-country.php:1770
+#: login-restrict-country.php:1786
 #: pro-settings.php:909
 #: pro-settings.php:931
 #: pro-settings.php:958
@@ -582,10 +597,10 @@ msgid "Based on the current options there is a login restriction, this is:"
 msgstr ""
 
 #. Translators: %1$s - allowed or blocked, %1$s - list of elements.
-#: login-restrict-country.php:1622
-#: login-restrict-country.php:1640
-#: login-restrict-country.php:1658
-#: login-restrict-country.php:1674
+#: login-restrict-country.php:1736
+#: login-restrict-country.php:1754
+#: login-restrict-country.php:1772
+#: login-restrict-country.php:1788
 #: pro-settings.php:911
 #: pro-settings.php:923
 #: pro-settings.php:933
@@ -597,24 +612,24 @@ msgstr ""
 msgid "%1$s for the %2$s IPs"
 msgstr ""
 
-#: login-restrict-country.php:1624
-#: login-restrict-country.php:1633
-#: login-restrict-country.php:1642
-#: login-restrict-country.php:1651
-#: login-restrict-country.php:1660
-#: login-restrict-country.php:1666
-#: login-restrict-country.php:1676
-#: login-restrict-country.php:1682
+#: login-restrict-country.php:1738
+#: login-restrict-country.php:1747
+#: login-restrict-country.php:1756
+#: login-restrict-country.php:1765
+#: login-restrict-country.php:1774
+#: login-restrict-country.php:1780
+#: login-restrict-country.php:1790
+#: login-restrict-country.php:1796
 #: pro-settings.php:895
 #: pro-settings.php:900
 msgid "any"
 msgstr ""
 
 #. Translators: %1$s - allowed or blocked, %1$s - list of elements.
-#: login-restrict-country.php:1631
-#: login-restrict-country.php:1649
-#: login-restrict-country.php:1664
-#: login-restrict-country.php:1680
+#: login-restrict-country.php:1745
+#: login-restrict-country.php:1763
+#: login-restrict-country.php:1778
+#: login-restrict-country.php:1794
 #: pro-settings.php:917
 #: pro-settings.php:939
 #: pro-settings.php:951
@@ -624,52 +639,52 @@ msgstr ""
 msgid "%1$s from the %2$s countries"
 msgstr ""
 
-#: login-restrict-country.php:1773
+#: login-restrict-country.php:1887
 msgid "Settings"
 msgstr ""
 
-#: login-restrict-country.php:1774
+#: login-restrict-country.php:1888
 msgid "Plugin URL"
 msgstr ""
 
-#: login-restrict-country.php:1812
-#: login-restrict-country.php:1844
-#: login-restrict-country.php:1908
+#: login-restrict-country.php:1926
+#: login-restrict-country.php:1958
+#: login-restrict-country.php:2022
 msgid "A huge thanks in advance!"
 msgstr ""
 
 #. Translators: %s - donate URL.
-#: login-restrict-country.php:1817
+#: login-restrict-country.php:1931
 msgid "If you find the plugin useful and would like to support my work, please consider making a <a href=\"%s\" target=\"_blank\">donation</a>."
 msgstr ""
 
 #. Translators: %s - rating.
-#: login-restrict-country.php:1821
-#: login-restrict-country.php:1913
+#: login-restrict-country.php:1935
+#: login-restrict-country.php:2027
 msgid "It would make me very happy if you would leave a %s rating."
 msgstr ""
 
 #. Translators: %1$s - plugin name.
-#: login-restrict-country.php:1841
+#: login-restrict-country.php:1955
 msgid "%1$s plugin was activated!"
 msgstr ""
 
 #. Translators: %1$s - extensions URL.
-#: login-restrict-country.php:1849
+#: login-restrict-country.php:1963
 msgid "You are using the free version. Get the <a href=\"%1$s\" target=\"_blank\"><b>PRO</b> version</a>."
 msgstr ""
 
 #. Translators: %1$s - pro version label, %2$s - PRO URL.
-#: login-restrict-country.php:1855
+#: login-restrict-country.php:1969
 msgid "Thank you for purchasing the <a href=\"%1$s\" target=\"_blank\"><b>PRO</b> version</a>!"
 msgstr ""
 
 #. Translators: %1$s - plugins URL, %2$s - heart icon, %3$s - extensions URL, %4$s - star icon, %5$s - maybe PRO details.
-#: login-restrict-country.php:1862
+#: login-restrict-country.php:1976
 msgid "%5$sCheck out my other <a href=\"%1$s\" target=\"_blank\" rel=\"noreferrer\">%2$s free plugins</a> on WordPress.org and the <a href=\"%3$s\" target=\"_blank\" rel=\"noreferrer\">%4$s other extensions</a> available!"
 msgstr ""
 
-#: login-restrict-country.php:1883
+#: login-restrict-country.php:1997
 msgid "Dismiss this notice."
 msgstr ""
 
@@ -821,6 +836,10 @@ msgstr ""
 
 #: pro-settings.php:722
 msgid "restriction simulation"
+msgstr ""
+
+#: pro-settings.php:739
+msgid "For some reason the authentication for your account is restricted. Please contact the administrator."
 msgstr ""
 
 #: pro-settings.php:744
