@@ -60,7 +60,8 @@ if ( ! empty( self::$settings['include_forward_ip'] ) ) {
 <hr>
 <div class="box">
 	<?php
-	$details = get_transient( 'rcil-debug' );
+	$detection = self::detection_method();
+	$details   = get_transient( 'rcil-debug' );
 	if ( false === $details ) {
 		if ( ! class_exists( 'WP_Debug_Data' ) && file_exists( ABSPATH . 'wp-admin/includes/class-wp-debug-data.php' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
@@ -130,7 +131,7 @@ if ( ! empty( self::$settings['include_forward_ip'] ) ) {
 		$details .= PHP_EOL . '- ' . sprintf(
 			// Translators: %1$s - detection method.
 			__( 'The available detection method is %1$s.', 'slicr' ),
-			self::detection_method()
+			$detection
 		);
 
 		// phpcs:disable
@@ -167,7 +168,7 @@ if ( ! empty( self::$settings['include_forward_ip'] ) ) {
 		echo wp_kses_post( sprintf(
 			// Translators: %1$s - detection method.
 			__( 'The available detection method is %1$s.', 'slicr' ),
-			'<b>' . self::detection_method() . '</b>'
+			'<b>' . $detection . '</b>'
 		) );
 		?>
 		<br>

@@ -5,7 +5,7 @@
  * Description: This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want.
  * Text Domain: slicr
  * Domain Path: /langs
- * Version:     6.8.0
+ * Version:     6.8.1
  * Author:      Iulia Cazan
  * Author URI:  https://profiles.wordpress.org/iulia-cazan
  * Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
@@ -31,7 +31,7 @@
 
 // Define the plugin version.
 define( 'SISANU_RCIL_DB_OPTION', 'sisanu_rcil' );
-define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.80 );
+define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.81 );
 define( 'SISANU_RCIL_SLUG', 'slicr' );
 define( 'SISANU_RCIL_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'SISANU_RCIL_URL', trailingslashit( plugins_url( '/', plugin_basename( __FILE__ ) ) ) );
@@ -235,27 +235,7 @@ class SISANU_Restrict_Country_IP_Login {
 		add_action( 'admin_notices', [ $ob_class, 'plugin_admin_notices' ] );
 		add_action( 'wp_ajax_plugin-deactivate-notice-' . SISANU_RCIL_SLUG, [ $ob_class, 'plugin_admin_notices_cleanup' ] );
 
-		add_action( 'init', [ $ob_class, 'l10n' ] );
 		add_action( 'plugins_loaded', [ $ob_class, 'plugin_ver_check' ] );
-	}
-
-	/**
-	 * Load text domain for internalization.
-	 */
-	public static function l10n() {
-		$locale      = get_locale();
-		$textdomain  = 'slicr';
-		$plugin_path = SISANU_RCIL_DIR . 'langs/' . $textdomain . '-' . $locale . '.mo';
-		$global_path = WP_LANG_DIR . '/plugins/' . $textdomain . '-' . $locale . '.mo';
-
-		load_plugin_textdomain( $textdomain, false, basename( SISANU_RCIL_DIR ) . '/langs/' );
-
-		// Attempt to fix 6.7 translation from plugin folder.
-		if ( file_exists( $plugin_path ) && is_readable( $plugin_path ) ) {
-			\load_textdomain( $textdomain, $plugin_path );
-		} elseif ( file_exists( $global_path ) && is_readable( $global_path ) ) {
-			\load_textdomain( $textdomain, $global_path );
-		}
 	}
 
 	/**
@@ -863,8 +843,6 @@ class SISANU_Restrict_Country_IP_Login {
 					$maybe_test = filter_input( INPUT_POST, 'test-ip' );
 					$test_ip    = filter_input( INPUT_POST, 'test_ip' );
 					if ( ! empty( $maybe_test ) && ! empty( $test_ip ) ) {
-						delete_transient( 'rcil-geo-method' );
-
 						global $country_code_detected_api;
 						$trans_id  = 'rcil-test-' . md5( gmdate( 'Y-m-d' ) );
 						$test_info = [
@@ -899,20 +877,28 @@ class SISANU_Restrict_Country_IP_Login {
 
 				case 6:
 					$integration = [
-						'geolocated' => [
+						'geolocated'  => [
 							'apikey'   => '',
 							'endpoint' => '',
+						],
+						'ip2location' => [
+							'apikey' => '',
+						],
+						'geoplugin'   => [
+							'apikey' => '',
 						],
 					];
 
 					$data = filter_input( INPUT_POST, 'integration', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-					if ( ! empty( $data['geolocated']['apikey'] ) ) {
-						$integration['geolocated']['apikey'] = sanitize_text_field( $data['geolocated']['apikey'] );
-					}
-					if ( ! empty( $data['geolocated']['endpoint'] ) ) {
-						$integration['geolocated']['endpoint'] = sanitize_text_field( $data['geolocated']['endpoint'] );
+					foreach ( $integration as $key => $info ) {
+						$integration[ $key ]['apikey'] = sanitize_text_field( $data[ $key ]['apikey'] );
+
+						if ( isset( $integration[ $key ]['endpoint'] ) ) {
+							$integration[ $key ]['endpoint'] = sanitize_text_field( $data[ $key ]['endpoint'] );
+						}
 					}
 
+					delete_transient( 'rcil-geo-method' );
 					update_option( SISANU_RCIL_DB_OPTION . '_integration', $integration );
 					do_action( 'sislrc_after_save_settings' );
 					wp_safe_redirect( $url . '&tab=6' );
@@ -1215,78 +1201,28 @@ class SISANU_Restrict_Country_IP_Login {
 	}
 
 	/**
-	 * Maybe fetch url content with cUrl.
-	 *
-	 * @param string $url URL to be crawled.
-	 */
-	public static function maybe_fetch_url( $url = '' ): string { // phpcs:ignore
-		$result = '';
-		if ( function_exists( 'curl_setopt' ) ) {
-			// phpcs:disable
-			$ch = curl_init();
-			curl_setopt( $ch, CURLOPT_URL, $url );
-			curl_setopt( $ch, CURLOPT_AUTOREFERER, false );
-			curl_setopt( $ch, CURLOPT_FAILONERROR, true );
-			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-			curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
-			curl_setopt( $ch, CURLOPT_HEADER, false );
-			$result = @curl_exec( $ch );
-			$code   = @curl_getinfo( $ch );
-			curl_close( $ch );
-			if ( ! empty( $code['http_code'] ) && '404' === $code['http_code'] ) {
-				$result = '';
-			}
-			// phpcs:enable
-		}
-		return (string) $result;
-	}
-
-	/**
-	 * Maybe a country code by cUrl.
-	 *
-	 * @param string $url URL to be crawled.
-	 */
-	public static function country_code_by_curl( $url = '' ): string { // phpcs:ignore
-		$code = '';
-		$body = self::maybe_fetch_url( $url );
-		if ( ! empty( $body ) ) {
-			// phpcs:disable
-			$data = @json_decode( $body );
-			if ( ! empty( $data->country ) ) {
-				// Response from ipapi.io.
-				$code = $data->country;
-			} elseif ( ! empty( $data->countryCode ) ) {
-				// Response from geolocated.io.
-				$code = $data->countryCode;
-			} elseif ( ! empty( $data->geoplugin_countryCode ) ) {
-				// Response from geoplugin.net.
-				$code = $data->geoplugin_countryCode;
-			}
-			// phpcs:enable
-		}
-
-		return (string) $code;
-	}
-
-	/**
 	 * Maybe a country code by JSON fetch.
 	 *
 	 * @param string $url URL to be crawled.
 	 */
 	public static function country_code_by_json( $url = '' ): string { // phpcs:ignore
-		$code = '';
-		$body = wp_remote_get( $url, [ 'timeout' => 120 ] );
-		if ( ! is_wp_error( $body ) && ! empty( $body['body'] ) ) {
+		$code     = '';
+		$response = wp_remote_get( $url, [
+			'timeout' => 120,
+			'Accept'  => 'application/json',
+		] );
+		if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response )
+			&& ! empty( $response['body'] ) ) {
+
 			// phpcs:disable
-			$data = @json_decode( $body['body'] );
-			if ( ! empty( $data->country ) ) {
-				// Response from ipapi.io.
-				$code = $data->country;
-			} elseif ( ! empty( $data->countryCode ) ) {
+			$data = @json_decode( $response['body'] );
+			if ( ! empty( $data->country_code ) && strlen( $data->country_code ) === 2 ) {
+				// Response from ipapi.io || ip2location.io.
+				$code = $data->country_code;
+			} elseif ( ! empty( $data->countryCode ) && strlen( $data->countryCode ) === 2 ) {
 				// Response from geolocated.io.
 				$code = $data->countryCode;
-			} elseif ( ! empty( $data->geoplugin_countryCode ) ) {
+			} elseif ( ! empty( $data->geoplugin_countryCode ) && strlen( $data->geoplugin_countryCode ) === 2 ) {
 				// Response from geoplugin.net.
 				$code = $data->geoplugin_countryCode;
 			}
@@ -1297,42 +1233,38 @@ class SISANU_Restrict_Country_IP_Login {
 	}
 
 	/**
-	 * Maybe a country code by php fetch.
-	 *
-	 * @param string $url URL to be crawled.
+	 * Get the available lookups for the integration.
 	 */
-	public static function country_code_by_php( $url = '' ): string {
-		$code = '';
-		// phpcs:disable
-		$data = maybe_unserialize( @file_get_contents( $url ) );
-		if ( ! empty( $data['country'] ) ) {
-			// Response from ipapi.io.
-			$code = (string) $data['country'];
-		} elseif ( ! empty( $data['countryCode'] ) ) {
-			// Response from geolocated.io.
-			$code = $data['countryCode'];
-		} elseif ( ! empty( $data['geoplugin_countryCode'] ) ) {
-			// Response from geoplugin.net.
-			$code = $data['geoplugin_countryCode'];
-		}
-		// phpcs:enable
+	public static function get_available_lookups(): array {
+		static $available_lookups;
 
-		return (string) $code;
-	}
+		if ( ! isset( $available_lookups ) ) {
+			$integration       = get_option( SISANU_RCIL_DB_OPTION . '_integration', [] );
+			$available_lookups = [];
 
-	/**
-	 * Return the geolocated endpoint.
-	 *
-	 * @param string $ip IP for lookup.
-	 */
-	public static function get_geolocated_endpoint( $ip ): string {
-		$integration = get_option( SISANU_RCIL_DB_OPTION . '_integration', [] );
-		if ( ! empty( $integration['geolocated']['apikey'] )
-			&& ! empty( $integration['geolocated']['endpoint'] ) ) {
-			return esc_url( 'https://' . $integration['geolocated']['endpoint'] . '.io/ip/' . $ip . '?api-key=' . $integration['geolocated']['apikey'] );
+			if ( function_exists( 'geoip_record_by_name' ) && empty( self::$settings['bypass_php_geoip'] ) ) {
+				// PHP Geo IP Location is available on the server.
+				$available_lookups['php_geoip'] = '';
+			}
+
+			// The default API.
+			$available_lookups['ipapi'] = 'https://ipapi.co/{IP}/json/';
+
+			if ( ! empty( $integration['geolocated']['apikey'] )
+				&& ! empty( $integration['geolocated']['endpoint'] ) ) {
+				$available_lookups['geolocated'] = 'https://' . $integration['geolocated']['endpoint'] . '/ip/{IP}?api-key=' . $integration['geolocated']['apikey'];
+			}
+
+			if ( ! empty( $integration['ip2location']['apikey'] ) ) {
+				$available_lookups['ip2location'] = 'https://api.ip2location.io/?key=' . $integration['ip2location']['apikey'] . '&ip={IP}';
+			}
+
+			if ( ! empty( $integration['geoplugin']['apikey'] ) ) {
+				$available_lookups['geoplugin'] = 'https://api.geoplugin.com?auth=' . $integration['geoplugin']['apikey'] . '&ip={IP}';
+			}
 		}
 
-		return '';
+		return $available_lookups;
 	}
 
 	/**
@@ -1342,58 +1274,32 @@ class SISANU_Restrict_Country_IP_Login {
 		$trans_id = 'rcil-geo-method';
 		$api      = get_transient( $trans_id );
 		if ( false === $api ) {
-			$user = '12.34.56.78';
-			$code = '';
-			$api  = '';
+			$user    = '12.34.56.78';
+			$code    = '';
+			$api     = '';
+			$lookups = self::get_available_lookups();
+			if ( ! empty( $lookups ) ) {
+				foreach ( $lookups as $type => $endpoint ) {
+					if ( 'php_geoip' === $type ) {
+						$info = geoip_record_by_name( $user );
+						$code = ! empty( $info['country_code'] ) ? $info['country_code'] : '!NA';
+						$api  = 'PHP `geoip_record_by_name`';
+					} else {
+						// First attempt by cUrl.
+						$code = self::country_code_by_json( str_replace( '{IP}', $user, $endpoint ) );
+						if ( ! empty( $code ) && '!NA' !== $code ) {
+							$api = 'CURL `' . $type . '`';
+						}
+					}
 
-			if ( function_exists( 'geoip_record_by_name' )
-				&& empty( self::$settings['bypass_php_geoip'] ) ) {
-				$info = geoip_record_by_name( $user );
-				$code = ! empty( $info['country_code'] ) ? $info['country_code'] : '!NA';
-				$api  = 'PHP `geoip_record_by_name`';
-			}
-
-			if ( empty( $api ) ) {
-				// First attempt by cUrl.
-				$code = self::country_code_by_json( 'https://ipapi.co/' . $user . '/json/' );
-				if ( ! empty( $code ) && '!NA' !== $code ) {
-					$api = 'CURL `ipapi`';
+					if ( ! empty( $api ) ) {
+						// This was detected.
+						break;
+					}
 				}
 			}
 
-			$maybe_geolocated = self::get_geolocated_endpoint( $user );
-			if ( empty( $api ) && ! empty( $maybe_geolocated ) ) {
-				// First attempt by cUrl.
-				$code = self::country_code_by_json( $maybe_geolocated );
-				if ( ! empty( $code ) && '!NA' !== $code ) {
-					$api = 'CURL `geolocated`';
-				}
-			}
-
-			if ( empty( $api ) ) {
-				// First attempt by cUrl.
-				$code = self::country_code_by_curl( 'http://www.geoplugin.net/json.gp?ip=' . $user );
-				if ( ! empty( $code ) && '!NA' !== $code ) {
-					$api = 'CURL `geoplugin`';
-				}
-			}
-
-			if ( empty( $api ) ) {
-				// The GeoIP library is not available, so we are trying to use the public GeoPlugin.
-				$code = self::country_code_by_json( 'http://www.geoplugin.net/json.gp?ip=' . $user );
-				if ( ! empty( $code ) && '!NA' !== $code ) {
-					$api = 'JSON `geoplugin`';
-				}
-			}
-
-			if ( empty( $api ) ) {
-				$code = self::country_code_by_php( 'http://www.geoplugin.net/php.gp?ip=' . $user );
-				if ( ! empty( $code ) && '!NA' !== $code ) {
-					$api = 'PHP `geoplugin`';
-				}
-			}
-
-			$api = $api ?? __( 'undefined', 'slicr' );
+			$api = ! empty( $api ) ? $api : __( 'undefined', 'slicr' );
 			set_transient( $trans_id, $api, 360 * MINUTE_IN_SECONDS );
 		}
 
@@ -1415,61 +1321,29 @@ class SISANU_Restrict_Country_IP_Login {
 		if ( true === $bypass_cache || false === $country_code ) {
 			$duration = ! empty( self::$settings['lockout_duration'] ) ? (int) self::$settings['lockout_duration'] : 60;
 			$duration = $duration * MINUTE_IN_SECONDS;
-			if ( function_exists( 'geoip_record_by_name' ) ) {
-				if ( empty( self::$settings['bypass_php_geoip'] ) ) {
-					// If GeoIP library is available, then let's use this.
-					$user_details = geoip_record_by_name( $user_ip );
-					$country_code = ! empty( $user_details['country_code'] ) ? $user_details['country_code'] : $country_code;
+			$lookups  = self::get_available_lookups();
+			if ( ! empty( $lookups ) && ! in_array( $user_ip, [ '127.0.0.1', '::1' ], true ) ) {
+				foreach ( $lookups as $type => $endpoint ) {
+					if ( 'php_geoip' === $type ) {
+						$info         = geoip_record_by_name( $user_ip );
+						$country_code = ! empty( $info['country_code'] ) ? $info['country_code'] : '!NA';
 
-					$country_code_detected_api = 'PHP `geoip_record_by_name`';
-					set_transient( $trans_id, $country_code, $duration );
-					return $country_code;
+						$country_code_detected_api = 'PHP `geoip_record_by_name`';
+						set_transient( $trans_id, $country_code, $duration );
+
+						// Code from PHP was detected.
+						return $country_code;
+					} else {
+						$country_code = self::country_code_by_json( str_replace( '{IP}', $user_ip, $endpoint ) );
+						if ( ! empty( $country_code ) && '!NA' !== $country_code ) {
+							$country_code_detected_api = 'CURL `' . $type . '`';
+							set_transient( $trans_id, $country_code, $duration );
+
+							// Code from cURL was detected.
+							return $country_code;
+						}
+					}
 				}
-			}
-
-			$country_code = self::country_code_by_json( 'https://ipapi.co/' . $user_ip . '/json/' );
-			if ( ! empty( $country_code ) && '!NA' !== $country_code ) {
-				// Fail-fast, we found it.
-				$country_code_detected_api = 'CURL `ipapi`';
-				set_transient( $trans_id, $country_code, $duration );
-				return $country_code;
-			}
-
-			$maybe_geolocated = self::get_geolocated_endpoint( $user_ip );
-			if ( ! empty( $maybe_geolocated ) ) {
-				$country_code = self::country_code_by_json( $maybe_geolocated );
-				if ( ! empty( $country_code ) && '!NA' !== $country_code ) {
-					// Fail-fast, we found it.
-					$country_code_detected_api = 'CURL `geolocated`';
-					set_transient( $trans_id, $country_code, $duration );
-					return $country_code;
-				}
-			}
-
-			// First attempt by cUrl.
-			$country_code = self::country_code_by_curl( 'http://www.geoplugin.net/json.gp?ip=' . $user_ip );
-			if ( ! empty( $country_code ) && '!NA' !== $country_code ) {
-				// Fail-fast, we found it.
-				$country_code_detected_api = 'CURL';
-				set_transient( $trans_id, $country_code, $duration );
-				return $country_code;
-			}
-
-			// The GeoIP library is not available, so we are trying to use the public GeoPlugin.
-			$country_code = self::country_code_by_json( 'http://www.geoplugin.net/json.gp?ip=' . $user_ip );
-			if ( ! empty( $country_code ) && '!NA' !== $country_code ) {
-				// Fail-fast, we found it.
-				$country_code_detected_api = 'JSON';
-				set_transient( $trans_id, $country_code, $duration );
-				return $country_code;
-			}
-
-			$country_code = self::country_code_by_php( 'http://www.geoplugin.net/php.gp?ip=' . $user_ip );
-			if ( ! empty( $country_code ) && '!NA' !== $country_code ) {
-				// Fail-fast, we found it.
-				$country_code_detected_api = 'PHP';
-				set_transient( $trans_id, $country_code, $duration );
-				return $country_code;
 			}
 
 			$country_code = '!NA';

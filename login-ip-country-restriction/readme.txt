@@ -2,8 +2,8 @@
 Contributors: Iulia Cazan
 Tags: country restriction, login restriction, block country, block IP, country firewall
 Requires at least: 5.1
-Tested up to: 6.8
-Stable tag: 6.8.0
+Tested up to: 6.9
+Stable tag: 6.8.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -44,8 +44,9 @@ None
 
 == Changelog ==
 
-= 6.8.0 =
-* Tested up to 6.8.2
-* Added more free IP lookup providers
+= 6.8.1 =
+* Tested up to 6.8.3
+* Added more IP lookup providers
+* Translation updates
 
 See the [changelog](changelog.txt) for detailed information on changes made in the earlier versions.

@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 6.8.0 =
+* Tested up to 6.8.2
+* Added more free IP lookup providers
+
 = 6.7.2 =
 * Tested up to 6.8.1
 * Backward compatibility for PHP 7.4

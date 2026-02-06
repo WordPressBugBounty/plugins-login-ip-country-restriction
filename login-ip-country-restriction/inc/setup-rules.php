@@ -29,8 +29,8 @@ $true_pro = self::$is_pro && function_exists( '\RCIL\Pro\key_is_active' ) && tru
 					?>
 					<li>
 						<span><?php echo (int) $count; ?>.</span>
-						<label class="pro-item-after disabled">
-							<span><?php echo esc_html( $value['title'] ); ?></span>
+						<label>
+							<span class="pro-item-after disabled"><?php echo esc_html( $value['title'] ); ?></span>
 						</label>
 					</li>
 					<?php
@@ -38,9 +38,9 @@ $true_pro = self::$is_pro && function_exists( '\RCIL\Pro\key_is_active' ) && tru
 					?>
 					<li>
 						<span><?php echo (int) $count; ?>.</span>
-						<label class="pro-item-after">
+						<label>
 							<input type="radio" name="rule_type" value="<?php echo (int) $key; ?>" <?php checked( self::$rules->type, $key ); ?>>
-							<span><?php echo esc_html( $value['title'] ); ?></span>
+							<span class="pro-item-after"><?php echo esc_html( $value['title'] ); ?></span>
 						</label>
 					</li>
 					<?php
