@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 6.8.1 =
+* Tested up to 6.8.3
+* Added more IP lookup providers
+* Translation updates
+
 = 6.8.0 =
 * Tested up to 6.8.2
 * Added more free IP lookup providers

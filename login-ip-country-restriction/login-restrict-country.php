@@ -1,11 +1,11 @@
-<?php
+<?php // phpcs:ignore Generic.Files.LineEndings.InvalidEOLChar textdomain_mismatch
 /**
  * Plugin Name: Login IP & Country Restriction
  * Plugin URI:  https://iuliacazan.ro/login-ip-country-restriction/
  * Description: This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want.
  * Text Domain: slicr
  * Domain Path: /langs
- * Version:     6.8.1
+ * Version:     6.8.2
  * Author:      Iulia Cazan
  * Author URI:  https://profiles.wordpress.org/iulia-cazan
  * Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
@@ -13,7 +13,7 @@
  *
  * @package ic-devops
  *
- * Copyright (C) 2014-2025 Iulia Cazan
+ * Copyright (C) 2014-2026 Iulia Cazan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -29,9 +29,16 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+// phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+defined( 'ABSPATH' ) || exit;
+
 // Define the plugin version.
 define( 'SISANU_RCIL_DB_OPTION', 'sisanu_rcil' );
-define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.81 );
+define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.82 );
+define( 'SISANU_RCIL_PLUGIN_VER_TEXT', '6.8.2' );
 define( 'SISANU_RCIL_SLUG', 'slicr' );
 define( 'SISANU_RCIL_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'SISANU_RCIL_URL', trailingslashit( plugins_url( '/', plugin_basename( __FILE__ ) ) ) );
@@ -236,6 +243,7 @@ class SISANU_Restrict_Country_IP_Login {
 		add_action( 'wp_ajax_plugin-deactivate-notice-' . SISANU_RCIL_SLUG, [ $ob_class, 'plugin_admin_notices_cleanup' ] );
 
 		add_action( 'plugins_loaded', [ $ob_class, 'plugin_ver_check' ] );
+		add_filter( 'admin_footer_text', [ $ob_class, 'footer_text' ] );
 	}
 
 	/**
@@ -1066,7 +1074,7 @@ class SISANU_Restrict_Country_IP_Login {
 	 */
 	public static function get_current_ip(): string {
 		$ip = '';
-		// phpcs:disable
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
 			$ip = wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] );
 		} elseif ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
@@ -1082,7 +1090,7 @@ class SISANU_Restrict_Country_IP_Login {
 			}
 		}
 
-		// phpcs:enable
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( '127.0.0.1' === $ip || '::1' === $ip ) {
 			return apply_filters( 'sislrc_the_user_ip', (string) $ip );
 		}
@@ -1214,7 +1222,8 @@ class SISANU_Restrict_Country_IP_Login {
 		if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response )
 			&& ! empty( $response['body'] ) ) {
 
-			// phpcs:disable
+			// phpcs:disable WordPress.PHP.NoSilencedErrors.Discouraged
+			// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			$data = @json_decode( $response['body'] );
 			if ( ! empty( $data->country_code ) && strlen( $data->country_code ) === 2 ) {
 				// Response from ipapi.io || ip2location.io.
@@ -1226,7 +1235,7 @@ class SISANU_Restrict_Country_IP_Login {
 				// Response from geoplugin.net.
 				$code = $data->geoplugin_countryCode;
 			}
-			// phpcs:enable
+			// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
 
 		return (string) $code;
@@ -1882,31 +1891,66 @@ class SISANU_Restrict_Country_IP_Login {
 	}
 
 	/**
-	 * Maybe donate or rate.
+	 * Display footer links and plugin credits.
+	 *
+	 * Note: $original is type-hinted as ?string to gracefully handle
+	 * third-party plugins that incorrectly return null or non-string values
+	 * to this filter.
+	 *
+	 * @see https://developer.wordpress.org/reference/hooks/admin_footer_text/
+	 *
+	 * @param  string|null $original Original footer content.
+	 * @return string|null
 	 */
-	public static function show_donate_text() {
-		?>
-		<div class="donate outside">
-			<img src="<?php echo esc_url( plugin_dir_url( __FILE__ ) . '/assets/images/icon-128x128.gif' ); ?>" width="32" height="32" alt="">
-			<div>
-				<?php
-				if ( ! self::$is_pro ) {
-					echo wp_kses_post( self::donate_text() );
-				} else {
-					$thanks = __( 'A huge thanks in advance!', 'slicr' );
+	public static function footer_text( ?string $original = '' ): ?string {
+		$screen = \get_current_screen();
+		if ( ! is_object( $screen ) || ( ! substr_count( $screen->base, 'login-ip-country-restriction-settings' ) ) ) {
+			return $original;
+		}
 
-					echo wp_kses_post(
-						sprintf(
-							// Translators: %s - rating.
-							__( 'It would make me very happy if you would leave a %s rating.', 'slicr' ),
-							'<a href="' . self::PLUGIN_SUPPORT_URL . 'reviews/?rate=5#new-post" class="rating" target="_blank" rel="noreferrer" title="' . esc_attr( $thanks ) . '">★★★★★</a>'
-						) . ' ' . $thanks
-					);
-				}
-				?>
-			</div>
-		</div>
-		<?php
+		$elements = [];
+		$title    = __( 'Login IP & Country Restriction', 'slicr' );
+		$donate   = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ&item_name=Support for development and maintenance (' . rawurlencode( $title ) . ')';
+
+		$elements[] = sprintf(
+			// Translators: %1$s - title, %2$s - version, %3$s - author.
+			\__( '%1$s version %2$s by %3$s', 'slicr' ),
+			\esc_attr( $title ),
+			\esc_attr( SISANU_RCIL_PLUGIN_VER_TEXT ),
+			'<a href="https://iuliacazan.ro" target="_blank" rel="noopener">Iulia Cazan</a>'
+		);
+
+		if ( self::$is_pro ) {
+			$elements[] = sprintf(
+				'<a href="%1$s" target="_blank" rel="noopener">%2$s</a>',
+				\esc_url( 'https://iuliacazan.ro/customer-support/' ),
+				\esc_attr__( 'Support', 'slicr' )
+			);
+		} else {
+			$elements[] = sprintf(
+				'<a href="%1$s" target="_blank" rel="noopener">%2$s</a>',
+				\esc_url( self::PLUGIN_SUPPORT_URL ),
+				\esc_attr__( 'Support', 'slicr' )
+			);
+		}
+
+		$elements[] = sprintf(
+			'<a href="%1$s" target="_blank" rel="noopener">%2$s</a>',
+			\esc_url( self::PLUGIN_SUPPORT_URL . 'reviews/' ),
+			\esc_attr__( 'Reviews', 'slicr' )
+		);
+		$elements[] = sprintf(
+			'<a href="%1$s" target="_blank" rel="noopener">%2$s</a>',
+			\esc_url( $donate ),
+			\esc_attr__( 'Donate', 'slicr' )
+		);
+		$elements[] = sprintf(
+			// Translators: %1$s - social link.
+			\__( 'Follow me on <a href="%1$s" target="_blank" rel="noopener">LinkedIn</a>', 'slicr' ),
+			'https://www.linkedin.com/in/iuliacazan/',
+		);
+
+		return \wp_kses_post( implode( ' &bull; ', $elements ) );
 	}
 }
 

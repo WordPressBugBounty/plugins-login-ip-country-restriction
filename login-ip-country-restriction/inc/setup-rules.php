@@ -6,9 +6,10 @@
  * @package ic-devops
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+// phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+defined( 'ABSPATH' ) || exit;
 
 $true_pro = self::$is_pro && function_exists( '\RCIL\Pro\key_is_active' ) && true === \RCIL\Pro\key_is_active();
 ?>

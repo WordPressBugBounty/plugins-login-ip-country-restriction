@@ -6,9 +6,10 @@
  * @package ic-devops
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+// phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+defined( 'ABSPATH' ) || exit;
 
 $lookups     = self::get_available_lookups();
 $integration = get_option( SISANU_RCIL_DB_OPTION . '_integration', [] );

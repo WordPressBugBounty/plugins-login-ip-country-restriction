@@ -6,17 +6,17 @@
  * @package ic-devops
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+// phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
+
+defined( 'ABSPATH' ) || exit;
 
 $all_countries = self::get_countries_list();
 
-// phpcs:disable
 $tab = filter_input( INPUT_GET, 'tab', FILTER_DEFAULT );
 $tab = empty( $tab ) ? 0 : (int) $tab;
 $tab = $tab < 0 || $tab > 6 ? 0 : $tab;
-// phpcs:enable
 
 $rules = [
 	6 => [
@@ -170,7 +170,5 @@ $menu_items = apply_filters( 'sislrc_display_pro_tabs', [
 			}
 			?>
 		</form>
-
-		<?php self::show_donate_text(); ?>
 	</div>
 </div>

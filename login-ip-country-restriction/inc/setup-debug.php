@@ -6,9 +6,10 @@
  * @package ic-devops
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+// phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+defined( 'ABSPATH' ) || exit;
 
 $setup = [
 	'_ver'              => SISANU_RCIL_CURRENT_DB_VERSION,
@@ -22,8 +23,8 @@ $setup = [
 	'_settings'         => get_option( SISANU_RCIL_DB_OPTION . '_settings', [] ),
 ];
 
-// phpcs:disable
-$forward = ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) : '';
+
+$forward = ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) : ''; // phpcs:ignore
 
 $server_info = [ 'SERVER_ADDR', 'REMOTE_ADDR', 'HTTP_CF_IPCOUNTRY', 'HTTP_CF_CONNECTING_IP', 'HTTP_CLIENT_IP' ];
 if ( ! empty( self::$settings['include_forward_ip'] ) ) {
@@ -134,7 +135,7 @@ if ( ! empty( self::$settings['include_forward_ip'] ) ) {
 			$detection
 		);
 
-		// phpcs:disable
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$details .= PHP_EOL . '- SERVER_ADDR: ';
 		$details .= ! empty( $_SERVER['SERVER_ADDR'] ) ? wp_unslash( $_SERVER['SERVER_ADDR'] ) : '';
 
@@ -154,7 +155,7 @@ if ( ! empty( self::$settings['include_forward_ip'] ) ) {
 			$details .= PHP_EOL . '- HTTP_X_FORWARDED_FOR: ';
 			$details .= ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) : '';
 		}
-		// phpcs:enable
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		set_transient( 'rcil-debug', $details, WEEK_IN_SECONDS );
 	}

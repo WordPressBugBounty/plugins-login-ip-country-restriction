@@ -6,9 +6,9 @@
  * @package ic-devops
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+defined( 'ABSPATH' ) || exit;
 
 $all_countries = [
 	'AF' => 'Afghanistan',
