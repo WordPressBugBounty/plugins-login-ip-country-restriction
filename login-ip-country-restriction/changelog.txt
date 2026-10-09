@@ -1,5 +1,18 @@
 == Changelog ==
 
+= 6.8.3 =
+* Tested up to 7.1
+* Security hardening: validate the detected IP, capability check on settings save
+* Added the opt-in option to trust the Cloudflare visitor IP header (existing installs keep the current behavior until settings are saved)
+* Fixed the multisite transients cleanup query
+* Fixed the registration redirect also applying to the login page
+* Pro: WooCommerce customers countries collection is compatible with HPOS order storage (the classic storage is still supported)
+* Pro: the lockout duration now locks the user out after a restricted login attempt (the country lookup cache is now fixed at 1 hour); saving the settings clears the lockouts
+* Lower timeout and proper Accept header for IP lookups
+
+= 6.8.2 =
+* Tested up to 7.0
+
 = 6.8.1 =
 * Tested up to 6.8.3
 * Added more IP lookup providers

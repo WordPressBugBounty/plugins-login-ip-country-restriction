@@ -111,6 +111,15 @@ defined( 'ABSPATH' ) || exit;
 					</span>
 				</label>
 			</li>
+
+			<li>
+				<label>
+					<input type="checkbox" value="1" name="_login_ip_country_restriction_settings[trust_cf_ip]" id="_login_ip_country_restriction_settings_trust_cf_ip" <?php checked( true, ! empty( self::$settings['trust_cf_ip'] ) ); ?>/>
+					<span>
+						<?php esc_html_e( 'trust the Cloudflare visitor IP (HTTP_CF_CONNECTING_IP), enable this only if the site is behind Cloudflare', 'slicr' ); ?>
+					</span>
+				</label>
+			</li>
 		</ul>
 	</div>
 </div>

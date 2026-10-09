@@ -5,7 +5,7 @@
  * Description: This plugin hooks in the authenticate filter. By default, the plugin is set to allow all access and you can configure the plugin to allow the login only from some specified IPs or the specified countries. PLEASE MAKE SURE THAT YOU CONFIGURE THE PLUGIN TO ALLOW YOUR OWN ACCESS. If you set a restriction by IP, then you have to add your own IP (if you are using the plugin in a local setup the IP is 127.0.0.1 or ::1, this is added in your list by default). If you set a restriction by country, then you have to select from the list of countries at least your country. The both types of restrictions work independent, so you can set only one type of restriction or both if you want.
  * Text Domain: slicr
  * Domain Path: /langs
- * Version:     6.8.2
+ * Version:     6.8.3
  * Author:      Iulia Cazan
  * Author URI:  https://profiles.wordpress.org/iulia-cazan
  * Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
@@ -37,8 +37,8 @@ defined( 'ABSPATH' ) || exit;
 
 // Define the plugin version.
 define( 'SISANU_RCIL_DB_OPTION', 'sisanu_rcil' );
-define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.82 );
-define( 'SISANU_RCIL_PLUGIN_VER_TEXT', '6.8.2' );
+define( 'SISANU_RCIL_CURRENT_DB_VERSION', 6.83 );
+define( 'SISANU_RCIL_PLUGIN_VER_TEXT', '6.8.3' );
 define( 'SISANU_RCIL_SLUG', 'slicr' );
 define( 'SISANU_RCIL_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'SISANU_RCIL_URL', trailingslashit( plugins_url( '/', plugin_basename( __FILE__ ) ) ) );
@@ -300,11 +300,7 @@ class SISANU_Restrict_Country_IP_Login {
 			// Fallback to page now test.
 			return ! empty( $pagenow ) && 'wp-login.php' === $pagenow;
 		} elseif ( 'register' === $page_type ) {
-			if ( self::this_is_login() ) {
-				return true;
-			}
-
-			// Fallback to page now test.
+			// Only the registration action of the login script, not any login page.
 			return ! empty( $pagenow ) && 'wp-login.php' === $pagenow
 				&& ! empty( $_REQUEST['action'] ) && 'register' === $_REQUEST['action']; // phpcs:ignore
 		}
@@ -431,9 +427,14 @@ class SISANU_Restrict_Country_IP_Login {
 			'bypass_php_geoip'    => false,
 			'force_remove_local'  => false,
 			'include_forward_ip'  => false,
+			'trust_cf_ip'         => false,
 		];
 
 		self::$settings = maybe_unserialize( get_option( SISANU_RCIL_DB_OPTION . '_settings', [] ) );
+		if ( ! empty( self::$settings ) && is_array( self::$settings ) && ! isset( self::$settings['trust_cf_ip'] ) ) {
+			// Existing installs keep the previous behavior until the option is saved.
+			self::$settings['trust_cf_ip'] = true;
+		}
 		self::$settings = wp_parse_args( self::$settings, $default );
 
 		$ips = implode( ',', array_merge( self::$allowed_ips, self::$blocked_ips ) );
@@ -648,18 +649,22 @@ class SISANU_Restrict_Country_IP_Login {
 		global $wpdb;
 		// Remove all the transients records in one query.
 		$tmp_query = $wpdb->prepare(
-			' DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s OR option_name LIKE %s ',
+			' DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s ',
 			$wpdb->esc_like( '_transient_rcil-geo' ) . '%',
-			$wpdb->esc_like( '_transient_timeout_rcil-geo' ) . '%'
+			$wpdb->esc_like( '_transient_timeout_rcil-geo' ) . '%',
+			$wpdb->esc_like( '_transient_rcil-lock' ) . '%',
+			$wpdb->esc_like( '_transient_timeout_rcil-lock' ) . '%'
 		);
 		$wpdb->query( $tmp_query ); // phpcs:ignore
 
 		if ( is_multisite() ) {
 			// Attempt to flush transient also on multisite.
 			$tmp_query = $wpdb->prepare(
-				' DELETE FROM ' . $wpdb->sitemeta . ' WHERE meta_key LIKE %s OR option_name LIKE %s ',
+				' DELETE FROM ' . $wpdb->sitemeta . ' WHERE meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s ',
 				$wpdb->esc_like( '_transient_rcil-geo' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_rcil-geo' ) . '%'
+				$wpdb->esc_like( '_transient_timeout_rcil-geo' ) . '%',
+				$wpdb->esc_like( '_transient_rcil-lock' ) . '%',
+				$wpdb->esc_like( '_transient_timeout_rcil-lock' ) . '%'
 			);
 			$wpdb->query( $tmp_query ); // phpcs:ignore
 		}
@@ -671,6 +676,10 @@ class SISANU_Restrict_Country_IP_Login {
 	public static function maybe_save_settings() {
 		$nonce = filter_input( INPUT_POST, '_login_ip_country_restriction_settings_nonce', FILTER_DEFAULT );
 		if ( ! empty( $nonce ) ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_die( esc_html__( 'Action not allowed.', 'slicr' ) );
+			}
+
 			if ( ! wp_verify_nonce( $nonce, '_login_ip_country_restriction_settings_save' ) ) {
 				wp_die( esc_html__( 'Action not allowed.', 'slicr' ), esc_html__( 'Security Breach', 'slicr' ) );
 			}
@@ -724,6 +733,7 @@ class SISANU_Restrict_Country_IP_Login {
 
 						$include_forward_ip        = ! empty( $sel['include_forward_ip'] );
 						$opt['include_forward_ip'] = $include_forward_ip;
+						$opt['trust_cf_ip']        = ! empty( $sel['trust_cf_ip'] );
 						update_option( SISANU_RCIL_DB_OPTION . '_settings', $opt );
 
 						self::load_settings();
@@ -735,6 +745,7 @@ class SISANU_Restrict_Country_IP_Login {
 
 						$include_forward_ip        = ! empty( $sel['include_forward_ip'] );
 						$opt['include_forward_ip'] = $include_forward_ip;
+						$opt['trust_cf_ip']        = ! empty( $sel['trust_cf_ip'] );
 						update_option( SISANU_RCIL_DB_OPTION . '_settings', $opt );
 
 						self::load_settings();
@@ -1071,14 +1082,19 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Get current IP.
+	 *
+	 * The visitor IP is `REMOTE_ADDR`, unless the Cloudflare option is enabled
+	 * (`trust_cf_ip`), when `HTTP_CF_CONNECTING_IP` is used first. This header can be
+	 * spoofed by the clients that are not behind Cloudflare, so it is opt-in
+	 * (enabled by default only for the installs that predate the option).
+	 * For the local requests, `HTTP_X_FORWARDED_FOR` can be used if `include_forward_ip` is set.
+	 * The result is validated and falls back to a valid `REMOTE_ADDR`, or an empty string.
 	 */
 	public static function get_current_ip(): string {
 		$ip = '';
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		if ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
+		if ( ! empty( self::$settings['trust_cf_ip'] ) && ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
 			$ip = wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] );
-		} elseif ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-			$ip = wp_unslash( $_SERVER['HTTP_CLIENT_IP'] );
 		} elseif ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
 			$ip = wp_unslash( $_SERVER['REMOTE_ADDR'] );
 		}
@@ -1086,8 +1102,16 @@ class SISANU_Restrict_Country_IP_Login {
 		if ( '127.0.0.1' === $ip || '::1' === $ip ) {
 			if ( ! empty( self::$settings['include_forward_ip'] )
 				&& ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-				$ip = wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+				$forwarded = explode( ',', wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
+				$ip        = trim( $forwarded[0] );
 			}
+		}
+
+		$ip = trim( (string) $ip );
+		if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+			$ip = ! empty( $_SERVER['REMOTE_ADDR'] ) && filter_var( wp_unslash( $_SERVER['REMOTE_ADDR'] ), FILTER_VALIDATE_IP )
+				? wp_unslash( $_SERVER['REMOTE_ADDR'] )
+				: '';
 		}
 
 		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -1216,8 +1240,8 @@ class SISANU_Restrict_Country_IP_Login {
 	public static function country_code_by_json( $url = '' ): string { // phpcs:ignore
 		$code     = '';
 		$response = wp_remote_get( $url, [
-			'timeout' => 120,
-			'Accept'  => 'application/json',
+			'timeout' => 10,
+			'headers' => [ 'Accept' => 'application/json' ],
 		] );
 		if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response )
 			&& ! empty( $response['body'] ) ) {
@@ -1317,6 +1341,8 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Retrieves the current user country code based on the user IP.
+	 * The detected code is cached in a transient for one hour; `!NA` is returned when
+	 * the country cannot be identified (the country rules do not restrict in that case).
 	 *
 	 * @param string $ip           Maybe an explicit IP.
 	 * @param bool   $bypass_cache Bypass or not the cache (defaults to false).
@@ -1328,8 +1354,7 @@ class SISANU_Restrict_Country_IP_Login {
 		$trans_id     = 'rcil-geo-' . md5( $user_ip );
 		$country_code = get_transient( $trans_id );
 		if ( true === $bypass_cache || false === $country_code ) {
-			$duration = ! empty( self::$settings['lockout_duration'] ) ? (int) self::$settings['lockout_duration'] : 60;
-			$duration = $duration * MINUTE_IN_SECONDS;
+			$duration = HOUR_IN_SECONDS;
 			$lookups  = self::get_available_lookups();
 			if ( ! empty( $lookups ) && ! in_array( $user_ip, [ '127.0.0.1', '::1' ], true ) ) {
 				foreach ( $lookups as $type => $endpoint ) {
@@ -1690,7 +1715,9 @@ class SISANU_Restrict_Country_IP_Login {
 
 	/**
 	 * Returns the current user if this is allowed (hence defaults to WordPress functionality)
-	 * or forbid access to authentication.
+	 * or forbid access to authentication. The roles without restriction are skipped (Pro).
+	 * An attempt that matches a restriction also locks the user out for the lockout
+	 * duration (Pro), and the individual user lockout is checked.
 	 *
 	 * @param  \WP_User $user     Potential WP_User instance.
 	 * @param  string   $username Username.
@@ -1712,11 +1739,18 @@ class SISANU_Restrict_Country_IP_Login {
 		$restrict = self::user_has_restriction();
 		if ( ! empty( $restrict ) ) {
 			// The user country based on the user IP is not in the list of allowed countries and also the user IP is not in the allowed IPs list.
+			self::maybe_set_user_lockout();
 			wp_logout();
 			do_action( 'sislrc_maybe_404_redirect' );
 			self::forbidden_screen();
 		} else {
 			// If we got this far, the user seems legit.
+			if ( self::user_is_locked_out() ) {
+				wp_logout();
+				do_action( 'sislrc_maybe_404_redirect' );
+				self::forbidden_screen();
+			}
+
 			if ( ! empty( self::$settings['users_lockout'] ) && ! empty( self::$user_id ) ) {
 				$lockout = get_user_meta( self::$user_id, 'rcil-user-lockout', true );
 				if ( ! empty( $lockout ) ) {
@@ -1731,6 +1765,35 @@ class SISANU_Restrict_Country_IP_Login {
 			}
 			return $user;
 		}
+	}
+
+	/**
+	 * Get the transient name used for the lockout of the current user.
+	 * The lockouts are cleared when the plugin settings are saved.
+	 */
+	public static function user_lockout_transient(): string {
+		return 'rcil-lock-' . (int) self::$user_id;
+	}
+
+	/**
+	 * Lock the user out for the configured lockout duration (in minutes),
+	 * after an authentication attempt that matched a restriction.
+	 */
+	public static function maybe_set_user_lockout() {
+		if ( empty( self::$user_id ) || ! self::$is_pro ) {
+			return;
+		}
+
+		$duration = ! empty( self::$settings['lockout_duration'] ) ? (int) self::$settings['lockout_duration'] : 60;
+		set_transient( self::user_lockout_transient(), time(), $duration * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Check if the user is still locked out after a restricted attempt.
+	 */
+	public static function user_is_locked_out(): bool {
+		return ! empty( self::$user_id ) && self::$is_pro
+			&& false !== get_transient( self::user_lockout_transient() );
 	}
 
 	/**
